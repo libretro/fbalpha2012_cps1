@@ -268,7 +268,8 @@ void CpsWritePort(const UINT32 ia, UINT8 d)
 		}
 	}
 
-	if (Cps == 1 && Cps1QsHack == 1) {
+	if (Cps1QsHack == 1)
+   {
 		if (ia == 0x181) {
 			// Pass the Sound Code to the Q-Sound Shared Ram
 			CpsZRamC0[0x001] = d;

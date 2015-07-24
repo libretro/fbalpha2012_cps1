@@ -13,11 +13,12 @@ struct CpsrLineInfo CpsrLineInfo[15];
 
 static void GetRowsRange(INT32 *pnStart,INT32 *pnWidth,INT32 nRowFrom,INT32 nRowTo)
 {
-  INT32 i,nStart,nWidth;
+  INT32 i, nWidth;
 
   // Get the range of scroll values within nRowCount rows
   // Start with zero range
-  nStart = BURN_ENDIAN_SWAP_INT16(CpsrRows[nRowFrom&0x3ff]); nStart&=0x3ff; nWidth=0;
+  INT32 nStart = BURN_ENDIAN_SWAP_INT16(CpsrRows[nRowFrom&0x3ff]); nStart&=0x3ff; nWidth=0;
+
   for (i=nRowFrom;i<nRowTo;i++)
   {
     INT32 nViz; INT32 nDiff;
@@ -46,8 +47,7 @@ static void GetRowsRange(INT32 *pnStart,INT32 *pnWidth,INT32 nRowFrom,INT32 nRow
   *pnWidth=nWidth;
 }
 
-
-static INT32 PrepareRows()
+static INT32 PrepareRows(void)
 {
   INT32 y; INT32 r;
   struct CpsrLineInfo *pli;
@@ -62,16 +62,14 @@ static INT32 PrepareRows()
     INT32 nMaxLeft=0,nMaxRight=0;
     INT32 ty; INT16 *pr;
 
-    if (CpsrRows==NULL)
+    if (!CpsrRows)
     {
-      // No row shift - all the same
-      INT32 v;
-      v =(pli->nTileStart<<4)-nCpsrScrX;
-      nMaxLeft=v; nMaxRight=v;
-      for (ty=0,pr=pli->Rows; ty<16; ty++,pr++)
-      {
-        *pr=(INT16)v;
-      }
+       // No row shift - all the same
+       INT32 v;
+       v =(pli->nTileStart<<4)-nCpsrScrX;
+       nMaxLeft=v; nMaxRight=v;
+       for (ty=0,pr=pli->Rows; ty<16; ty++,pr++)
+          *pr=(INT16)v;
     }
     else
     {
@@ -107,47 +105,49 @@ static INT32 PrepareRows()
 // row scroll each tile line uses (pli->nStart/nWidth),
 // and finding which tiles are visible onscreen (pli->nTileStart/End).
 
-INT32 Cps1rPrepare()
+INT32 Cps1rPrepare(void)
 {
-  INT32 y; struct CpsrLineInfo *pli;
-  if (CpsrBase==NULL) return 1;
+   INT32 y;
+   struct CpsrLineInfo *pli;
+   if (!CpsrBase)
+      return 1;
 
-  nEndline = 224;
-  EndLineInfo = 14;
-  nShiftY=16-(nCpsrScrY&15);
+   nEndline = 224;
+   EndLineInfo = 14;
+   nShiftY=16-(nCpsrScrY&15);
 
-  for (y=-1,pli=CpsrLineInfo; y<EndLineInfo; y++,pli++)
-  {
-    INT32 nStart=0,nWidth=0;
+   for (y=-1,pli=CpsrLineInfo; y<EndLineInfo; y++,pli++)
+   {
+      INT32 nStart=0,nWidth=0;
 
-    if (CpsrRows!=NULL)
-    {
-      INT32 nRowFrom,nRowTo;
-      // Find out which rows we need to check
-      nRowFrom=(y<<4)+nShiftY;
-      nRowTo=nRowFrom+16;
-      if (nRowFrom<0) nRowFrom=0;
-      if (nRowTo>224) nRowTo=224;
+      if (CpsrRows)
+      {
+         INT32 nRowFrom,nRowTo;
+         // Find out which rows we need to check
+         nRowFrom=(y<<4)+nShiftY;
+         nRowTo=nRowFrom+16;
+         if (nRowFrom<0) nRowFrom=0;
+         if (nRowTo>224) nRowTo=224;
 
-      // Shift by row table start offset
-      nRowFrom+=nCpsrRowStart;
-      nRowTo  +=nCpsrRowStart;
+         // Shift by row table start offset
+         nRowFrom+=nCpsrRowStart;
+         nRowTo  +=nCpsrRowStart;
 
-      // Find out what range of scroll values there are for this line
-      GetRowsRange(&nStart,&nWidth,nRowFrom,nRowTo);
-    }
+         // Find out what range of scroll values there are for this line
+         GetRowsRange(&nStart,&nWidth,nRowFrom,nRowTo);
+      }
 
-    nStart+=nCpsrScrX;
-    nStart&=0x3ff;
+      nStart+=nCpsrScrX;
+      nStart&=0x3ff;
 
-    // Save info in CpsrLineInfo table
-    pli->nStart=nStart;
-    pli->nWidth=nWidth;
-    // Find range of tiles to draw to see whole width:
-    pli->nTileStart=nStart>>4;
-    pli->nTileEnd=(nStart+nWidth+0x18f)>>4;
-  }
+      // Save info in CpsrLineInfo table
+      pli->nStart=nStart;
+      pli->nWidth=nWidth;
+      // Find range of tiles to draw to see whole width:
+      pli->nTileStart=nStart>>4;
+      pli->nTileEnd=(nStart+nWidth+0x18f)>>4;
+   }
 
-  PrepareRows();
-  return 0;
+   PrepareRows();
+   return 0;
 }

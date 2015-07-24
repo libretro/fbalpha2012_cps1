@@ -75,9 +75,8 @@ static INT32 DrawScroll1(INT32 i)
 	nOff <<= 8;
 	nOff &= 0xffc000;
 	Find = CpsFindGfxRam(nOff, 0x4000);
-	if (Find == NULL) {
+	if (!Find)
 		return 1;
-	}
 	CpsScr1DrawDoX(Find, nScrX, nScrY);
 	return 0;
 }
@@ -88,9 +87,8 @@ static INT32 DrawScroll2Init(INT32 i)
 	INT32 nScr2Off; INT32 n;
 
 	nScr2Off = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x04)));
-	if (Cps1OverrideLayers && nCps1LayerOffs[1] != -1) {
+	if (Cps1OverrideLayers && nCps1LayerOffs[1] != -1)
 		nScr2Off = BURN_ENDIAN_SWAP_INT16(nCps1LayerOffs[1]);
-	}
 
 	// Get scroll coordinates
 	nCpsrScrX= BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x10))); // Scroll 2 X
@@ -114,27 +112,25 @@ static INT32 DrawScroll2Init(INT32 i)
 
 	nScr2Off &= 0xFFC000;
 	CpsrBase = CpsFindGfxRam(nScr2Off, 0x4000);
-	if (CpsrBase == NULL) {
+	if (!CpsrBase)
 		return 1;
-	}
 
 	CpsrRows = NULL;
 
-	if ((n & 1) && !CpsDisableRowScroll) {
-		INT32 nTab, nStart;
-		// Find row scroll table:
+	if ((n & 1) && !CpsDisableRowScroll)
+   {
+      // Find row scroll table:
+      INT32 nTab = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x08)));
+      INT32 nStart = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x20)));
 
-		nTab = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x08)));
-		nStart = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x20)));
+      nTab <<= 8;
+      nTab &= 0xFFF800; // Vampire - Row scroll effect in VS screen background
 
-		nTab <<= 8;
-		nTab &= 0xFFF800; // Vampire - Row scroll effect in VS screen background
+      CpsrRows = (UINT16 *)CpsFindGfxRam(nTab, 0x0800);
 
-		CpsrRows = (UINT16 *)CpsFindGfxRam(nTab, 0x0800);
-
-		// Find start offset
-		nCpsrRowStart = nStart + 16;
-	}
+      // Find start offset
+      nCpsrRowStart = nStart + 16;
+   }
 
 	CpsrPrepareDoX();
 	return 0;
@@ -151,9 +147,8 @@ inline static INT32 DrawScroll2Exit()
 
 inline static INT32 DrawScroll2Do()
 {
-	if (CpsrBase == NULL) {
+	if (!CpsrBase)
 		return 1;
-	}
 	CpsrRenderDoX();
 	return 0;
 }
@@ -165,9 +160,8 @@ static INT32 DrawScroll3(INT32 i)
 	UINT8 *Find;
 
 	nOff = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x06)));
-	if (Cps1OverrideLayers && nCps1LayerOffs[2] != -1) {
+	if (Cps1OverrideLayers && nCps1LayerOffs[2] != -1)
 		nOff = BURN_ENDIAN_SWAP_INT16(nCps1LayerOffs[2]);
-	}
 
 	// Get scroll coordinates
 	nScrX = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[i] + 0x14))); // Scroll 3 X
@@ -184,9 +178,8 @@ static INT32 DrawScroll3(INT32 i)
 	nOff <<= 8;
 	nOff &= 0xffc000;
 	Find=CpsFindGfxRam(nOff, 0x4000);
-	if (Find == NULL) {
+	if (!Find)
 		return 1;
-	}
 	CpsScr3DrawDoX(Find, nScrX, nScrY);
 	return 0;
 }
@@ -222,9 +215,12 @@ static void Cps1Layers()
   nDrawMask=1; // Sprites always on
   LayerCont = BURN_ENDIAN_SWAP_INT16(*((UINT16 *)(CpsSaveReg[0] + nCpsLcReg)));
   // Get correct bits from Layer Controller
-  if (LayerCont & CpsLayEn[1]) nDrawMask|=2;
-  if (LayerCont & CpsLayEn[2]) nDrawMask|=4;
-  if (LayerCont & CpsLayEn[3]) nDrawMask|=8;
+  if (LayerCont & CpsLayEn[1])
+     nDrawMask|=2;
+  if (LayerCont & CpsLayEn[2])
+     nDrawMask|=4;
+  if (LayerCont & CpsLayEn[3])
+     nDrawMask|=8;
   nDrawMask&=nBurnLayer;   // User choice of layers to display
   
   // Layer control:
@@ -250,10 +246,10 @@ static void Cps1Layers()
   CRP(0,1) CRP(0,2) CRP(0,3) CRP(1,2) CRP(1,3) CRP(2,3)
 #undef CRP
 
-  for (i = 0; i < 2; i++) {
-	  if (LayerCont & CpsLayEn[4 + i]) {
+  for (i = 0; i < 2; i++)
+  {
+	  if (LayerCont & CpsLayEn[4 + i])
 		  DrawStar(i);
-	  }
   }
 
   // prepare layer 2
@@ -264,38 +260,46 @@ static void Cps1Layers()
   {
     INT32 n=Draw[i]; // Find out which layer to draw
 
-    if (n==0) {
-	  if (nDrawMask & 1)  CpsObjDrawDoX(0,7);
+    if (n==0)
+    {
+       if (nDrawMask & 1)
+          CpsObjDrawDoX(0,7);
 
-	  if (!Cps1DisableBgHi) {
-		nBgHi=1;
-		switch (Draw[i+1]) {
-			case 1:
-				if (nDrawMask & 2) 	DrawScroll1(0);
-				break;
-			case 2:
-				if (nDrawMask & 4)  DrawScroll2Do();
-				break;
-			case 3:
-				if (nDrawMask & 8)  DrawScroll3(0);
-				break;
-		}
-		nBgHi=0;
-	  }
-	}
+       if (!Cps1DisableBgHi)
+       {
+          nBgHi=1;
+          switch (Draw[i+1])
+          {
+             case 1:
+                if (nDrawMask & 2) 	DrawScroll1(0);
+                break;
+             case 2:
+                if (nDrawMask & 4)  DrawScroll2Do();
+                break;
+             case 3:
+                if (nDrawMask & 8)  DrawScroll3(0);
+                break;
+          }
+          nBgHi=0;
+       }
+    }
 
     // Then Draw the scroll layer on top
-    switch (n) {
-		case 1:
-			if (nDrawMask & 2) DrawScroll1(0);
-			break;
-		case 2:
-			if (nDrawMask & 4) DrawScroll2Do();
-			break;
-		case 3:
-			if (nDrawMask & 8) DrawScroll3(0);
-			break;
-	}
+    switch (n)
+    {
+       case 1:
+          if (nDrawMask & 2)
+             DrawScroll1(0);
+          break;
+       case 2:
+          if (nDrawMask & 4)
+             DrawScroll2Do();
+          break;
+       case 3:
+          if (nDrawMask & 8)
+             DrawScroll3(0);
+          break;
+    }
   }
 
   DrawScroll2Exit();
@@ -303,22 +307,18 @@ static void Cps1Layers()
 
 void CpsClearScreen()
 {
-	if (Cps == 1) {
-				UINT32* pClear = (UINT32*)pBurnDraw;
-				UINT32 nColour = CpsPal[0xbff ^ 15] | CpsPal[0xbff ^ 15] << 16;
-				for (INT32 i = 0; i < 384 * 224 / 16; i++) {
-					*pClear++ = nColour;
-					*pClear++ = nColour;
-					*pClear++ = nColour;
-					*pClear++ = nColour;
-					*pClear++ = nColour;
-					*pClear++ = nColour;
-					*pClear++ = nColour;
-					*pClear++ = nColour;
-				}
-	} else {
-		memset(pBurnDraw, 0, 384 * 224 * nBurnBpp);
-	}
+   UINT32* pClear = (UINT32*)pBurnDraw;
+   UINT32 nColour = CpsPal[0xbff ^ 15] | CpsPal[0xbff ^ 15] << 16;
+   for (INT32 i = 0; i < 384 * 224 / 16; i++) {
+      *pClear++ = nColour;
+      *pClear++ = nColour;
+      *pClear++ = nColour;
+      *pClear++ = nColour;
+      *pClear++ = nColour;
+      *pClear++ = nColour;
+      *pClear++ = nColour;
+      *pClear++ = nColour;
+   }
 }
 
 static void DoDraw(INT32 Recalc)

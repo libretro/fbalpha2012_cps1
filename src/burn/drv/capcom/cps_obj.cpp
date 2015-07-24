@@ -40,12 +40,12 @@ INT32 CpsObjInit()
 								// CPS1 sprites lagged by 1 frame
 
 	ObjMem = (UINT8*)BurnMalloc((nMax << 3) * nFrameCount);
-	if (ObjMem == NULL) {
+	if (!ObjMem)
 		return 1;
-	}
 
 	// Set up the frame buffers
-	for (INT32 i = 0; i < nFrameCount; i++) {
+	for (INT32 i = 0; i < nFrameCount; i++)
+   {
 		of[i].Obj = ObjMem + (nMax << 3) * i;
 		of[i].nCount = 0;
 	}
@@ -57,7 +57,8 @@ INT32 CpsObjInit()
 
 INT32 CpsObjExit()
 {
-	for (INT32 i = 0; i < nFrameCount; i++) {
+	for (INT32 i = 0; i < nFrameCount; i++)
+   {
 		of[i].Obj = NULL;
 		of[i].nCount = 0;
 	}
@@ -83,9 +84,8 @@ INT32 CpsObjGet()
 	struct ObjFrame* pof;
 	UINT8* Get = NULL;
 	
-	if (Cps1ObjGetCallbackFunction) {
+	if (Cps1ObjGetCallbackFunction)
 		return Cps1ObjGetCallbackFunction();
-	}
 
 	pof = of + nGetNext;
 
@@ -95,48 +95,44 @@ INT32 CpsObjGet()
 	pof->nShiftX = -0x40;
 	pof->nShiftY = -0x10;
 
-	{
-		INT32 nOff = BURN_ENDIAN_SWAP_INT16(*((UINT16*)(CpsReg + 0x00))) << 8;
-		nOff &= 0xfff800;
-		Get = CpsFindGfxRam(nOff, 0x800);		
-		
-		if (Cps1LockSpriteList910000) {
-			Get = CpsFindGfxRam(0x910000, 0x800);
-		}
-	}
+   {
+      INT32 nOff = BURN_ENDIAN_SWAP_INT16(*((UINT16*)(CpsReg + 0x00))) << 8;
+      nOff &= 0xfff800;
+      Get = CpsFindGfxRam(nOff, 0x800);		
+
+      if (Cps1LockSpriteList910000)
+         Get = CpsFindGfxRam(0x910000, 0x800);
+   }
 	
-	if (Get==NULL) return 1;
+	if (!Get)
+      return 1;
 
 	// Make a copy of all active sprites in the list
-	for (pg = Get, i = 0; i < nMax; pg += 8, i++) {
-		UINT16* ps = (UINT16*)pg;
+	for (pg = Get, i = 0; i < nMax; pg += 8, i++)
+   {
+      UINT16* ps = (UINT16*)pg;
 
-		{
-			if (BURN_ENDIAN_SWAP_INT16(ps[3]) >= 0xff00) {													// end of sprite list
-				break;
-			}
-			if (Cps1DetectEndSpriteList8000) {
-				if (BURN_ENDIAN_SWAP_INT16(ps[1]) & 0x8000) {
-					break;
-				}
-			}
-		}
-		
-		if ((BURN_ENDIAN_SWAP_INT16(ps[0]) | BURN_ENDIAN_SWAP_INT16(ps[3])) == 0) {													// sprite blank
-			continue;
-		}
+      if (BURN_ENDIAN_SWAP_INT16(ps[3]) >= 0xff00)													// end of sprite list
+         break;
+      if (Cps1DetectEndSpriteList8000)
+      {
+         if (BURN_ENDIAN_SWAP_INT16(ps[1]) & 0x8000)
+            break;
+      }
 
-		// Okay - this sprite is active:
-		memcpy(po, pg, 8); // copy it over
+      if ((BURN_ENDIAN_SWAP_INT16(ps[0]) | BURN_ENDIAN_SWAP_INT16(ps[3])) == 0)	// sprite blank
+         continue;
 
-		pof->nCount++;
-		po += 8;
-	}
+      // Okay - this sprite is active:
+      memcpy(po, pg, 8); // copy it over
+
+      pof->nCount++;
+      po += 8;
+   }
 
 	nGetNext++;
-	if (nGetNext >= nFrameCount) {
+	if (nGetNext >= nFrameCount)
 		nGetNext = 0;
-	}
 
 	return 0;
 }
@@ -145,7 +141,8 @@ void CpsObjDrawInit()
 {
 	nZOffset = nMaxZMask;
 
-	if (nZOffset >= 0xFC00) {
+	if (nZOffset >= 0xFC00)
+   {
 		// The Z buffer might moverflow the next fram, so initialise it
 		memset(ZBuf, 0, 384 * 224 * 2);
 		nZOffset = 0;
@@ -163,9 +160,8 @@ INT32 Cps1ObjDraw(INT32 nLevelFrom,INT32 nLevelTo)
 	struct ObjFrame *pof;
 	(void)nLevelFrom; (void)nLevelTo;
 	
-	if (Cps1ObjDrawCallbackFunction) {
+	if (Cps1ObjDrawCallbackFunction)
 		return Cps1ObjDrawCallbackFunction(nLevelFrom, nLevelTo);
-	}
 
 	// Draw the earliest frame we have in history
 	pof=of+nGetNext;
@@ -173,64 +169,72 @@ INT32 Cps1ObjDraw(INT32 nLevelFrom,INT32 nLevelTo)
 	// Point to Obj list
 	ps=(UINT16 *)pof->Obj;
 
-	if (!CpsDrawSpritesInReverse) {
-		ps+=(pof->nCount-1)<<2; nPsAdd=-4; // CPS1 is reversed
-	} else {
+	if (!CpsDrawSpritesInReverse)
+   {
+		ps+=(pof->nCount-1)<<2;
+      nPsAdd=-4; // CPS1 is reversed
+   }
+	else
 		nPsAdd=4;
-	}
 
 	// Go through all the Objs
-	for (i=0; i<pof->nCount; i++,ps+=nPsAdd) {
-		INT32 x,y,n,a,bx,by,dx,dy; INT32 nFlip;
+	for (i=0; i<pof->nCount; i++,ps+=nPsAdd)
+   {
+      INT32 dx,dy;
+      INT32 nFlip;
 
-		x = BURN_ENDIAN_SWAP_INT16(ps[0]); y = BURN_ENDIAN_SWAP_INT16(ps[1]); n = BURN_ENDIAN_SWAP_INT16(ps[2]); a = BURN_ENDIAN_SWAP_INT16(ps[3]);
-			
-		// Find out sprite size
-		bx=((a>> 8)&15)+1;
-		by=((a>>12)&15)+1;
-		
-		n = GfxRomBankMapper(GFXTYPE_SPRITES, n);
-		if (n == -1) continue;
-		
-		n |= (y & 0x6000) << 3; // high bits of address
-		
-		// CPS1 coords are 9 bit signed?
-		x&=0x01ff; if (x>=0x1c0) x-=0x200;
-		y&=0x01ff; y^=0x100; y-=0x100;
+      INT32 x = BURN_ENDIAN_SWAP_INT16(ps[0]);
+      INT32 y = BURN_ENDIAN_SWAP_INT16(ps[1]);
+      INT32 n = BURN_ENDIAN_SWAP_INT16(ps[2]);
+      INT32 a = BURN_ENDIAN_SWAP_INT16(ps[3]);
 
-		x+=pof->nShiftX;
-		y+=pof->nShiftY;
+      // Find out sprite size
+      INT32 bx=((a>> 8)&15)+1;
+      INT32 by=((a>>12)&15)+1;
 
-		// Find the palette for the tiles on this sprite
-		CpstPal = CpsPal + ((a & 0x1F) << 4);
+      n = GfxRomBankMapper(GFXTYPE_SPRITES, n);
+      if (n == -1)
+         continue;
 
-		nFlip=(a>>5)&3;		
+      n |= (y & 0x6000) << 3; // high bits of address
 
-		// Take care with tiles if the sprite goes off the screen
-		if (x<0 || y<0 || x+(bx<<4)>384 || y+(by<<4)>224) {
-			nCpstType=CTT_16X16 | CTT_CARE;
-		} else {
-			nCpstType=CTT_16X16;
-		}
+      // CPS1 coords are 9 bit signed?
+      x&=0x01ff; if (x>=0x1c0) x-=0x200;
+      y&=0x01ff; y^=0x100; y-=0x100;
 
-		nCpstFlip=nFlip;
-		for (dy=0;dy<by;dy++) {
-			for (dx=0;dx<bx;dx++) {
-				INT32 ex,ey;
-				if (nFlip&1) ex=(bx-dx-1);
-				else ex=dx;
-				if (nFlip&2) ey=(by-dy-1);
-				else ey=dy;
+      x+=pof->nShiftX;
+      y+=pof->nShiftY;
 
-				nCpstX=x+(ex<<4);
-				nCpstY=y+(ey<<4);
-				nCpstTile = (n & ~0x0F) + (dy << 4) + ((n + dx) & 0x0F);
-				nCpstTile <<= 7;
-				CpstOneObjDoX[0]();
-			}
-		}
+      // Find the palette for the tiles on this sprite
+      CpstPal = CpsPal + ((a & 0x1F) << 4);
 
-	}
+      nFlip=(a>>5)&3;		
+      nCpstType=CTT_16X16;
+
+      // Take care with tiles if the sprite goes off the screen
+      if (x<0 || y<0 || x+(bx<<4)>384 || y+(by<<4)>224)
+         nCpstType |= CTT_CARE;
+
+      nCpstFlip=nFlip;
+      for (dy=0;dy<by;dy++)
+      {
+         for (dx=0;dx<bx;dx++)
+         {
+            INT32 ex,ey;
+            if (nFlip&1) ex=(bx-dx-1);
+            else ex=dx;
+            if (nFlip&2) ey=(by-dy-1);
+            else ey=dy;
+
+            nCpstX=x+(ex<<4);
+            nCpstY=y+(ey<<4);
+            nCpstTile = (n & ~0x0F) + (dy << 4) + ((n + dx) & 0x0F);
+            nCpstTile <<= 7;
+            CpstOneObjDoX[0]();
+         }
+      }
+
+   }
 	return 0;
 }
 
@@ -264,31 +268,27 @@ INT32 Cps2ObjDraw(INT32 nLevelFrom, INT32 nLevelTo)
 			bMask = 1;
 			continue;
 		}
-		if (v < nLevelFrom) {
+		if (v < nLevelFrom)
 			continue;
-		}
 
-		if (bMask) {
+		if (bMask)
 			nMaxZMask = ZValue;
-		} else {
+      else
 			nMaxZValue = ZValue;
-		}
 
 		// Select CpstOne function;
-		if (bMask || nMaxZMask > nMaxZValue) {
+		if (bMask || nMaxZMask > nMaxZValue)
 			pCpstOne = CpstOneObjDoX[1];
-		} else {
+      else
 			pCpstOne = CpstOneObjDoX[0];
-		}
 
 		x = BURN_ENDIAN_SWAP_INT16(ps[0]);
 		y = BURN_ENDIAN_SWAP_INT16(ps[1]);
 		n = BURN_ENDIAN_SWAP_INT16(ps[2]);
 		a = BURN_ENDIAN_SWAP_INT16(ps[3]);
 
-		if (a & 0x80) {														// marvel vs capcom ending sprite off-set
+		if (a & 0x80) // marvel vs capcom ending sprite off-set
 			x += CpsSaveFrg[0][0x9];
-		}
 		
 		// CPS2 coords are 10 bit signed (-512 to 511)
 		x &= 0x03FF; x ^= 0x200; x -= 0x200;
@@ -326,13 +326,11 @@ INT32 Cps2ObjDraw(INT32 nLevelFrom, INT32 nLevelTo)
 		// Find out sprite size
 		bx = ((a >> 8) & 15) + 1;
 		by = ((a >> 12) & 15) + 1;
+      nCpstType = CTT_16X16;
 
 		// Take care with tiles if the sprite goes off the screen
-		if (x < 0 || y < 0 || x + (bx << 4) > 383 || y + (by << 4) > 223) {
-			nCpstType = CTT_16X16 | CTT_CARE;
-		} else {
-			nCpstType = CTT_16X16;
-		}
+		if (x < 0 || y < 0 || x + (bx << 4) > 383 || y + (by << 4) > 223)
+			nCpstType |= CTT_CARE;
 
 //		if (v == 0) {
 //			bprintf(PRINT_IMPORTANT, _T("  - %4i: 0x%04X 0x%04X 0x%04X 0x%04X\n"), ZValue - (UINT16)nMaxZValue, ps[0], ps[1], ps[2], ps[3]);
@@ -343,17 +341,15 @@ INT32 Cps2ObjDraw(INT32 nLevelFrom, INT32 nLevelTo)
 			for (dx = 0; dx < bx; dx++) {
 				INT32 ex, ey;
 
-				if (nFlip & 1) {
+				if (nFlip & 1)
 					ex = (bx - dx - 1);
-				} else {
+            else
 					ex = dx;
-				}
 
-				if (nFlip & 2) {
+				if (nFlip & 2)
 					ey = (by - dy - 1);
-				} else {
+            else
 					ey = dy;
-				}
 
 				nCpstX = x + (ex << 4);
 				nCpstY = y + (ey << 4);
@@ -389,18 +385,19 @@ INT32 FcrashObjGet()
 
 	Get = CpsRam90 + 0x50c8;
 	
-	if (Get==NULL) return 1;
+	if (!Get)
+      return 1;
 
 	// Make a copy of all active sprites in the list
-	for (pg = Get, i = 0; i < nMax; pg += 8, i++) {
+	for (pg = Get, i = 0; i < nMax; pg += 8, i++)
+   {
 		UINT16* ps = (UINT16*)pg;
-		INT32 n, y, x, a;
+		INT32 n, x, a;
 		
-		y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
+		INT32 y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
 		
-		if (y == 0x8000) { // end of sprite list
+		if (y == 0x8000) // end of sprite list
 			break;
-		}
 		
 		n = BURN_ENDIAN_SWAP_INT16(ps[0]);
 		a = BURN_ENDIAN_SWAP_INT16(ps[1]);
@@ -420,9 +417,8 @@ INT32 FcrashObjGet()
 	}
 
 	nGetNext++;
-	if (nGetNext >= nFrameCount) {
+	if (nGetNext >= nFrameCount)
 		nGetNext = 0;
-	}
 
 	return 0;
 }
@@ -431,10 +427,8 @@ INT32 KodbObjGet()
 {
 	INT32 i;
 	UINT8 *pg, *po;
-	struct ObjFrame* pof;
 	UINT8* Get = NULL;
-	
-	pof = of + nGetNext;
+	struct ObjFrame *pof = of + nGetNext;
 
 	pof->nCount = 0;
 
@@ -447,155 +441,150 @@ INT32 KodbObjGet()
 	if (Get==NULL) return 1;
 
 	// Make a copy of all active sprites in the list
-	for (pg = Get, i = 0; i < nMax; pg += 8, i++) {
-		UINT16* ps = (UINT16*)pg;
-		INT32 n, y, x, a;
-		
-		y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
-		
-		if (y == 0xffff) { // end of sprite list
-			break;
-		}
-		
-		n = BURN_ENDIAN_SWAP_INT16(ps[0]);
-		a = BURN_ENDIAN_SWAP_INT16(ps[1]);
-		x = BURN_ENDIAN_SWAP_INT16(ps[2]);
+	for (pg = Get, i = 0; i < nMax; pg += 8, i++)
+   {
+      UINT16* ps = (UINT16*)pg;
+      INT32 n, x, a;
 
-		po[0] = n & 0xff;
-		po[1] = n >> 8;
-		po[2] = a & 0xff;
-		po[3] = a >> 8;
-		po[4] = x & 0xff;
-		po[5] = x >> 8;
-		po[6] = y & 0xff;
-		po[7] = y >> 8;
+      INT32 y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
 
-		pof->nCount++;
-		po += 8;
-	}
+      if (y == 0xffff) // end of sprite list
+         break;
+
+      n = BURN_ENDIAN_SWAP_INT16(ps[0]);
+      a = BURN_ENDIAN_SWAP_INT16(ps[1]);
+      x = BURN_ENDIAN_SWAP_INT16(ps[2]);
+
+      po[0] = n & 0xff;
+      po[1] = n >> 8;
+      po[2] = a & 0xff;
+      po[3] = a >> 8;
+      po[4] = x & 0xff;
+      po[5] = x >> 8;
+      po[6] = y & 0xff;
+      po[7] = y >> 8;
+
+      pof->nCount++;
+      po += 8;
+   }
 
 	nGetNext++;
-	if (nGetNext >= nFrameCount) {
+	if (nGetNext >= nFrameCount)
 		nGetNext = 0;
-	}
 	
 	return 0;
 }
 
-INT32 DinopicObjGet()
+INT32 DinopicObjGet(void)
 {
-	INT32 i;
-	UINT8 *pg, *po;
-	struct ObjFrame* pof;
-	UINT8* Get = NULL;
-	
-	pof = of + nGetNext;
+   INT32 i;
+   UINT8 *pg, *po;
+   UINT8* Get = NULL;
+   struct ObjFrame *pof = of + nGetNext;
 
-	pof->nCount = 0;
+   pof->nCount = 0;
 
-	po = pof->Obj;
-	pof->nShiftX = -0x40;
-	pof->nShiftY = -0x10;
+   po = pof->Obj;
+   pof->nShiftX = -0x40;
+   pof->nShiftY = -0x10;
 
-	Get = CpsBootlegSpriteRam + 0x1000;
-	
-	if (Get==NULL) return 1;
+   Get = CpsBootlegSpriteRam + 0x1000;
 
-	// Make a copy of all active sprites in the list
-	for (pg = Get, i = 0; i < nMax; pg += 8, i++) {
-		UINT16* ps = (UINT16*)pg;
-		INT32 n, y, x, a;
-		
-		y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
-		
-		if (y == 0x8000) { // end of sprite list
-			break;
-		}
-		
-		n = BURN_ENDIAN_SWAP_INT16(ps[0]);
-		a = BURN_ENDIAN_SWAP_INT16(ps[1]);
-		x = BURN_ENDIAN_SWAP_INT16(ps[2]);
-		
-		po[0] = n & 0xff;
-		po[1] = n >> 8;
-		po[2] = a & 0xff;
-		po[3] = a >> 8;
-		po[4] = x & 0xff;
-		po[5] = x >> 8;
-		po[6] = y & 0xff;
-		po[7] = y >> 8;
+   if (Get==NULL) return 1;
 
-		pof->nCount++;
-		po += 8;
-	}
+   // Make a copy of all active sprites in the list
+   for (pg = Get, i = 0; i < nMax; pg += 8, i++)
+   {
+      UINT16* ps = (UINT16*)pg;
+      INT32 n, x, a;
 
-	nGetNext++;
-	if (nGetNext >= nFrameCount) {
-		nGetNext = 0;
-	}
+      INT32 y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
 
-	return 0;
+      if (y == 0x8000) // end of sprite list
+         break;
+
+      n = BURN_ENDIAN_SWAP_INT16(ps[0]);
+      a = BURN_ENDIAN_SWAP_INT16(ps[1]);
+      x = BURN_ENDIAN_SWAP_INT16(ps[2]);
+
+      po[0] = n & 0xff;
+      po[1] = n >> 8;
+      po[2] = a & 0xff;
+      po[3] = a >> 8;
+      po[4] = x & 0xff;
+      po[5] = x >> 8;
+      po[6] = y & 0xff;
+      po[7] = y >> 8;
+
+      pof->nCount++;
+      po += 8;
+   }
+
+   nGetNext++;
+   if (nGetNext >= nFrameCount)
+      nGetNext = 0;
+
+   return 0;
 }
 
-INT32 DaimakaibObjGet()
+INT32 DaimakaibObjGet(void)
 {
-	INT32 i;
-	UINT8 *pg, *po;
-	struct ObjFrame* pof;
-	UINT8* Get = NULL;
-	
-	pof = of + nGetNext;
+   INT32 i;
+   UINT8 *pg, *po;
+   struct ObjFrame* pof;
+   UINT8* Get = NULL;
 
-	pof->nCount = 0;
+   pof = of + nGetNext;
 
-	po = pof->Obj;
-	pof->nShiftX = -0x40;
-	pof->nShiftY = -0x10;
+   pof->nCount = 0;
 
-	// writes a blank sprite, followed by end of sprite list marker, start at 0x10 to ignore these
-	Get = CpsBootlegSpriteRam + 0x1010;
-	
-	if (Get==NULL) return 1;
+   po = pof->Obj;
+   pof->nShiftX = -0x40;
+   pof->nShiftY = -0x10;
 
-	// Make a copy of all active sprites in the list
-	for (pg = Get, i = 0; i < nMax; pg += 8, i++) {
-		UINT16* ps = (UINT16*)pg;
-		INT32 n, y, x, a;
-		
-		y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
-		
-		if (y == 0x8000) { // end of sprite list
-			break;
-		}
-		
-		n = BURN_ENDIAN_SWAP_INT16(ps[0]);
-		a = BURN_ENDIAN_SWAP_INT16(ps[1]);
-		x = BURN_ENDIAN_SWAP_INT16(ps[2]);
-		
-		n = GfxRomBankMapper(GFXTYPE_SPRITES, n);
-		if (n == -1) continue;
-		
-		n |= (y & 0x6000) << 3; // high bits of address
+   // writes a blank sprite, followed by end of sprite list marker, start at 0x10 to ignore these
+   Get = CpsBootlegSpriteRam + 0x1010;
 
-		po[0] = n & 0xff;
-		po[1] = n >> 8;
-		po[2] = a & 0xff;
-		po[3] = a >> 8;
-		po[4] = x & 0xff;
-		po[5] = x >> 8;
-		po[6] = y & 0xff;
-		po[7] = y >> 8;
+   if (Get==NULL) return 1;
 
-		pof->nCount++;
-		po += 8;
-	}
+   // Make a copy of all active sprites in the list
+   for (pg = Get, i = 0; i < nMax; pg += 8, i++) {
+      UINT16* ps = (UINT16*)pg;
+      INT32 n, y, x, a;
 
-	nGetNext++;
-	if (nGetNext >= nFrameCount) {
-		nGetNext = 0;
-	}
+      y = BURN_ENDIAN_SWAP_INT16(ps[-1]);
 
-	return 0;
+      if (y == 0x8000) { // end of sprite list
+         break;
+      }
+
+      n = BURN_ENDIAN_SWAP_INT16(ps[0]);
+      a = BURN_ENDIAN_SWAP_INT16(ps[1]);
+      x = BURN_ENDIAN_SWAP_INT16(ps[2]);
+
+      n = GfxRomBankMapper(GFXTYPE_SPRITES, n);
+      if (n == -1) continue;
+
+      n |= (y & 0x6000) << 3; // high bits of address
+
+      po[0] = n & 0xff;
+      po[1] = n >> 8;
+      po[2] = a & 0xff;
+      po[3] = a >> 8;
+      po[4] = x & 0xff;
+      po[5] = x >> 8;
+      po[6] = y & 0xff;
+      po[7] = y >> 8;
+
+      pof->nCount++;
+      po += 8;
+   }
+
+   nGetNext++;
+   if (nGetNext >= nFrameCount)
+      nGetNext = 0;
+
+   return 0;
 }
 
 INT32 WofhObjGet()

@@ -37,9 +37,8 @@ static UINT32 SepTable[256];
 static INT32 SepTableCalc()
 {
 	static INT32 bDone = 0;
-	if (bDone) {
+	if (bDone)
 		return 0;										// Already done it
-	}
 
 	for (INT32 i = 0; i < 256; i++) {
 		SepTable[i] = Separate(255 - i);
