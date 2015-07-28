@@ -1,7 +1,6 @@
 #include "burnint.h"
 #include "m68000_intf.h"
 #include "z80_intf.h"
-#include "m6800_intf.h"
 
 // A hiscore.dat support module for FBA - written by Treble Winner, Feb 2009
 // At some point we really need a CPU interface to track CPU types and numbers,
@@ -40,10 +39,6 @@ static void set_cpu_type()
 	else if (nHasZet > -1)
 	{
 		nCpuType = 5;			// Zilog Z80
-	}
-	else if (nM6800Count)
-	{
-		nCpuType = 8;			// M6800 & Family
 	}
 	else
 	{
@@ -132,9 +127,6 @@ static UINT8 cpu_read_byte(UINT32 a)
 			return SekReadByte(a);
 		case 5:
 			return ZetReadByte(a);
-			
-		case 8:
-			return M6800ReadByte(a);
 	}
 
 	return 0;
@@ -150,10 +142,6 @@ static void cpu_write_byte(UINT32 a, UINT8 d)
 
 		case 5:
 			ZetWriteByte(a, d);
-		break;
-		
-		case 8:
-			M6800WriteByte(a, d);
 		break;
 	}
 }
