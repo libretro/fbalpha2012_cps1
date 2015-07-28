@@ -25,21 +25,16 @@ UINT8 *BurnMalloc(INT32 size)
 {
 	for (INT32 i = 0; i < MAX_MEM_PTR; i++)
 	{
-		if (memptr[i] == NULL) {
-			memptr[i] = (UINT8*)malloc(size);
+		if (!memptr[i])
+      {
+         memptr[i] = (UINT8*)calloc(1, size);
 
-			if (memptr[i] == NULL) {
-				bprintf (0, _T("BurnMalloc failed to allocate %d bytes of memory!\n"), size);
-				return NULL;
-			}
+         if (!memptr[i])
+            return NULL;
 
-			memset (memptr[i], 0, size); // set contents to 0
-
-			return memptr[i];
-		}
+         return memptr[i];
+      }
 	}
-
-	bprintf (0, _T("BurnMalloc called too many times!\n"));
 
 	return NULL; // Freak out!
 }
@@ -50,28 +45,27 @@ void _BurnFree(void *ptr)
 	UINT8 *mptr = (UINT8*)ptr;
 
 	for (INT32 i = 0; i < MAX_MEM_PTR; i++)
-	{
-		if (memptr[i] == mptr) {
-			free (memptr[i]);
-			memptr[i] = NULL;
+   {
+      if (memptr[i] != mptr)
+         continue;
 
-			break;
-		}
-	}
+      free (memptr[i]);
+      memptr[i] = NULL;
+
+      break;
+   }
 }
 
 // call in BurnDrvExit?
 
-void BurnExitMemoryManager()
+void BurnExitMemoryManager(void)
 {
 	for (INT32 i = 0; i < MAX_MEM_PTR; i++)
-	{
-		if (memptr[i] != NULL) {
-#if defined FBA_DEBUG
-			bprintf(PRINT_ERROR, _T("BurnExitMemoryManager had to free mem pointer %i\n"), i);
-#endif
-			free (memptr[i]);
-			memptr[i] = NULL;
-		}
-	}
+   {
+      if (!memptr[i])
+         continue;
+
+      free (memptr[i]);
+      memptr[i] = NULL;
+   }
 }
