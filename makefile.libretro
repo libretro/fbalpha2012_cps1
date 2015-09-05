@@ -349,17 +349,7 @@ generate-files:
 
 $(TARGET): $(OBJS)
 	@echo "LD $@"
-ifeq ($(platform), ps3)
-	@$(AR) rcs $@ $(OBJS)
-else ifeq ($(platform), sncps3)
-	$(AR) rcs $@ $(OBJS)
-else ifeq ($(platform), psl1ght)
-	$(AR) rcs $@ $(OBJS)
-else ifeq ($(platform), xenon)
-	@$(AR) rcs $@ $(OBJS)
-else ifeq ($(platform), ngc)
-	@$(AR) rcs $@ $(OBJS)
-else ifeq ($(platform), wii)
+ifeq ($(STATIC_LINKING), 1)
 	@$(AR) rcs $@ $(OBJS)
 else
 	@$(CXX) -o $@ $(SHARED) $(OBJS) $(LDFLAGS)
