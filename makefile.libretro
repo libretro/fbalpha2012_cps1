@@ -3,10 +3,6 @@ LIBRETRO_OPTIMIZATIONS = 1
 FRONTEND_SUPPORTS_RGB565 = 1
 HAVE_GRIFFIN = 0
 
-ifneq ($(EMSCRIPTEN),)
-   platform = emscripten
-endif
-
 ifeq ($(platform),)
 platform = unix
 ifeq ($(shell uname -a),)
@@ -62,6 +58,7 @@ else ifeq ($(platform), ps3)
 	ENDIANNESS_DEFINES = -DMSB_FIRST
    PLATFORM_DEFINES += -D__CELLOS_LV2__
    EXTERNAL_ZLIB = 1
+	STATIC_LINKING = 1
 else ifeq ($(platform), sncps3)
    TARGET := $(TARGET_NAME)_libretro_ps3.a
    CXX	= $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
@@ -70,6 +67,7 @@ else ifeq ($(platform), sncps3)
 	ENDIANNESS_DEFINES = -DMSB_FIRST
    PLATFORM_DEFINES += -D__CELLOS_LV2__ -DSN_TARGET_PS3
    EXTERNAL_ZLIB = 1
+	STATIC_LINKING = 1
 else ifeq ($(platform), psl1ght)
    TARGET := $(TARGET_NAME)_libretro_psl1ght.a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
@@ -78,6 +76,7 @@ else ifeq ($(platform), psl1ght)
 	ENDIANNESS_DEFINES = -DMSB_FIRST
    PLATFORM_DEFINES += -D__CELLOS_LV2__
    EXTERNAL_ZLIB = 1
+	STATIC_LINKING = 1
 else ifeq ($(platform), vita)
    TARGET := $(TARGET_NAME)_libretro_vita.a
 	CC = arm-vita-eabi-gcc$(EXE_EXT)
@@ -102,6 +101,7 @@ else ifeq ($(platform), ngc)
 	ENDIANNESS_DEFINES = -DMSB_FIRST
    PLATFORM_DEFINES := -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float
    EXTERNAL_ZLIB = 1
+	STATIC_LINKING = 1
 else ifeq ($(platform), wii)
    TARGET := $(TARGET_NAME)_libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
@@ -110,6 +110,7 @@ else ifeq ($(platform), wii)
 	ENDIANNESS_DEFINES = -DMSB_FIRST
    PLATFORM_DEFINES := -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
    EXTERNAL_ZLIB = 1
+	STATIC_LINKING = 1
 else ifeq ($(platform), ctr)
    TARGET := $(TARGET_NAME)_libretro_ctr.a
    EXTERNAL_ZLIB = 1
