@@ -87,7 +87,6 @@ else ifeq ($(platform), vita)
    PLATFORM_DEFINES += -DVITA
    EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
-   ENDIANNESS_DEFINES := -DLSB_FIRST
 else ifeq ($(platform), xenon)
    TARGET := $(TARGET_NAME)_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
