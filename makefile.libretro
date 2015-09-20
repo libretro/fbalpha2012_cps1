@@ -86,6 +86,9 @@ else ifeq ($(platform), vita)
    PLATFORM_DEFINES += -DVITA
    EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
+   CFLAGS += -O3 -mfloat-abi=hard -ffast-math -fsingle-precision-constant
+   CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+   CPU_ARCH := arm
 else ifeq ($(platform), xenon)
    TARGET := $(TARGET_NAME)_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
