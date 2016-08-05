@@ -40,7 +40,7 @@ GRIFFIN_DIR = griffin-libretro
 
 EXTERNAL_ZLIB = 0
 
-TARGET_NAME := fb_alpha_cps1
+TARGET_NAME := fba2012_cps1
 
 ifeq ($(platform), unix)
    TARGET := $(TARGET_NAME)_libretro.so
