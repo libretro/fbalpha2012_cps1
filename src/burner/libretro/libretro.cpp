@@ -559,10 +559,10 @@ void retro_cheat_set(unsigned, bool, const char*) {}
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   int width, height;
+   INT32 width, height;
    BurnDrvGetVisibleSize(&width, &height);
-   int maximum = width > height ? width : height;
-   struct retro_game_geometry geom = { width, height, maximum, maximum };
+   unsigned maximum = width > height ? width : height;
+   struct retro_game_geometry geom = { (unsigned)width, (unsigned)height, maximum, maximum };
    struct retro_system_timing timing = { 59.629403, 59.629403 * AUDIO_SEGMENT_LENGTH };
 
    info->geometry = geom;
@@ -1698,7 +1698,7 @@ static bool init_input(void)
             keybinds[pgi->Input.Switch.nCode][1] = 0;
             value_found = true;
          }
-         else if((!strcmp(bii.szName,"P1 Shot")) && (parentrom && !strcmp(parentrom,"avsp") || !strcmp(drvname,"avsp")))
+         else if((!strcmp(bii.szName,"P1 Shot")) && ((parentrom && !strcmp(parentrom,"avsp")) || !strcmp(drvname,"avsp")))
          {
             keybinds[pgi->Input.Switch.nCode][0] = RETRO_DEVICE_ID_JOYPAD_A;
             keybinds[pgi->Input.Switch.nCode][1] = 0;
@@ -1710,7 +1710,7 @@ static bool init_input(void)
             keybinds[pgi->Input.Switch.nCode][1] = 1;
             value_found = true;
          }
-         else if((parentrom && !strcmp(parentrom,"avsp") || !strcmp(drvname,"avsp")) && (!strcmp(bii.szName,"P2 Shot")))
+         else if(((parentrom && !strcmp(parentrom,"avsp")) || !strcmp(drvname,"avsp")) && (!strcmp(bii.szName,"P2 Shot")))
          {
             keybinds[pgi->Input.Switch.nCode][0] = RETRO_DEVICE_ID_JOYPAD_A;
             keybinds[pgi->Input.Switch.nCode][1] = 1;
