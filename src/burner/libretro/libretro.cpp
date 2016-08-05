@@ -395,9 +395,7 @@ static void check_variables(void)
       static bool old_value = false;
       bool value = false;
 
-      if (strcmp(var.value, "disabled") == 0)
-         value = false;
-      else if (strcmp(var.value, "enabled") == 0)
+      if (!strcmp(var.value, "enabled"))
          value = true;
 
       if (old_value != value)
@@ -432,9 +430,9 @@ static void check_variables(void)
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
-      if (strcmp(var.value, "100") == 0)
+      if (!strcmp(var.value, "100"))
          nBurnCPUSpeedAdjust = 0x0100;
-      else if (strcmp(var.value, "110") == 0)
+      else if (!strcmp(var.value, "110"))
          nBurnCPUSpeedAdjust = 0x0110;
       else if (strcmp(var.value, "120") == 0)
          nBurnCPUSpeedAdjust = 0x0120;
@@ -617,24 +615,6 @@ static bool fba_init(unsigned driver, const char *game_zip_name)
          rotation = 0;
    }
 
-   if(
-         (strcmp("gunbird2", game_zip_name) == 0) ||
-         (strcmp("s1945ii", game_zip_name) == 0) ||
-         (strcmp("s1945iii", game_zip_name) == 0) ||
-         (strcmp("dragnblz", game_zip_name) == 0) ||
-         (strcmp("gnbarich", game_zip_name) == 0) ||
-         (strcmp("mjgtaste", game_zip_name) == 0) ||
-         (strcmp("tgm2", game_zip_name) == 0) ||
-         (strcmp("tgm2p", game_zip_name) == 0) ||
-         (strcmp("soldivid", game_zip_name) == 0) ||
-         (strcmp("daraku", game_zip_name) == 0) ||
-         (strcmp("sbomber", game_zip_name) == 0) ||
-         (strcmp("sbombera", game_zip_name) == 0) 
-
-         )
-   {
-      nBurnBpp = 4;
-   }
    fprintf(stderr, "Game: %s\n", game_zip_name);
 
    environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotation);
@@ -1712,31 +1692,31 @@ static bool init_input(void)
 
       for(int j = 0; j < counter; j++)
       {
-         if((strcmp(bii.szName,"P1 Select") ==0) && (boardrom && (strcmp(boardrom,"neogeo") == 0)))
+         if((!strcmp(bii.szName,"P1 Select")) && (boardrom && (!strcmp(boardrom,"neogeo"))))
          {
             keybinds[pgi->Input.Switch.nCode][0] = RETRO_DEVICE_ID_JOYPAD_SELECT;
             keybinds[pgi->Input.Switch.nCode][1] = 0;
             value_found = true;
          }
-         else if((strcmp(bii.szName,"P1 Shot") ==0) && (parentrom && strcmp(parentrom,"avsp") == 0 || strcmp(drvname,"avsp") == 0))
+         else if((!strcmp(bii.szName,"P1 Shot")) && (parentrom && !strcmp(parentrom,"avsp") || !strcmp(drvname,"avsp")))
          {
             keybinds[pgi->Input.Switch.nCode][0] = RETRO_DEVICE_ID_JOYPAD_A;
             keybinds[pgi->Input.Switch.nCode][1] = 0;
             value_found = true;
          }
-         else if((strcmp(bii.szName,"P2 Select") ==0) && (boardrom && (strcmp(boardrom,"neogeo") == 0)))
+         else if((!strcmp(bii.szName,"P2 Select")) && (boardrom && (!strcmp(boardrom,"neogeo"))))
          {
             keybinds[pgi->Input.Switch.nCode][0] = RETRO_DEVICE_ID_JOYPAD_SELECT;
             keybinds[pgi->Input.Switch.nCode][1] = 1;
             value_found = true;
          }
-         else if((parentrom && strcmp(parentrom,"avsp") == 0 || strcmp(drvname,"avsp") == 0) && (strcmp(bii.szName,"P2 Shot") ==0))
+         else if((parentrom && !strcmp(parentrom,"avsp") || !strcmp(drvname,"avsp")) && (!strcmp(bii.szName,"P2 Shot")))
          {
             keybinds[pgi->Input.Switch.nCode][0] = RETRO_DEVICE_ID_JOYPAD_A;
             keybinds[pgi->Input.Switch.nCode][1] = 1;
             value_found = true;
          }
-         else if(strcmp(bii.szName, bind_map[j].bii_name) == 0)
+         else if(!strcmp(bii.szName, bind_map[j].bii_name))
          {
             keybinds[pgi->Input.Switch.nCode][0] = bind_map[j].nCode[0];
             keybinds[pgi->Input.Switch.nCode][1] = bind_map[j].nCode[1];
@@ -1991,10 +1971,14 @@ static void poll_input(void)
 
 static unsigned int BurnDrvGetIndexByName(const char* name)
 {
+   unsigned int i;
    unsigned int ret = ~0U;
-   for (unsigned int i = 0; i < nBurnDrvCount; i++) {
+
+   for (i = 0; i < nBurnDrvCount; i++)
+   {
       nBurnDrvActive = i;
-      if (strcmp(BurnDrvGetText(DRV_NAME), name) == 0) {
+      if (!strcmp(BurnDrvGetText(DRV_NAME), name))
+      {
          ret = i;
          break;
       }
