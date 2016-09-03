@@ -916,7 +916,7 @@ INLINE void FM_KEYON(UINT8 type, FM_CH *CH , int s )
 		SLOT->phase = 0;		/* restart Phase Generator */
 		SLOT->ssgn = (SLOT->ssg & 0x04) >> 1;
 
-		if ((type == TYPE_YM2608))
+		if (type == TYPE_YM2608)
 		{
 		        if( (SLOT->ar + SLOT->ksr) < 32+62 )
 		        {
@@ -1065,7 +1065,7 @@ INLINE void set_ar_ksr(UINT8 type, FM_CH *CH,FM_SLOT *SLOT,int v)
 	if ((SLOT->ar + SLOT->ksr) < 32+62)
 	{
 		SLOT->eg_sh_ar  = eg_rate_shift [SLOT->ar  + SLOT->ksr ];
-		if ((type == TYPE_YM2608))
+		if (type == TYPE_YM2608)
 		{
 			SLOT->eg_sh_ar  = eg_rate_shift [SLOT->ar  + SLOT->ksr ];
 			SLOT->eg_sel_ar = eg_rate_select2612[SLOT->ar  + SLOT->ksr ];
@@ -1088,7 +1088,7 @@ INLINE void set_dr(UINT8 type, FM_SLOT *SLOT,int v)
 	SLOT->d1r = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
 
 	SLOT->eg_sh_d1r = eg_rate_shift [SLOT->d1r + SLOT->ksr];
-	if ((type == TYPE_YM2608))
+	if (type == TYPE_YM2608)
 	{
 		SLOT->eg_sel_d1r= eg_rate_select2612[SLOT->d1r + SLOT->ksr];
 	}
@@ -1105,7 +1105,7 @@ INLINE void set_sr(UINT8 type, FM_SLOT *SLOT,int v)
 	SLOT->d2r = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
 
 	SLOT->eg_sh_d2r = eg_rate_shift [SLOT->d2r + SLOT->ksr];
-	if ((type == TYPE_YM2608))
+	if (type == TYPE_YM2608)
 	{
 		SLOT->eg_sel_d2r= eg_rate_select2612[SLOT->d2r + SLOT->ksr];
 	}
@@ -1123,7 +1123,7 @@ INLINE void set_sl_rr(UINT8 type, FM_SLOT *SLOT,int v)
 	SLOT->rr  = 34 + ((v&0x0f)<<2);
 
 	SLOT->eg_sh_rr  = eg_rate_shift [SLOT->rr  + SLOT->ksr];
-	if ((type == TYPE_YM2608))
+	if (type == TYPE_YM2608)
 	{
 		SLOT->eg_sel_rr = eg_rate_select2612[SLOT->rr  + SLOT->ksr];
 	}
