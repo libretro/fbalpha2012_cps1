@@ -9,7 +9,9 @@
  #define EMU_A68K								// Use A68K Assembler 68000 emulator
 #endif
 
+#ifndef EMU_M68K
 #define EMU_M68K								// Use Musashi 68000 emulator
+#endif
 
 #define SEK_MAX	(4)								// Maximum number of CPUs supported
 
