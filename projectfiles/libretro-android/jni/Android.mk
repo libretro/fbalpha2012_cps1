@@ -136,8 +136,8 @@ LOCAL_MODULE    := libretro
 
 LOCAL_SRC_FILES := $(GRIFFIN_CXX_SRC_FILES) $(CYCLONE_SRC)  $(filter-out $(BURN_BLACKLIST),$(foreach dir,$(FBA_SRC_DIRS),$(wildcard $(dir)/*.cpp))) $(filter-out $(BURN_BLACKLIST),$(foreach dir,$(FBA_SRC_DIRS),$(wildcard $(dir)/*.c))) $(LIBRETRO_DIR)/libretro.cpp $(LIBRETRO_DIR)/neocdlist.cpp 
 
-LOCAL_CXXFLAGS += -O3 -fno-stack-protector -DUSE_SPEEDHACKS -DSH2_INLINE="static inline" -D__LIBRETRO_OPTIMIZATIONS__ -D__LIBRETRO__ -Wno-write-strings -DUSE_FILE32API -DANDROID -DFRONTEND_SUPPORTS_RGB565 $(CYCLONE_DEFINES)
-LOCAL_CFLAGS = -O3 -fno-stack-protector -DUSE_SPEEDHACKS -DSH2_INLINE="static inline" -D__LIBRETRO_OPTIMIZATIONS__ -D__LIBRETRO__ -Wno-write-strings -DUSE_FILE32API -DANDROID -DFRONTEND_SUPPORTS_RGB565 $(CYCLONE_DEFINES)
+LOCAL_CXXFLAGS += -O2 -fno-stack-protector -DUSE_SPEEDHACKS -D__LIBRETRO_OPTIMIZATIONS__ -D__LIBRETRO__ -Wno-write-strings -DUSE_FILE32API -DANDROID -DFRONTEND_SUPPORTS_RGB565 $(CYCLONE_DEFINES)
+LOCAL_CFLAGS = -O2 -fno-stack-protector -DUSE_SPEEDHACKS -D__LIBRETRO_OPTIMIZATIONS__ -D__LIBRETRO__ -Wno-write-strings -DUSE_FILE32API -DANDROID -DFRONTEND_SUPPORTS_RGB565 $(CYCLONE_DEFINES)
 
 LOCAL_C_INCLUDES = $(FBA_BURNER_DIR)/win32 \
 	$(LIBRETRO_DIR) \
@@ -152,16 +152,8 @@ LOCAL_C_INCLUDES = $(FBA_BURNER_DIR)/win32 \
 	$(FBA_INTERFACE_DIR)/cd \
 	$(FBA_BURNER_DIR) \
 	$(FBA_CPU_DIR) \
-	$(FBA_CPU_DIR)/i8039 \
 	$(FBA_LIB_DIR)/zlib \
 	$(FBA_BURN_DIR)/drv/capcom \
-	$(FBA_BURN_DIR)/drv/dataeast \
-	$(FBA_BURN_DIR)/drv/cave \
-	$(FBA_BURN_DIR)/drv/neogeo \
-	$(FBA_BURN_DIR)/drv/psikyo \
-	$(FBA_BURN_DIR)/drv/sega \
-	$(FBA_BURN_DIR)/drv/toaplan \
-	$(FBA_BURN_DIR)/drv/taito \
 	$(FBA_GENERATED_DIR) \
 	$(FBA_LIB_DIR)
 
