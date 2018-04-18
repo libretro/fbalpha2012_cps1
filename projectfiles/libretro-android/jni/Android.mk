@@ -1,42 +1,23 @@
-CYCLONE_ENABLED := 0
-HAVE_GRIFFIN    := 0
-
 LOCAL_PATH := $(call my-dir)
 
-include $(CLEAR_VARS)
-
-
-MAIN_FBA_DIR := ../../../src
-FBA_BURN_DIR := $(MAIN_FBA_DIR)/burn
+MAIN_FBA_DIR         := $(LOCAL_PATH)/../../../src
+FBA_BURN_DIR         := $(MAIN_FBA_DIR)/burn
 FBA_BURN_DRIVERS_DIR := $(MAIN_FBA_DIR)/burn/drv
-FBA_BURNER_DIR := $(MAIN_FBA_DIR)/burner
-LIBRETRO_DIR := $(FBA_BURNER_DIR)/libretro
-FBA_CPU_DIR := $(MAIN_FBA_DIR)/cpu
-FBA_LIB_DIR := $(MAIN_FBA_DIR)/dep/libs
-FBA_INTERFACE_DIR := $(MAIN_FBA_DIR)/intf
-FBA_GENERATED_DIR = $(MAIN_FBA_DIR)/dep/generated
-FBA_SCRIPTS_DIR = $(MAIN_FBA_DIR)/dep/scripts
-GRIFFIN_DIR := ../../../griffin-libretro
-
-ifeq ($(TARGET_ARCH),arm)
-LOCAL_CXXFLAGS += -DANDROID_ARM
-LOCAL_ARM_MODE := arm
-LOCAL_C_FLAGS += -fuse-ld=gold
-LOCAL_CPP_FLAGS+= -fuse-ld=gold
-LOCAL_LDLIBS := -fuse-ld=gold
-ifeq ($(CYCLONE_ENABLED), 1)
-CYCLONE_SRC := $(FBA_CPU_DIR)/cyclone/cyclone.s
-CYCLONE_DEFINES := -DBUILD_C68K
-endif
-endif
-
-ifeq ($(TARGET_ARCH),x86)
-LOCAL_CXXFLAGS +=  -DANDROID_X86
-endif
-
-ifeq ($(TARGET_ARCH),mips)
-LOCAL_CXXFLAGS += -DANDROID_MIPS -D__mips__ -D__MIPSEL__
-endif
+FBA_BURNER_DIR       := $(MAIN_FBA_DIR)/burner
+LIBRETRO_DIR         := $(FBA_BURNER_DIR)/libretro
+LIBRETRO_COMM_DIR    := $(LIBRETRO_DIR)/libretro-common
+FBA_CPU_DIR          := $(MAIN_FBA_DIR)/cpu
+FBA_LIB_DIR          := $(MAIN_FBA_DIR)/dep/libs
+FBA_INTERFACE_DIR    := $(MAIN_FBA_DIR)/intf
+FBA_GENERATED_DIR    := $(MAIN_FBA_DIR)/dep/generated
+FBA_SCRIPTS_DIR      := $(MAIN_FBA_DIR)/dep/scripts
+M68K_DIR             := $(FBA_CPU_DIR)/m68k
+CPS2_DIR             := $(FBA_BURN_DRIVERS_DIR)/capcom
+CPS3_DIR             := $(FBA_BURN_DRIVERS_DIR)/cps3
+GALAXIAN_DIR         := $(FBA_BURN_DRIVERS_DIR)/galaxian
+NEOGEO_DIR           := $(FBA_BURN_DRIVERS_DIR)/neogeo
+PGM_DIR              := $(FBA_BURN_DRIVERS_DIR)/pgm
+SNES_DIR             := $(FBA_BURN_DRIVERS_DIR)/snes
 
 BURN_BLACKLIST := $(FBA_BURNER_DIR)/un7z.cpp \
 	$(FBA_CPU_DIR)/arm7/arm7exec.c \
@@ -64,6 +45,8 @@ BURN_BLACKLIST := $(FBA_BURNER_DIR)/un7z.cpp \
 	$(FBA_BURNER_DIR)/cong.cpp \
 	$(FBA_BURNER_DIR)/image.cpp \
 	$(FBA_BURNER_DIR)/misc.cpp \
+	$(FBA_CPU_DIR)/c68k/c68k_ini.c \
+	$(FBA_CPU_DIR)/c68k/c68k_op.c \
 	$(FBA_CPU_DIR)/h6280/tblh6280.c \
 	$(FBA_CPU_DIR)/m6502/t65sc02.c \
 	$(FBA_CPU_DIR)/m6502/t65c02.c \
@@ -74,20 +57,6 @@ BURN_BLACKLIST := $(FBA_BURNER_DIR)/un7z.cpp \
 	$(FBA_CPU_DIR)/nec/v25instr.c \
 	$(FBA_CPU_DIR)/nec/necinstr.c \
 	$(FBA_BURN_DIR)/drv/capcom/ctv_make.cpp
-
-ifeq ($(HAVE_GRIFFIN), 1)
-GRIFFIN_CXX_SRC_FILES := $(GRIFFIN_DIR)/cps12.cpp $(GRIFFIN_DIR)/cps3.cpp $(GRIFFIN_DIR)/neogeo.cpp $(GRIFFIN_DIR)/pgm.cpp $(GRIFFIN_DIR)/snes.cpp $(GRIFFIN_DIR)/galaxian.cpp
-GRIFFIN_CXX_SRC_FILES += $(GRIFFIN_DIR)/cpu-m68k.cpp
-BURN_BLACKLIST += $(FBA_CPU_DIR)/m68000_intf.cpp
-else
-CPS2_DIR := $(FBA_BURN_DRIVERS_DIR)/capcom
-CPS3_DIR := $(FBA_BURN_DRIVERS_DIR)/cps3
-GALAXIAN_DIR := $(FBA_BURN_DRIVERS_DIR)/galaxian
-NEOGEO_DIR := $(FBA_BURN_DRIVERS_DIR)/neogeo
-PGM_DIR := $(FBA_BURN_DRIVERS_DIR)/pgm
-SNES_DIR := $(FBA_BURN_DRIVERS_DIR)/snes
-M68K_DIR := $(FBA_CPU_DIR)/m68k
-endif
 
 FBA_BURN_DIRS := $(FBA_BURN_DIR) \
 	$(FBA_BURN_DIR)/devices \
@@ -130,33 +99,45 @@ FBA_CPU_DIRS := $(FBA_CPU_DIR) \
 
 FBA_SRC_DIRS := $(FBA_BURNER_DIR) $(FBA_BURN_DIRS) $(FBA_CPU_DIRS) $(FBA_BURNER_DIRS)
 
-LOCAL_MODULE    := libretro
+INCDIRS := -I$(FBA_BURNER_DIR)/win32 \
+	-I$(LIBRETRO_DIR) \
+	-I$(LIBRETRO_DIR)/tchar \
+	-I$(FBA_BURN_DIR) \
+	-I$(MAIN_FBA_DIR)/cpu \
+	-I$(FBA_BURN_DIR)/snd \
+	-I$(FBA_BURN_DIR)/devices \
+	-I$(FBA_INTERFACE_DIR) \
+	-I$(FBA_INTERFACE_DIR)/input \
+	-I$(FBA_INTERFACE_DIR)/cd \
+	-I$(FBA_BURNER_DIR) \
+	-I$(FBA_CPU_DIR) \
+	-I$(FBA_CPU_DIR)/i8039 \
+	-I$(FBA_LIB_DIR)/zlib \
+	-I$(FBA_BURN_DIR)/drv/capcom \
+	-I$(FBA_BURN_DIR)/drv/dataeast \
+	-I$(FBA_BURN_DIR)/drv/cave \
+	-I$(FBA_BURN_DIR)/drv/neogeo \
+	-I$(FBA_BURN_DIR)/drv/psikyo \
+	-I$(FBA_BURN_DIR)/drv/sega \
+	-I$(FBA_BURN_DIR)/drv/toaplan \
+	-I$(FBA_BURN_DIR)/drv/taito \
+	-I$(FBA_GENERATED_DIR) \
+	-I$(LIBRETRO_COMM_DIR)/include \
+	-I$(FBA_LIB_DIR)
 
+COREFLAGS := $(INCDIRS) -fno-stack-protector -DUSE_SPEEDHACKS -D__LIBRETRO_OPTIMIZATIONS__ -D__LIBRETRO__ -Wno-write-strings -DUSE_FILE32API -DANDROID -DFRONTEND_SUPPORTS_RGB565 -DFBACORES_CPS
 
+GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
+ifneq ($(GIT_VERSION)," unknown")
+  COREFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
+endif
 
-LOCAL_SRC_FILES := $(GRIFFIN_CXX_SRC_FILES) $(CYCLONE_SRC)  $(filter-out $(BURN_BLACKLIST),$(foreach dir,$(FBA_SRC_DIRS),$(wildcard $(dir)/*.cpp))) $(filter-out $(BURN_BLACKLIST),$(foreach dir,$(FBA_SRC_DIRS),$(wildcard $(dir)/*.c))) $(LIBRETRO_DIR)/libretro.cpp $(LIBRETRO_DIR)/neocdlist.cpp 
-
-LOCAL_CXXFLAGS += -O2 -fno-stack-protector -DUSE_SPEEDHACKS -D__LIBRETRO_OPTIMIZATIONS__ -D__LIBRETRO__ -Wno-write-strings -DUSE_FILE32API -DANDROID -DFRONTEND_SUPPORTS_RGB565 $(CYCLONE_DEFINES)
-LOCAL_CFLAGS = -O2 -fno-stack-protector -DUSE_SPEEDHACKS -D__LIBRETRO_OPTIMIZATIONS__ -D__LIBRETRO__ -Wno-write-strings -DUSE_FILE32API -DANDROID -DFRONTEND_SUPPORTS_RGB565 $(CYCLONE_DEFINES)
-
-LOCAL_C_INCLUDES = $(FBA_BURNER_DIR)/win32 \
-	$(LIBRETRO_DIR) \
-	$(LIBRETRO_DIR)/libretro-common/include \
-	$(LIBRETRO_DIR)/tchar \
-	$(FBA_BURN_DIR) \
-	$(MAIN_FBA_DIR)/cpu \
-	$(FBA_BURN_DIR)/snd \
-	$(FBA_BURN_DIR)/devices \
-	$(FBA_INTERFACE_DIR) \
-	$(FBA_INTERFACE_DIR)/input \
-	$(FBA_INTERFACE_DIR)/cd \
-	$(FBA_BURNER_DIR) \
-	$(FBA_CPU_DIR) \
-	$(FBA_LIB_DIR)/zlib \
-	$(FBA_BURN_DIR)/drv/capcom \
-	$(FBA_GENERATED_DIR) \
-	$(FBA_LIB_DIR)
-
-LOCAL_LDLIBS += -lz
-
+include $(CLEAR_VARS)
+LOCAL_MODULE       := retro
+LOCAL_SRC_FILES    := $(filter-out $(BURN_BLACKLIST),$(foreach dir,$(FBA_SRC_DIRS),$(wildcard $(dir)/*.cpp))) $(filter-out $(BURN_BLACKLIST),$(foreach dir,$(FBA_SRC_DIRS),$(wildcard $(dir)/*.c))) $(LIBRETRO_DIR)/libretro.cpp
+LOCAL_CXXFLAGS     := $(COREFLAGS)
+LOCAL_CFLAGS       := $(COREFLAGS)
+LOCAL_LDFLAGS      := -Wl,-version-script=$(LIBRETRO_DIR)/link.T
+LOCAL_LDLIBS       := -lz
+LOCAL_CPP_FEATURES := exceptions rtti
 include $(BUILD_SHARED_LIBRARY)
