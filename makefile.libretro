@@ -99,6 +99,7 @@ else
 	CXX = c++ -arch armv7 -isysroot $(IOSSDK)
 endif
    CFLAGS += -DIOS
+
    ifeq ($(platform),$(filter $(platform),ios9 ios-arm64))
       CC += -miphoneos-version-min=8.0
       CXX +=  -miphoneos-version-min=8.0
@@ -108,6 +109,7 @@ endif
       CXX +=  -miphoneos-version-min=5.0
       CFLAGS += -miphoneos-version-min=5.0
    endif
+
 else ifeq ($(platform), qnx)
    TARGET := $(TARGET_NAME)_libretro_$(platform).so
    fpic := -fPIC
@@ -216,6 +218,42 @@ else ifeq ($(platform), rpi2)
    PLATFORM_DEFINES += -DARM
    CXXFLAGS += $(CFLAGS) -fno-rtti -fno-exceptions
    CPU_ARCH := arm 
+
+# Classic Platforms ####################
+# Platform affix = classic_<ISA>_<µARCH>
+# Help at https://modmyclassic.com/comp
+
+# (armv7 a7, hard point, neon based) ### 
+# NESC, SNESC, C64 mini 
+else ifeq ($(platform), classic_armv7_a7)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic := -fPIC
+	SHARED := -shared -Wl,-no-undefined -Wl,--version-script=$(LIBRETRO_DIR)/link.T
+	CFLAGS += -Ofast \
+	-flto=4 -fwhole-program -fuse-linker-plugin \
+	-fdata-sections -ffunction-sections -Wl,--gc-sections \
+	-fno-stack-protector -fno-ident -fomit-frame-pointer \
+	-falign-functions=1 -falign-jumps=1 -falign-loops=1 \
+	-fno-unwind-tables -fno-asynchronous-unwind-tables -fno-unroll-loops \
+	-fmerge-all-constants -fno-math-errno \
+	-marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+	CXXFLAGS += $(CFLAGS)
+	CPPFLAGS += $(CFLAGS)
+	ASFLAGS += $(CFLAGS)
+	HAVE_NEON = 1
+	ARCH = arm
+	BUILTIN_GPU = neon
+	USE_DYNAREC = 1
+	ifeq ($(shell echo `$(CC) -dumpversion` "< 4.9" | bc -l), 1)
+	  CFLAGS += -march=armv7-a
+	else
+	  CFLAGS += -march=armv7ve
+	  # If gcc is 5.0 or later
+	  ifeq ($(shell echo `$(CC) -dumpversion` ">= 5" | bc -l), 1)
+	    LDFLAGS += -static-libgcc -static-libstdc++
+	  endif
+	endif
+#######################################
 
 else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
@@ -521,12 +559,14 @@ generate-files:
 	$(EXE_PREFIX)$(M68KMAKE_EXE) $(FBA_CPU_DIR)/m68k/ $(FBA_CPU_DIR)/m68k/m68k_in.c
 
 $(TARGET): $(OBJS)
+	@echo "** BUILDING $(TARGET) FOR PLATFORM $(platform) **"
 	@echo "LD $@"
 ifeq ($(STATIC_LINKING), 1)
 	@$(AR) rcs $@ $(OBJS)
 else
 	@$(LD) $(LINKOUT)$@ $(SHARED) $(OBJS) $(LDFLAGS)
 endif
+	@echo "** BUILD SUCCESSFUL! GG NO RE **"
 
 %.o: %.cpp
 	@echo "CXX $<"
