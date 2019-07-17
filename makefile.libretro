@@ -192,7 +192,7 @@ else ifeq ($(platform), wiiu)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    ENDIANNESS_DEFINES = -DMSB_FIRST
-   PLATFORM_DEFINES := -DGEKKO -DWIIU -DHW_RVL -mwup -mcpu=750 -meabi -mhard-float
+   PLATFORM_DEFINES := -DGEKKO -DWIIU -DHW_RVL -mcpu=750 -meabi -mhard-float
    PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
    EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
@@ -208,6 +208,15 @@ else ifeq ($(platform), ctr)
    PLATFORM_DEFINES += -fomit-frame-pointer -ffast-math
    CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
    CPU_ARCH := arm
+   STATIC_LINKING = 1
+# Nintendo Switch (libnx)
+else ifeq ($(platform), libnx)
+   include $(DEVKITPRO)/libnx/switch_rules
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
+   PLATFORM_DEFINES := -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
+   PLATFORM_DEFINES += -I$(LIBNX)/include/ -specs=$(LIBNX)/switch.specs
+   PLATFORM_DEFINES += -D__SWITCH__ -DHAVE_LIBNX -DARM -march=armv8-a -mtune=cortex-a57 -mtp=soft
+   EXTERNAL_ZLIB = 1
    STATIC_LINKING = 1
 else ifeq ($(platform), rpi2)
    TARGET := $(TARGET_NAME)_libretro.so
