@@ -568,20 +568,17 @@ generate-files:
 	$(EXE_PREFIX)$(M68KMAKE_EXE) $(FBA_CPU_DIR)/m68k/ $(FBA_CPU_DIR)/m68k/m68k_in.c
 
 $(TARGET): $(OBJS)
-	@echo "LD $@"
 ifeq ($(STATIC_LINKING), 1)
-	@$(AR) rcs $@ $(OBJS)
+	$(AR) rcs $@ $(OBJS)
 else
-	@$(LD) $(LINKOUT)$@ $(SHARED) $(OBJS) $(LDFLAGS)
+	$(LD) $(LINKOUT)$@ $(SHARED) $(OBJS) $(LDFLAGS)
 endif
 
 %.o: %.cpp
-	@echo "CXX $<"
-	@$(CXX) -c $(OBJOUT)$@ $< $(CXXFLAGS) $(INCDIRS)
+	$(CXX) -c $(OBJOUT)$@ $< $(CXXFLAGS) $(INCDIRS)
 
 %.o: %.c
-	@echo "CC $<"
-	@$(CC) -c $(OBJOUT)$@ $< $(CFLAGS) $(INCDIRS)
+	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS) $(INCDIRS)
 
 clean-objs:
 	rm -f $(OBJS)
