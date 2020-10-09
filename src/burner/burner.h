@@ -55,19 +55,8 @@ typedef struct tagIMAGE {
 #include "interface.h"
 #endif
 
-#define IMG_FREE		(1 << 0)
-
 // Macros for parsing text
 #define SKIP_WS(s) while (_istspace(*s)) { s++; }			// Skip whitespace
-#define FIND_WS(s) while (*s && !_istspace(*s)) { s++; }	// Find whitespace
-#define FIND_QT(s) while (*s && *s != _T('\"')) { s++; }	// Find quote
-
-// image.cpp
-void img_free(IMAGE* img);
-INT32 img_alloc(IMAGE* img);
-
-bool PNGIsImage(FILE* fp);
-INT32 PNGLoad(IMAGE* img, FILE* fp, INT32 nPreset);
 
 // gami.cpp
 extern struct GameInp* GameInp;
@@ -106,12 +95,6 @@ extern TCHAR szPlayerDefaultIni[4][MAX_PATH];
 
 // cong.cpp
 extern const INT32 nConfigMinVersion;					// Minimum version of application for which input files are valid
-extern bool bSaveInputs;
-INT32 ConfigGameLoad(bool bOverWrite);				// char* lpszName = NULL
-INT32 ConfigGameSave(bool bSave);
-
-// conc.cpp
-INT32 ConfigCheatLoad();
 
 // gamc.cpp
 INT32 GamcMisc(struct GameInp* pgi, char* szi, INT32 nPlayer);
@@ -138,23 +121,7 @@ char* DecorateGameName(UINT32 nBurnDrv);
 TCHAR* DecorateGenreInfo();
 void ComputeGammaLUT();
 
-// dat.cpp
-#define DAT_ARCADE_ONLY		0
-#define DAT_MEGADRIVE_ONLY	1
-#define DAT_PCENGINE_ONLY	2
-#define DAT_TG16_ONLY		3
-#define DAT_SGX_ONLY		4
-INT32 write_datfile(INT32 bType, FILE* fDat);
-INT32 create_datfile(TCHAR* szFilename, INT32 bType);
-
-// sshot.cpp
-INT32 MakeScreenShot();
-
 // state.cpp
-INT32 BurnStateLoadEmbed(FILE* fp, INT32 nOffset, INT32 bAll, INT32 (*pLoadGame)());
-INT32 BurnStateLoad(TCHAR* szName, INT32 bAll, INT32 (*pLoadGame)());
-INT32 BurnStateSaveEmbed(FILE* fp, INT32 nOffset, INT32 bAll);
-INT32 BurnStateSave(TCHAR* szName, INT32 bAll);
 
 // statec.cpp
 INT32 BurnStateCompress(UINT8** pDef, INT32* pnDefLen, INT32 bAll);
@@ -168,22 +135,3 @@ INT32 ZipClose();
 INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount);
 INT32 ZipLoadFile(UINT8* Dest, INT32 nLen, INT32* pnWrote, INT32 nEntry);
 INT32 __cdecl ZipLoadOneFile(char* arcName, const char* fileName, void** Dest, INT32* pnWrote);
-
-// bzip.cpp
-
-#define BZIP_STATUS_OK		(0)
-#define BZIP_STATUS_BADDATA	(1)
-#define BZIP_STATUS_ERROR	(2)
-
-INT32 BzipOpen(bool);
-INT32 BzipClose();
-INT32 BzipInit();
-INT32 BzipExit();
-INT32 BzipStatus();
-
-// support_paths.cpp
-extern TCHAR szAppPreviewsPath[MAX_PATH];
-extern TCHAR szAppTitlesPath[MAX_PATH];
-extern TCHAR szAppCheatsPath[MAX_PATH];
-extern TCHAR szAppIpsPath[MAX_PATH];
-extern TCHAR szAppIconsPath[MAX_PATH];
