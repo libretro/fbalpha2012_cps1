@@ -804,63 +804,6 @@ static UINT32 __cdecl BurnHighColFiller(INT32, INT32, INT32, INT32) { return (UI
 UINT32 (__cdecl *BurnHighCol) (INT32 r, INT32 g, INT32 b, INT32 i) = BurnHighColFiller;
 
 // ----------------------------------------------------------------------------
-// Colour-depth independant image transfer
-
-UINT16* pTransDraw = NULL;
-
-static INT32 nTransWidth, nTransHeight;
-
-void BurnTransferClear(void)
-{
-	memset((void*)pTransDraw, 0, nTransWidth * nTransHeight * sizeof(UINT16));
-}
-
-INT32 BurnTransferCopy(UINT32* pPalette)
-{
-	UINT16* pSrc = pTransDraw;
-	UINT8* pDest = pBurnDraw;
-	
-	pBurnDrvPalette = pPalette;
-
-   for (INT32 y = 0; y < nTransHeight; y++, pSrc += nTransWidth, pDest += nBurnPitch)
-   {
-      for (INT32 x = 0; x < nTransWidth; x ++)
-         ((UINT16*)pDest)[x] = pPalette[pSrc[x]];
-   }
-
-	return 0;
-}
-
-void BurnTransferExit(void)
-{
-	if (pTransDraw)
-   {
-		free(pTransDraw);
-		pTransDraw = NULL;
-	}
-}
-
-INT32 BurnTransferInit(void)
-{
-	if (BurnDrvGetFlags() & BDF_ORIENTATION_VERTICAL) {
-		BurnDrvGetVisibleSize(&nTransHeight, &nTransWidth);
-	} else {
-		BurnDrvGetVisibleSize(&nTransWidth, &nTransHeight);
-	}
-
-	pTransDraw = (UINT16*)malloc(nTransWidth * nTransHeight * sizeof(UINT16));
-	if (pTransDraw == NULL) {
-		return 1;
-	}
-
-	BurnTransferClear();
-
-	return 0;
-}
-
-
-
-// ----------------------------------------------------------------------------
 // Savestate support
 
 // Application-defined callback for processing the area

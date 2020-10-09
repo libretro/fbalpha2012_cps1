@@ -84,16 +84,6 @@ INT32 BurnClearScreen();
 INT32 BurnLoadRom(UINT8* Dest, INT32 i, INT32 nGap);
 
 // ---------------------------------------------------------------------------
-// Colour-depth independant image transfer
-
-extern UINT16* pTransDraw;
-
-void BurnTransferClear();
-INT32 BurnTransferCopy(UINT32* pPalette);
-void BurnTransferExit();
-INT32 BurnTransferInit();
-
-// ---------------------------------------------------------------------------
 // Plotting pixels
 
 #define PutPix(pPix, c) (*((UINT16*)pPix) = (UINT16)c)
