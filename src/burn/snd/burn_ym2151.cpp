@@ -22,33 +22,30 @@ static INT32 YM2151RouteDirs[2];
 
 static void YM2151RenderResample(INT16* pSoundBuf, INT32 nSegmentLength)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_YM2151Initted) bprintf(PRINT_ERROR, _T("YM2151RenderResample called without init\n"));
-#endif
-	
 	nBurnPosition += nSegmentLength;
 
-	if (nBurnPosition >= nBurnSoundRate) {
-		nBurnPosition = nSegmentLength;
+	if (nBurnPosition >= nBurnSoundRate)
+   {
+      nBurnPosition = nSegmentLength;
 
-		pYM2151Buffer[0][1] = pYM2151Buffer[0][(nFractionalPosition >> 16) - 3];
-		pYM2151Buffer[0][2] = pYM2151Buffer[0][(nFractionalPosition >> 16) - 2];
-		pYM2151Buffer[0][3] = pYM2151Buffer[0][(nFractionalPosition >> 16) - 1];
+      pYM2151Buffer[0][1] = pYM2151Buffer[0][(nFractionalPosition >> 16) - 3];
+      pYM2151Buffer[0][2] = pYM2151Buffer[0][(nFractionalPosition >> 16) - 2];
+      pYM2151Buffer[0][3] = pYM2151Buffer[0][(nFractionalPosition >> 16) - 1];
 
-		pYM2151Buffer[1][1] = pYM2151Buffer[1][(nFractionalPosition >> 16) - 3];
-		pYM2151Buffer[1][2] = pYM2151Buffer[1][(nFractionalPosition >> 16) - 2];
-		pYM2151Buffer[1][3] = pYM2151Buffer[1][(nFractionalPosition >> 16) - 1];
+      pYM2151Buffer[1][1] = pYM2151Buffer[1][(nFractionalPosition >> 16) - 3];
+      pYM2151Buffer[1][2] = pYM2151Buffer[1][(nFractionalPosition >> 16) - 2];
+      pYM2151Buffer[1][3] = pYM2151Buffer[1][(nFractionalPosition >> 16) - 1];
 
-		nSamplesRendered -= (nFractionalPosition >> 16) - 4;
+      nSamplesRendered -= (nFractionalPosition >> 16) - 4;
 
-		for (UINT32 i = 0; i <= nSamplesRendered; i++) {
-			pYM2151Buffer[0][4 + i] = pYM2151Buffer[0][(nFractionalPosition >> 16) + i];
-			pYM2151Buffer[1][4 + i] = pYM2151Buffer[1][(nFractionalPosition >> 16) + i];
-		}
+      for (UINT32 i = 0; i <= nSamplesRendered; i++) {
+         pYM2151Buffer[0][4 + i] = pYM2151Buffer[0][(nFractionalPosition >> 16) + i];
+         pYM2151Buffer[1][4 + i] = pYM2151Buffer[1][(nFractionalPosition >> 16) + i];
+      }
 
-		nFractionalPosition &= 0x0000FFFF;
-		nFractionalPosition |= 4 << 16;
-	}
+      nFractionalPosition &= 0x0000FFFF;
+      nFractionalPosition |= 4 << 16;
+   }
 
 	pYM2151Buffer[0] = pBuffer + 4 + nSamplesRendered;
 	pYM2151Buffer[1] = pBuffer + 4 + nSamplesRendered + 65536;
@@ -105,10 +102,6 @@ static void YM2151RenderResample(INT16* pSoundBuf, INT32 nSegmentLength)
 
 static void YM2151RenderNormal(INT16* pSoundBuf, INT32 nSegmentLength)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_YM2151Initted) bprintf(PRINT_ERROR, _T("YM2151RenderNormal called without init\n"));
-#endif
-
 	nBurnPosition += nSegmentLength;
 
 	pYM2151Buffer[0] = pBuffer;
@@ -141,21 +134,13 @@ static void YM2151RenderNormal(INT16* pSoundBuf, INT32 nSegmentLength)
 	}
 }
 
-void BurnYM2151Reset()
+void BurnYM2151Reset(void)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_YM2151Initted) bprintf(PRINT_ERROR, _T("BurnYM2151Reset called without init\n"));
-#endif
-
 	YM2151ResetChip(0);
 }
 
-void BurnYM2151Exit()
+void BurnYM2151Exit(void)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_YM2151Initted) bprintf(PRINT_ERROR, _T("BurnYM2151Exit called without init\n"));
-#endif
-
 	BurnYM2151SetIrqHandler(NULL);
 	BurnYM2151SetPortHandler(NULL);
 
@@ -165,14 +150,10 @@ void BurnYM2151Exit()
 		free(pBuffer);
 		pBuffer = NULL;
 	}
-	
-	DebugSnd_YM2151Initted = 0;
 }
 
 INT32 BurnYM2151Init(INT32 nClockFrequency)
 {
-	DebugSnd_YM2151Initted = 1;
-	
 	if (nBurnSoundRate <= 0) {
 		YM2151Init(1, nClockFrequency, 11025);
 		return 0;
@@ -213,24 +194,14 @@ INT32 BurnYM2151Init(INT32 nClockFrequency)
 
 void BurnYM2151SetRoute(INT32 nIndex, double nVolume, INT32 nRouteDir)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_YM2151Initted) bprintf(PRINT_ERROR, _T("BurnYM2151SetRoute called without init\n"));
-	if (nIndex < 0 || nIndex > 1) bprintf(PRINT_ERROR, _T("BurnYM2151SetRoute called with invalid index %i\n"), nIndex);
-#endif
-	
 	YM2151Volumes[nIndex] = nVolume;
 	YM2151RouteDirs[nIndex] = nRouteDir;
 }
 
 void BurnYM2151Scan(INT32 nAction)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_YM2151Initted) bprintf(PRINT_ERROR, _T("BurnYM2151Scan called without init\n"));
-#endif
-	
-	if ((nAction & ACB_DRIVER_DATA) == 0) {
+	if ((nAction & ACB_DRIVER_DATA) == 0)
 		return;
-	}
 	SCAN_VAR(nBurnCurrentYM2151Register);
 	SCAN_VAR(BurnYM2151Registers);
 

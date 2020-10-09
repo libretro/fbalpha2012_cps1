@@ -174,11 +174,6 @@ static void MSM5205_vclk_callback(INT32 chip)
 
 void MSM5205Render(INT32 chip, INT16 *buffer, INT32 len)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205Render called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205Render called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 	INT16 *source = stream[chip];
 
@@ -215,12 +210,8 @@ void MSM5205Render(INT32 chip, INT16 *buffer, INT32 len)
 	}
 }
 
-void MSM5205Reset()
+void MSM5205Reset(void)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205Reset called without init\n"));
-#endif
-
 	for (INT32 chip = 0; chip < MAX_MSM5205; chip++)
 	{
 		voice = &chips[chip];
@@ -240,8 +231,6 @@ void MSM5205Reset()
 
 void MSM5205Init(INT32 chip, INT32 (*stream_sync)(INT32), INT32 clock, void (*vclk_callback)(), INT32 select, INT32 bAdd)
 {
-	DebugSnd_MSM5205Initted = 1;
-	
 	voice = &chips[chip];
 
 	memset (voice, 0, sizeof(_MSM5205_state));
@@ -269,11 +258,6 @@ void MSM5205Init(INT32 chip, INT32 (*stream_sync)(INT32), INT32 clock, void (*vc
 
 void MSM5205SetRoute(INT32 chip, double nVolume, INT32 nRouteDir)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205SetRoute called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205SetRoute called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 	voice->volume = nVolume;
 	voice->output_dir = nRouteDir;
@@ -281,43 +265,24 @@ void MSM5205SetRoute(INT32 chip, double nVolume, INT32 nRouteDir)
 
 void MSM5205SetLeftVolume(INT32 chip, double nLeftVolume)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205SetLeftVolume called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205SetLeftVolume called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 	voice->left_volume = nLeftVolume;
 }
 
 void MSM5205SetRightVolume(INT32 chip, double nRightVolume)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205SetRightVolume called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205SetRightVolume called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 	voice->left_volume = nRightVolume;
 }
 
 void MSM5205SetSeperateVolumes(INT32 chip, INT32 state)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205SetSeperateVolumes called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205SetSeperateVolumes called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 	voice->use_seperate_vols = state;
 }
 
-void MSM5205Exit()
+void MSM5205Exit(void)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205Exit called without init\n"));
-#endif
-
 	for (INT32 chip = 0; chip < MAX_MSM5205; chip++)
 	{
 		voice = &chips[chip];
@@ -329,17 +294,11 @@ void MSM5205Exit()
 		BurnFree (stream[chip]);
 	}
 	
-	DebugSnd_MSM5205Initted = 0;
 	nNumChips = 0;
 }
 
 void MSM5205VCLKWrite(INT32 chip, INT32 vclk)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205VCLKWrite called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205VCLKWrite called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 
 	if (voice->prescaler == 0)
@@ -354,22 +313,12 @@ void MSM5205VCLKWrite(INT32 chip, INT32 vclk)
 
 void MSM5205ResetWrite(INT32 chip, INT32 reset)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205ResetWrite called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205ResetWrite called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 	voice->reset = reset;
 }
 
 void MSM5205DataWrite(INT32 chip, INT32 data)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205DataWrite called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205DataWrite called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 
 	if( voice->bitwidth == 4)
@@ -380,21 +329,12 @@ void MSM5205DataWrite(INT32 chip, INT32 data)
 
 void MSM5205PlaymodeWrite(INT32 chip, INT32 select)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205PlaymodeWrite called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205PlaymodeWrite called with invalid chip %x\n"), chip);
-#endif
-
 	voice = &chips[chip];
 	MSM5205_playmode(chip,select);
 }
 
-void MSM5205Update()
+void MSM5205Update(void)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205Update called without init\n"));
-#endif
-
 	for (INT32 chip = 0; chip < MAX_MSM5205; chip++)
 	{
 		voice = &chips[chip];
@@ -412,18 +352,12 @@ void MSM5205Update()
 // see MSM5205_playmode for a more in-depth explanation of this
 INT32 MSM5205CalcInterleave(INT32 chip, INT32 cpu_speed)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205CalcInterleave called without init\n"));
-	if (chip > nNumChips) bprintf(PRINT_ERROR, _T("MSM5205CalcInterleave called with invalid chip %x\n"), chip);
-#endif
-
 	static const INT32 table[2][4] = { {96, 48, 64, 0}, {160, 40, 80, 20} };
 
 	voice = &chips[chip];
 
-	if ((voice->select & 3) == 3) {
+	if ((voice->select & 3) == 3)
 		return 133;  // (usually...)
-	}
 
 	INT32 ret = cpu_speed / (cpu_speed / (voice->clock / table[(voice->select >> 3) & 1][voice->select & 3]));
 	
@@ -432,13 +366,8 @@ INT32 MSM5205CalcInterleave(INT32 chip, INT32 cpu_speed)
 
 void MSM5205Scan(INT32 nAction, INT32 *pnMin)
 {
-#if defined FBA_DEBUG
-	if (!DebugSnd_MSM5205Initted) bprintf(PRINT_ERROR, _T("MSM5205Scan called without init\n"));
-#endif
-
-	if (pnMin != NULL) {
+	if (pnMin != NULL)
 		*pnMin = 0x029708;
-	}
 
 	if (nAction & ACB_DRIVER_DATA) {
 		for (INT32 chip = 0; chip < MAX_MSM5205; chip++) {
