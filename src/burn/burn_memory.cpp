@@ -12,7 +12,7 @@ static UINT8 *memptr[MAX_MEM_PTR]; // pointer to allocated memory
 
 // this should be called early on... BurnDrvInit?
 
-void BurnInitMemoryManager()
+void BurnInitMemoryManager(void)
 {
 	memset (memptr, 0, MAX_MEM_PTR * sizeof(UINT8 **));	
 }

@@ -83,8 +83,6 @@ INT32 BurnClearScreen();
 
 // load.cpp
 INT32 BurnLoadRom(UINT8* Dest, INT32 i, INT32 nGap);
-INT32 BurnXorRom(UINT8* Dest, INT32 i, INT32 nGap);
-INT32 BurnLoadBitField(UINT8* pDest, UINT8* pSrc, INT32 nField, INT32 nSrcLen);
 
 // ---------------------------------------------------------------------------
 // Colour-depth independant image transfer
