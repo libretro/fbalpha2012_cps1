@@ -1,4 +1,5 @@
 // Burner Game Input
+#include <stdio.h>
 #include "burner.h"
 
 // Player Default Controls
