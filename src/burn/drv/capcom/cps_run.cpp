@@ -332,8 +332,10 @@ INT32 Cps1Frame()
 //			CpsDraw();										// Draw frame
 //		}
 	}
-	
-   CpsDraw();										// Draw frame
+
+	if (!nSkipFrame) {
+		CpsDraw();										// Draw frame
+	}
 
 	if (Cps1Qs == 1) {
 		QsndEndFrame();
