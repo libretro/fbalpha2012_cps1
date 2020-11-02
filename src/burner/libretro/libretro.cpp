@@ -1,7 +1,9 @@
 #include "libretro.h"
+#include "libretro_core_options.h"
 #include "burner.h"
 #include "input/inp_keys.h"
 #include "state.h"
+#include "descriptors.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -31,8 +33,9 @@ static unsigned g_rom_count;
 
 #define AUDIO_SAMPLERATE 32000
 #define AUDIO_SEGMENT_LENGTH 534 // <-- Hardcoded value that corresponds well to 32kHz audio.
+#define VIDEO_REFRESH_RATE 59.629403f
 
-static uint32_t g_fba_frame[1024 * 1024];
+static uint32_t *g_fba_frame = NULL;
 static int16_t g_audio_buf[AUDIO_SEGMENT_LENGTH * 2];
 
 // libretro globals
@@ -42,6 +45,7 @@ static retro_video_refresh_t video_cb;
 static retro_input_poll_t poll_cb;
 static retro_input_state_t input_cb;
 static retro_audio_sample_batch_t audio_batch_cb;
+static retro_log_printf_t log_cb;
 void retro_set_video_refresh(retro_video_refresh_t cb) { video_cb = cb; }
 void retro_set_audio_sample(retro_audio_sample_t) {}
 void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) { audio_batch_cb = cb; }
@@ -52,17 +56,12 @@ void retro_set_environment(retro_environment_t cb)
 {
    environ_cb = cb;
 
-   static const struct retro_variable vars[] = {
-      { "diagnostics", "Diagnostics; disabled|enabled" },
-      { "cpu-speed-adjust", "CPU Speed Overclock; 100|110|120|130|140|150|160|170|180|190|200" },
-      { NULL, NULL },
-   };
-
-   cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)vars);
+   libretro_set_core_options(environ_cb);
 }
 
 char g_rom_dir[1024];
 static bool driver_inited;
+static bool diagnostic_input_active;
 
 void retro_get_system_info(struct retro_system_info *info)
 {
@@ -75,6 +74,71 @@ void retro_get_system_info(struct retro_system_info *info)
 
 static void poll_input();
 static bool init_input();
+
+/* Frameskipping Support */
+
+static unsigned frameskip_type             = 0;
+static unsigned frameskip_threshold        = 0;
+static uint16_t frameskip_counter          = 0;
+
+static bool retro_audio_buff_active        = false;
+static unsigned retro_audio_buff_occupancy = 0;
+static bool retro_audio_buff_underrun      = false;
+/* Maximum number of consecutive frames that
+ * can be skipped */
+#define FRAMESKIP_MAX 30
+
+static unsigned audio_latency              = 0;
+static bool update_audio_latency           = false;
+
+static void retro_audio_buff_status_cb(
+      bool active, unsigned occupancy, bool underrun_likely)
+{
+   retro_audio_buff_active    = active;
+   retro_audio_buff_occupancy = occupancy;
+   retro_audio_buff_underrun  = underrun_likely;
+}
+
+static void init_frameskip(void)
+{
+   if (frameskip_type > 0)
+   {
+      struct retro_audio_buffer_status_callback buf_status_cb;
+
+      buf_status_cb.callback = retro_audio_buff_status_cb;
+      if (!environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK,
+            &buf_status_cb))
+      {
+         if (log_cb)
+            log_cb(RETRO_LOG_WARN, "Frameskip disabled - frontend does not support audio buffer status monitoring.\n");
+
+         retro_audio_buff_active    = false;
+         retro_audio_buff_occupancy = 0;
+         retro_audio_buff_underrun  = false;
+         audio_latency              = 0;
+      }
+      else
+      {
+         /* Frameskip is enabled - increase frontend
+          * audio latency to minimise potential
+          * buffer underruns */
+         float frame_time_msec = 1000.0f / VIDEO_REFRESH_RATE;
+
+         /* Set latency to 6x current frame time... */
+         audio_latency = (unsigned)((6.0f * frame_time_msec) + 0.5f);
+
+         /* ...then round up to nearest multiple of 32 */
+         audio_latency = (audio_latency + 0x1F) & ~0x1F;
+      }
+   }
+   else
+   {
+      environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, NULL);
+      audio_latency = 0;
+   }
+
+   update_audio_latency = true;
+}
 
 // FBA stubs
 unsigned ArcadeJoystick;
@@ -119,7 +183,8 @@ static void InpDIPSWGetOffset (void)
       if (bdi.nFlags == 0xF0) /* 0xF0 is beginning of DIP switch list */
       {
          nDIPOffset = bdi.nInput;
-         fprintf(stderr, "DIP switches offset: %d.\n", bdi.nInput);
+         if (log_cb)
+            log_cb(RETRO_LOG_INFO, "DIP switches offset: %d.\n", bdi.nInput);
          break;
       }
    }
@@ -160,7 +225,8 @@ static int InpDIPSWInit()
       /* 0xFD are region DIP switches */
       if (bdi.nFlags == 0xFE || bdi.nFlags == 0xFD)
       {
-         fprintf(stderr, "DIP switch label: %s.\n", bdi.szText);
+         if (log_cb)
+            log_cb(RETRO_LOG_INFO, "DIP switch label: %s.\n", bdi.szText);
 
          int l = 0;
          for (int k = 0; l < bdi.nSetting; k++)
@@ -172,7 +238,9 @@ static int InpDIPSWInit()
                   bdi_tmp.nMask == 0x30) /* filter away NULL entries */
                continue;
 
-            fprintf(stderr, "DIP switch option: %s.\n", bdi_tmp.szText);
+            if (log_cb)
+               log_cb(RETRO_LOG_INFO, "DIP switch option: %s.\n", bdi_tmp.szText);
+
             l++;
          }
          pgi = GameInp + bdi.nInput + nDIPOffset;
@@ -268,7 +336,8 @@ static bool open_archive()
       if (BurnDrvGetZipName(&rom_name, index))
          continue;
 
-      fprintf(stderr, "[FBA] Archive: %s\n", rom_name);
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "[FBA] Archive: %s\n", rom_name);
 
       char path[1024];
 #ifdef _XBOX
@@ -279,7 +348,8 @@ static bool open_archive()
 
       if (ZipOpen(path) != 0)
       {
-         fprintf(stderr, "[FBA] Failed to find archive: %s\n", path);
+         if (log_cb)
+            log_cb(RETRO_LOG_ERROR, "[FBA] Failed to find archive: %s\n", path);
          return false;
       }
       ZipClose();
@@ -291,7 +361,8 @@ static bool open_archive()
    {
       if (ZipOpen((char*)g_find_list_path[z].c_str()) != 0)
       {
-         fprintf(stderr, "[FBA] Failed to open archive %s\n", g_find_list_path[z].c_str());
+         if (log_cb)
+            log_cb(RETRO_LOG_ERROR, "[FBA] Failed to open archive %s\n", g_find_list_path[z].c_str());
          return false;
       }
 
@@ -335,8 +406,10 @@ static bool open_archive()
    {
       if (g_find_list[i].nState != STAT_OK)
       {
-         fprintf(stderr, "[FBA] ROM index %i was not found ... CRC: 0x%08x\n",
-               i, g_find_list[i].ri.nCrc);
+         if (log_cb)
+            log_cb(RETRO_LOG_ERROR, "[FBA] ROM index %i was not found ... CRC: 0x%08x\n",
+                  i, g_find_list[i].ri.nCrc);
+
          if(!(g_find_list[i].ri.nType & BRF_OPT))
             return false;
       }
@@ -348,7 +421,25 @@ static bool open_archive()
 
 void retro_init()
 {
+   struct retro_log_callback log;
+   if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
+      log_cb = log.log;
+   else
+      log_cb = NULL;
+
+   g_fba_frame = (uint32_t*)malloc(0x400 * 0x400 * sizeof(uint32_t));
    BurnLibInit();
+
+   diagnostic_input_active    = false;
+
+   frameskip_type             = 0;
+   frameskip_threshold        = 0;
+   frameskip_counter          = 0;
+   retro_audio_buff_active    = false;
+   retro_audio_buff_occupancy = 0;
+   retro_audio_buff_underrun  = false;
+   audio_latency              = 0;
+   update_audio_latency       = false;
 }
 
 void retro_deinit(void)
@@ -357,6 +448,10 @@ void retro_deinit(void)
       BurnDrvExit();
    driver_inited = false;
    BurnLibExit();
+
+   if (g_fba_frame)
+      free(g_fba_frame);
+   g_fba_frame = NULL;
 }
 
 void retro_reset(void)
@@ -383,56 +478,20 @@ void retro_reset(void)
    BurnDrvFrame();
 }
 
-static bool first_init = true;
-
-static void check_variables(void)
+static void check_variables(bool first_run)
 {
    struct retro_variable var = {0};
-   var.key = "diagnostics";
+   unsigned last_frameskip_type;
 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && !first_init)
+   var.key             = "fba2012cps1_cpu_speed_adjust";
+   var.value           = NULL;
+   nBurnCPUSpeedAdjust = 0x0100;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      static bool old_value = false;
-      bool value = false;
-
-      if (!strcmp(var.value, "enabled"))
-         value = true;
-
-      if (old_value != value)
-      {
-         old_value = value;
-         struct GameInp* pgi = GameInp;
-
-         for (unsigned i = 0; i < nGameInpCount; i++, pgi++)
-         {
-            if (pgi->Input.Switch.nCode != FBK_F2)
-               continue;
-
-            pgi->Input.nVal = 1;
-            *(pgi->Input.pVal) = pgi->Input.nVal;
-
-            break;
-         }
-
-         nBurnLayer = 0xff;
-         pBurnSoundOut = g_audio_buf;
-         nBurnSoundRate = AUDIO_SAMPLERATE;
-         //nBurnSoundLen = AUDIO_SEGMENT_LENGTH;
-         nCurrentFrame++;
-
-         BurnDrvFrame();
-      }
-   }
-   else if (first_init)
-      first_init = false;
-
-   var.key = "cpu-speed-adjust";
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
-   {
-      if (!strcmp(var.value, "100"))
+      if (strcmp(var.value, "100") == 0)
          nBurnCPUSpeedAdjust = 0x0100;
-      else if (!strcmp(var.value, "110"))
+      else if (strcmp(var.value, "110") == 0)
          nBurnCPUSpeedAdjust = 0x0110;
       else if (strcmp(var.value, "120") == 0)
          nBurnCPUSpeedAdjust = 0x0120;
@@ -453,6 +512,70 @@ static void check_variables(void)
       else if (strcmp(var.value, "200") == 0)
          nBurnCPUSpeedAdjust = 0x0200;
    }
+
+   var.key             = "fba2012cps1_frameskip";
+   var.value           = NULL;
+   last_frameskip_type = frameskip_type;
+   frameskip_type      = 0;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      if (strcmp(var.value, "auto") == 0)
+         frameskip_type = 1;
+      else if (strcmp(var.value, "manual") == 0)
+         frameskip_type = 2;
+   }
+
+   var.key             = "fba2012cps1_frameskip_threshold";
+   var.value           = NULL;
+   frameskip_threshold = 33;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+      frameskip_threshold = strtol(var.value, NULL, 10);
+
+   /* (Re)Initialise frameskipping, if required */
+   if ((frameskip_type != last_frameskip_type) || first_run)
+      init_frameskip();
+
+   if (!first_run)
+   {
+      struct GameInp* pgi = GameInp;
+      bool last_diagnostic_input_active;
+
+      var.key                      = "fba2012cps1_diagnostics";
+      var.value                    = NULL;
+      last_diagnostic_input_active = diagnostic_input_active;
+      diagnostic_input_active      = false;
+
+      if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+         if (!strcmp(var.value, "enabled"))
+            diagnostic_input_active = true;
+
+      if (diagnostic_input_active &&
+          (diagnostic_input_active != last_diagnostic_input_active))
+      {
+         unsigned i;
+
+         for (i = 0; i < nGameInpCount; i++, pgi++)
+         {
+            if (pgi->Input.Switch.nCode != FBK_F2)
+               continue;
+
+            pgi->Input.nVal = 1;
+            *(pgi->Input.pVal) = pgi->Input.nVal;
+
+            break;
+         }
+
+         nBurnLayer = 0xff;
+         pBurnSoundOut = g_audio_buf;
+         nBurnSoundRate = AUDIO_SAMPLERATE;
+         //nBurnSoundLen = AUDIO_SEGMENT_LENGTH;
+         nCurrentFrame++;
+
+         BurnDrvFrame();
+      }
+   }
 }
 
 void retro_run(void)
@@ -460,6 +583,7 @@ void retro_run(void)
    int width, height;
    BurnDrvGetVisibleSize(&width, &height);
    pBurnDraw = (uint8_t*)g_fba_frame;
+   nSkipFrame = 0;
 
    poll_input();
 
@@ -467,10 +591,7 @@ void retro_run(void)
    pBurnSoundOut = g_audio_buf;
    nBurnSoundRate = AUDIO_SAMPLERATE;
    //nBurnSoundLen = AUDIO_SEGMENT_LENGTH;
-   nCurrentFrame++;
 
-
-   BurnDrvFrame();
    unsigned drv_flags = BurnDrvGetFlags();
    uint32_t height_tmp = height;
    size_t pitch_size = nBurnBpp == 2 ? sizeof(uint16_t) : sizeof(uint32_t);
@@ -488,12 +609,55 @@ void retro_run(void)
          nBurnPitch = width * pitch_size;
    }
 
-   video_cb(g_fba_frame, width, height, nBurnPitch);
+   nCurrentFrame++;
+
+   /* Check whether current frame should
+    * be skipped */
+   if ((frameskip_type > 0) && retro_audio_buff_active)
+   {
+      switch (frameskip_type)
+      {
+         case 1: /* auto */
+            nSkipFrame = retro_audio_buff_underrun ? 1 : 0;
+            break;
+         case 2: /* manual */
+            nSkipFrame = (retro_audio_buff_occupancy < frameskip_threshold) ? 1 : 0;
+            break;
+         default:
+            nSkipFrame = 0;
+            break;
+      }
+
+      if (!nSkipFrame || (frameskip_counter >= FRAMESKIP_MAX))
+      {
+         nSkipFrame        = 0;
+         frameskip_counter = 0;
+      }
+      else
+         frameskip_counter++;
+   }
+
+   /* If frameskip settings have changed, update
+    * frontend audio latency */
+   if (update_audio_latency)
+   {
+      environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY,
+            &audio_latency);
+      update_audio_latency = false;
+   }
+
+   BurnDrvFrame();
+
+   if (!nSkipFrame)
+      video_cb(g_fba_frame, width, height, nBurnPitch);
+   else
+      video_cb(NULL, width, height, nBurnPitch);
+
    audio_batch_cb(g_audio_buf, nBurnSoundLen);
 
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
-      check_variables();
+      check_variables(false);
 }
 
 static uint8_t *write_state_ptr;
@@ -563,7 +727,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    BurnDrvGetVisibleSize(&width, &height);
    unsigned maximum = width > height ? width : height;
    struct retro_game_geometry geom = { (unsigned)width, (unsigned)height, maximum, maximum };
-   struct retro_system_timing timing = { 59.629403, 59.629403 * AUDIO_SEGMENT_LENGTH };
+   struct retro_system_timing timing = { VIDEO_REFRESH_RATE, VIDEO_REFRESH_RATE * AUDIO_SEGMENT_LENGTH };
 
    info->geometry = geom;
    info->timing   = timing;
@@ -615,7 +779,8 @@ static bool fba_init(unsigned driver, const char *game_zip_name)
          rotation = 0;
    }
 
-   fprintf(stderr, "Game: %s\n", game_zip_name);
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "[FBA] Game: %s\n", game_zip_name);
 
    environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotation);
 
@@ -626,15 +791,17 @@ static bool fba_init(unsigned driver, const char *game_zip_name)
    {
       enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
 
-      if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt)) 
-         fprintf(stderr, "Frontend supports XRGB888 - will use that instead of XRGB1555.\n");
+      if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+         if (log_cb)
+            log_cb(RETRO_LOG_INFO, "Frontend supports XRGB888 - will use that instead of XRGB1555.\n");
    }
    else
    {
       enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
 
-      if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt)) 
-         fprintf(stderr, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
+      if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+         if (log_cb)
+            log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
    }
 #endif
 
@@ -721,12 +888,12 @@ bool retro_load_game(const struct retro_game_info *info)
 
       retval = true;
    }
-   else
-      fprintf(stderr, "[FBA] Cannot find driver.\n");
+   else if (log_cb)
+      log_cb(RETRO_LOG_ERROR, "[FBA] Cannot find driver.\n");
 
    InpDIPSWInit();
 
-   check_variables();
+   check_variables(true);
 
    return retval;
 }
@@ -822,15 +989,18 @@ static bool init_input(void)
    INT32	genre		= BurnDrvGetGenreFlags();
    INT32	hardware	= BurnDrvGetHardwareCode();
 
-   fprintf(stderr, "has_analog: %d\n", has_analog);
-   if(parentrom)
-	   fprintf(stderr, "parentrom: %s\n", parentrom);
-   if(boardrom)
-	   fprintf(stderr, "boardrom: %s\n", boardrom);
-   if(drvname)
-	   fprintf(stderr, "drvname: %s\n", drvname);
-   fprintf(stderr, "genre: %d\n", genre);
-   fprintf(stderr, "hardware: %d\n", hardware);
+   if (log_cb)
+   {
+      log_cb(RETRO_LOG_INFO, "[FBA] has_analog: %d\n", has_analog);
+      if(parentrom)
+         log_cb(RETRO_LOG_INFO, "[FBA] parentrom: %s\n", parentrom);
+      if(boardrom)
+         log_cb(RETRO_LOG_INFO, "[FBA] boardrom: %s\n", boardrom);
+      if(drvname)
+         log_cb(RETRO_LOG_INFO, "[FBA] drvname: %s\n", drvname);
+      log_cb(RETRO_LOG_INFO, "[FBA] genre: %d\n", genre);
+      log_cb(RETRO_LOG_INFO, "[FBA] hardware: %d\n", hardware);
+   }
 
    /* initialization */
    struct BurnInputInfo bii;
@@ -845,6 +1015,10 @@ static bool init_input(void)
    key_map bind_map[BIND_MAP_COUNT];
    unsigned counter = 0;
    unsigned incr = 0;
+
+   bind_map[PTR_INCR].bii_name = "Diagnostic";
+   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_R3;
+   bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "P1 Coin";
    bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_SELECT;
@@ -1732,17 +1906,25 @@ static bool init_input(void)
          if (!value_found)
             continue;
 
-         fprintf(stderr, "%s - assigned to key: %s, port: %d.\n", bii.szName, print_label(keybinds[pgi->Input.Switch.nCode][0]),keybinds[pgi->Input.Switch.nCode][1]);
-         fprintf(stderr, "%s - has nSwitch.nCode: %x.\n", bii.szName, pgi->Input.Switch.nCode);
+         if (log_cb)
+         {
+            log_cb(RETRO_LOG_INFO, "%s - assigned to key: %s, port: %d.\n", bii.szName, print_label(keybinds[pgi->Input.Switch.nCode][0]),keybinds[pgi->Input.Switch.nCode][1]);
+            log_cb(RETRO_LOG_INFO, "%s - has nSwitch.nCode: %x.\n", bii.szName, pgi->Input.Switch.nCode);
+         }
          break;
       }
 
       if(!value_found)
       {
-         fprintf(stderr, "WARNING! Button unaccounted for: [%s].\n", bii.szName);
-         fprintf(stderr, "%s - has nSwitch.nCode: %x.\n", bii.szName, pgi->Input.Switch.nCode);
+         if (log_cb)
+         {
+            log_cb(RETRO_LOG_WARN, "Button unaccounted for: [%s].\n", bii.szName);
+            log_cb(RETRO_LOG_WARN, "%s - has nSwitch.nCode: %x.\n", bii.szName, pgi->Input.Switch.nCode);
+         }
       }
    }
+
+   environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, default_gamepad);
 
    return has_analog;
 }
