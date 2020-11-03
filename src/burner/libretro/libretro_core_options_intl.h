@@ -77,7 +77,7 @@ struct retro_core_option_definition option_defs_tr[] = {
    {
       "fba2012cps1_cpu_speed_adjust",
       "CPU Hızı (%)",
-      "Emüle edilmiş CPU'nun hız aşırtmasını sağlar. Yavaşlamayı azaltabilir, ancak hatalara neden olabilir.",
+      "Öykünmüş CPU'nun hız aşırtmasını sağlar. Yavaşlamayı azaltabilir, ancak hatalara neden olabilir.",
       {
          { "100", NULL },
          { "110", NULL },
