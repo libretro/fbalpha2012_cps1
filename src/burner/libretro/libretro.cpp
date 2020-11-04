@@ -13,6 +13,8 @@
 
 static unsigned int BurnDrvGetIndexByName(const char* name);
 
+extern INT32 EnableHiscores;
+
 #define STAT_NOFIND	0
 #define STAT_OK		1
 #define STAT_CRC	   2
@@ -60,6 +62,8 @@ void retro_set_environment(retro_environment_t cb)
 }
 
 char g_rom_dir[1024];
+char g_save_dir[1024];
+char g_system_dir[1024];
 static bool driver_inited;
 static bool diagnostic_input_active;
 
@@ -513,6 +517,14 @@ static void check_variables(bool first_run)
          nBurnCPUSpeedAdjust = 0x0200;
    }
 
+   var.key             = "fba2012cps1_hiscores";
+   var.value           = NULL;
+   EnableHiscores      = 0;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+      if (strcmp(var.value, "enabled") == 0)
+         EnableHiscores = 1;
+
    var.key             = "fba2012cps1_frameskip";
    var.value           = NULL;
    last_frameskip_type = frameskip_type;
@@ -873,12 +885,41 @@ bool retro_load_game(const struct retro_game_info *info)
    extract_basename(basename, info->path, sizeof(basename));
    extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
 
+   const char *dir = NULL;
+   /* If save directory is defined use it... */
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &dir) && dir)
+   {
+      strncpy(g_save_dir, dir, sizeof(g_save_dir));
+      log_cb(RETRO_LOG_INFO, "Setting save dir to %s\n", g_save_dir);
+   }
+   else
+   {
+      /* ...otherwise use ROM directory */
+      strncpy(g_save_dir, g_rom_dir, sizeof(g_save_dir));
+      log_cb(RETRO_LOG_ERROR, "Save dir not defined => use roms dir %s\n", g_save_dir);
+   }
+
+   /* If system directory is defined use it... */
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) && dir)
+   {
+      strncpy(g_system_dir, dir, sizeof(g_system_dir));
+      log_cb(RETRO_LOG_INFO, "Setting system dir to %s\n", g_system_dir);
+   }
+   else
+   {
+      /* ...otherwise use ROM directory */
+      strncpy(g_system_dir, g_rom_dir, sizeof(g_system_dir));
+      log_cb(RETRO_LOG_ERROR, "System dir not defined => use roms dir %s\n", g_system_dir);
+   }
+
    unsigned i = BurnDrvGetIndexByName(basename);
    if (i < nBurnDrvCount)
    {
       pBurnSoundOut = g_audio_buf;
       nBurnSoundRate = AUDIO_SAMPLERATE;
       nBurnSoundLen = AUDIO_SEGMENT_LENGTH;
+
+      check_variables(true);
 
       if (!fba_init(i, basename))
          return false;
@@ -892,8 +933,6 @@ bool retro_load_game(const struct retro_game_info *info)
       log_cb(RETRO_LOG_ERROR, "[FBA] Cannot find driver.\n");
 
    InpDIPSWInit();
-
-   check_variables(true);
 
    return retval;
 }
