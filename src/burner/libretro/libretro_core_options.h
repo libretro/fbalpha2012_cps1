@@ -70,6 +70,17 @@ struct retro_core_option_definition option_defs_us[] = {
       "100"
    },
    {
+      "fba2012cps1_hiscores",
+      "Hiscores",
+      "Enables saving of high scores in supported games. Requires the file 'hiscore.dat' to be placed in your system/fbalpha2012/ folder.",
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "enabled"
+   },
+   {
       "fba2012cps1_frameskip",
       "Frameskip",
       "Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Manual' utilises the 'Frameskip Threshold (%)' setting.",
@@ -109,7 +120,7 @@ struct retro_core_option_definition option_defs_us[] = {
    {
       "fba2012cps1_diagnostics",
       "Diagnostic Input",
-      "Toggle ON then resume content to open service menu",
+      "Toggle ON then resume content to open service menu.",
       {
          { "disabled", NULL },
          { "enabled",  NULL },

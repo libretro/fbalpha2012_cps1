@@ -230,7 +230,8 @@ void HiscoreInit()
 #else
    char slash = '/';
 #endif
-	snprintf(szDatFilename, sizeof(szDatFilename), "%s%chiscore.dat", g_rom_dir, slash);
+	snprintf(szDatFilename, sizeof(szDatFilename), "%s%cfbalpha2012%chiscore.dat",
+			g_system_dir, slash, slash);
 #else
 	_stprintf(szDatFilename, _T("%shiscore.dat"), szAppHiscorePath);
 #endif
@@ -285,7 +286,7 @@ void HiscoreInit()
 	
 	TCHAR szFilename[MAX_PATH];
 #ifdef __LIBRETRO__
-	snprintf(szFilename, sizeof(szFilename), "%s%c%s.hi", g_rom_dir, slash, BurnDrvGetText(DRV_NAME));
+	snprintf(szFilename, sizeof(szFilename), "%s%c%s.hi", g_save_dir, slash, BurnDrvGetText(DRV_NAME));
 #else
 	_stprintf(szFilename, _T("%s%s.hi"), szAppHiscorePath, BurnDrvGetText(DRV_NAME));
 #endif
@@ -418,7 +419,7 @@ void HiscoreExit(void)
 #else
    char slash = '/';
 #endif
-	snprintf(szFilename, sizeof(szFilename), "%s%c%s.hi", g_rom_dir, slash, BurnDrvGetText(DRV_NAME));
+	snprintf(szFilename, sizeof(szFilename), "%s%c%s.hi", g_save_dir, slash, BurnDrvGetText(DRV_NAME));
 #else
 	_stprintf(szFilename, _T("%s%s.hi"), szAppHiscorePath, BurnDrvGetText(DRV_NAME));
 #endif
