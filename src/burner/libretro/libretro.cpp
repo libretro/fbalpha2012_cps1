@@ -144,6 +144,48 @@ static void init_frameskip(void)
    update_audio_latency = true;
 }
 
+/* Low pass audio filter */
+
+static bool low_pass_enabled       = false;
+static int32_t low_pass_range      = 0;
+/* Previous samples */
+static int32_t low_pass_left_prev  = 0;
+static int32_t low_pass_right_prev = 0;
+
+static void low_pass_filter_stereo(int16_t *buf, int length)
+{
+   int samples            = length;
+   int16_t *out           = buf;
+
+   /* Restore previous samples */
+   int32_t low_pass_left  = low_pass_left_prev;
+   int32_t low_pass_right = low_pass_right_prev;
+
+   /* Single-pole low-pass filter (6 dB/octave) */
+   int32_t factor_a       = low_pass_range;
+   int32_t factor_b       = 0x10000 - factor_a;
+
+   do
+   {
+      /* Apply low-pass filter */
+      low_pass_left  = (low_pass_left  * factor_a) + (*out       * factor_b);
+      low_pass_right = (low_pass_right * factor_a) + (*(out + 1) * factor_b);
+
+      /* 16.16 fixed point */
+      low_pass_left  >>= 16;
+      low_pass_right >>= 16;
+
+      /* Update sound buffer */
+      *out++ = (int16_t)low_pass_left;
+      *out++ = (int16_t)low_pass_right;
+   }
+   while (--samples);
+
+   /* Save last samples for next frame */
+   low_pass_left_prev  = low_pass_left;
+   low_pass_right_prev = low_pass_right;
+}
+
 // FBA stubs
 unsigned ArcadeJoystick;
 
@@ -444,6 +486,11 @@ void retro_init()
    retro_audio_buff_underrun  = false;
    audio_latency              = 0;
    update_audio_latency       = false;
+
+   low_pass_enabled           = false;
+   low_pass_range             = 0;
+   low_pass_left_prev         = 0;
+   low_pass_right_prev        = 0;
 }
 
 void retro_deinit(void)
@@ -480,6 +527,9 @@ void retro_reset(void)
    nCurrentFrame++;
 
    BurnDrvFrame();
+
+   low_pass_left_prev  = 0;
+   low_pass_right_prev = 0;
 }
 
 static void check_variables(bool first_run)
@@ -524,6 +574,21 @@ static void check_variables(bool first_run)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
       if (strcmp(var.value, "enabled") == 0)
          EnableHiscores = 1;
+
+   var.key             = "fba2012cps1_lowpass_filter";
+   var.value           = NULL;
+   low_pass_enabled    = false;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+      if (strcmp(var.value, "enabled") == 0)
+         low_pass_enabled = true;
+
+   var.key             = "fba2012cps1_lowpass_range";
+   var.value           = NULL;
+   low_pass_range      = (60 * 65536) / 100;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+      low_pass_range = (strtol(var.value, NULL, 10) * 65536) / 100;
 
    var.key             = "fba2012cps1_frameskip";
    var.value           = NULL;
@@ -664,6 +729,9 @@ void retro_run(void)
       video_cb(g_fba_frame, width, height, nBurnPitch);
    else
       video_cb(NULL, width, height, nBurnPitch);
+
+   if (low_pass_enabled)
+      low_pass_filter_stereo(g_audio_buf, nBurnSoundLen);
 
    audio_batch_cb(g_audio_buf, nBurnSoundLen);
 
