@@ -81,6 +81,28 @@ struct retro_core_option_definition option_defs_us[] = {
       "disabled"
    },
    {
+      "fba2012cps1_aspect",
+      "Core-Provided Aspect Ratio",
+      "Selects the preferred content aspect ratio. This will only apply when RetroArch's aspect ratio is set to 'Core provided' in the Video settings.",
+      {
+         { "DAR", NULL },
+         { "PAR", NULL },
+         { NULL, NULL },
+      },
+      "DAR"
+   },
+   {
+      "fba2012cps1_auto_rotate",
+      "Rotate Vertically Aligned Games (Restart)",
+      "Automatically rotate the display when running vertically aligned games. When disabled, D-Pad input will be rotated to match on-screen directions.",
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "enabled"
+   },
+   {
       "fba2012cps1_lowpass_filter",
       "Audio Filter",
       "Enables a low pass audio filter to soften the 'harsh' sound of some arcade games.",

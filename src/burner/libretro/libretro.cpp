@@ -37,8 +37,12 @@ static unsigned g_rom_count;
 #define AUDIO_SEGMENT_LENGTH 534 // <-- Hardcoded value that corresponds well to 32kHz audio.
 #define VIDEO_REFRESH_RATE 59.629403f
 
-static uint32_t *g_fba_frame = NULL;
+static uint16_t *g_fba_frame      = NULL;
+static uint16_t *g_fba_rotate_buf = NULL;
 static int16_t g_audio_buf[AUDIO_SEGMENT_LENGTH * 2];
+
+static uint16_t rotate_buf_width  = 0;
+static uint16_t rotate_buf_margin = 0;
 
 // libretro globals
 
@@ -64,8 +68,13 @@ void retro_set_environment(retro_environment_t cb)
 char g_rom_dir[1024];
 char g_save_dir[1024];
 char g_system_dir[1024];
-static bool driver_inited;
-static bool diagnostic_input_active;
+static bool driver_inited           = false;
+static bool diagnostic_input_active = false;
+static bool core_aspect_par         = false;
+static bool display_auto_rotate     = true;
+static bool display_rotated         = false;
+static bool hw_rotate_enabled       = false;
+static bool input_rotated           = false;
 
 void retro_get_system_info(struct retro_system_info *info)
 {
@@ -216,7 +225,6 @@ UINT8* CDEmuReadQChannel() { return 0; }
 INT32 CDEmuGetSoundBuffer(INT16* buffer, INT32 samples) { return 0; }
 #endif
 
-static unsigned char nPrevDIPSettings[4];
 static int nDIPOffset;
 
 static void InpDIPSWGetOffset (void)
@@ -260,12 +268,11 @@ void InpDIPSWResetDIPs (void)
 static int InpDIPSWInit()
 {
    BurnDIPInfo bdi;
-   struct GameInp *pgi;
 
    InpDIPSWGetOffset();
    InpDIPSWResetDIPs();
 
-   for(int i = 0, j = 0; BurnDrvGetDIPInfo(&bdi, i) == 0; i++)
+   for(int i = 0; BurnDrvGetDIPInfo(&bdi, i) == 0; i++)
    {
       /* 0xFE is the beginning label for a DIP switch entry */
       /* 0xFD are region DIP switches */
@@ -289,9 +296,6 @@ static int InpDIPSWInit()
 
             l++;
          }
-         pgi = GameInp + bdi.nInput + nDIPOffset;
-         nPrevDIPSettings[j] = pgi->Input.Constant.nConst;
-         j++;
       }
    }
 
@@ -473,7 +477,6 @@ void retro_init()
    else
       log_cb = NULL;
 
-   g_fba_frame = (uint32_t*)malloc(0x400 * 0x400 * sizeof(uint32_t));
    BurnLibInit();
 
    diagnostic_input_active    = false;
@@ -498,11 +501,16 @@ void retro_deinit(void)
    if (driver_inited)
       BurnDrvExit();
    driver_inited = false;
+   GameInpExit();
    BurnLibExit();
 
    if (g_fba_frame)
       free(g_fba_frame);
    g_fba_frame = NULL;
+
+   if (g_fba_rotate_buf)
+      free(g_fba_rotate_buf);
+   g_fba_rotate_buf = NULL;
 }
 
 void retro_reset(void)
@@ -535,6 +543,7 @@ void retro_reset(void)
 static void check_variables(bool first_run)
 {
    struct retro_variable var = {0};
+   bool last_core_aspect_par;
    unsigned last_frameskip_type;
 
    var.key             = "fba2012cps1_cpu_speed_adjust";
@@ -574,6 +583,33 @@ static void check_variables(bool first_run)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
       if (strcmp(var.value, "enabled") == 0)
          EnableHiscores = 1;
+
+   var.key              = "fba2012cps1_aspect";
+   var.value            = NULL;
+   last_core_aspect_par = core_aspect_par;
+   core_aspect_par      = false;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+      if (strcmp(var.value, "PAR") == 0)
+         core_aspect_par = true;
+
+   if (!first_run && (core_aspect_par != last_core_aspect_par))
+   {
+      struct retro_system_av_info av_info;
+      retro_get_system_av_info(&av_info);
+      environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &av_info);
+   }
+
+   if (first_run)
+   {
+      var.key             = "fba2012cps1_auto_rotate";
+      var.value           = NULL;
+      display_auto_rotate = true;
+
+      if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+         if (strcmp(var.value, "disabled") == 0)
+            display_auto_rotate = false;
+   }
 
    var.key             = "fba2012cps1_lowpass_filter";
    var.value           = NULL;
@@ -658,8 +694,9 @@ static void check_variables(bool first_run)
 void retro_run(void)
 {
    int width, height;
-   BurnDrvGetVisibleSize(&width, &height);
+   BurnDrvGetFullSize(&width, &height);
    pBurnDraw = (uint8_t*)g_fba_frame;
+   nBurnPitch = width * sizeof(uint16_t);
    nSkipFrame = 0;
 
    poll_input();
@@ -668,25 +705,6 @@ void retro_run(void)
    pBurnSoundOut = g_audio_buf;
    nBurnSoundRate = AUDIO_SAMPLERATE;
    //nBurnSoundLen = AUDIO_SEGMENT_LENGTH;
-
-   unsigned drv_flags = BurnDrvGetFlags();
-   uint32_t height_tmp = height;
-   size_t pitch_size = nBurnBpp == 2 ? sizeof(uint16_t) : sizeof(uint32_t);
-
-   switch (drv_flags & (BDF_ORIENTATION_FLIPPED | BDF_ORIENTATION_VERTICAL))
-   {
-      case BDF_ORIENTATION_VERTICAL:
-      case BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED:
-         nBurnPitch = height * pitch_size;
-         height = width;
-         width = height_tmp;
-         break;
-      case BDF_ORIENTATION_FLIPPED:
-      default:
-         nBurnPitch = width * pitch_size;
-   }
-
-   nCurrentFrame++;
 
    /* Check whether current frame should
     * be skipped */
@@ -723,12 +741,35 @@ void retro_run(void)
       update_audio_latency = false;
    }
 
+   nCurrentFrame++;
    BurnDrvFrame();
 
-   if (!nSkipFrame)
-      video_cb(g_fba_frame, width, height, nBurnPitch);
+   if (!display_rotated || hw_rotate_enabled)
+   {
+      if (!nSkipFrame)
+         video_cb(g_fba_frame, width, height, nBurnPitch);
+      else
+         video_cb(NULL, width, height, nBurnPitch);
+   }
    else
-      video_cb(NULL, width, height, nBurnPitch);
+   {
+      /* Perform software-based display rotation */
+      if (!nSkipFrame)
+      {
+         uint16_t *in_ptr  = g_fba_frame;
+         uint16_t *out_ptr = g_fba_rotate_buf;
+         size_t x, y;
+
+         for (y = 0; y < height; y++)
+            for (x = 0; x < width; x++)
+               *(out_ptr + (y + rotate_buf_margin) + (((width - 1) - x) * rotate_buf_width)) =
+                     *(in_ptr + x + (y * width));
+
+         video_cb(g_fba_rotate_buf, rotate_buf_width, width, rotate_buf_width * sizeof(uint16_t));
+      }
+      else
+         video_cb(NULL, rotate_buf_width, width, rotate_buf_width * sizeof(uint16_t));
+   }
 
    if (low_pass_enabled)
       low_pass_filter_stereo(g_audio_buf, nBurnSoundLen);
@@ -804,13 +845,49 @@ void retro_cheat_set(unsigned, bool, const char*) {}
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
    INT32 width, height;
-   BurnDrvGetVisibleSize(&width, &height);
-   unsigned maximum = width > height ? width : height;
-   struct retro_game_geometry geom = { (unsigned)width, (unsigned)height, maximum, maximum };
-   struct retro_system_timing timing = { VIDEO_REFRESH_RATE, VIDEO_REFRESH_RATE * AUDIO_SEGMENT_LENGTH };
 
-   info->geometry = geom;
-   info->timing   = timing;
+   memset(info, 0, sizeof(*info));
+
+   BurnDrvGetVisibleSize(&width, &height);
+
+   if (display_rotated && !hw_rotate_enabled)
+   {
+      info->geometry.base_width   = (unsigned)rotate_buf_width;
+      info->geometry.base_height  = (unsigned)height;
+      info->geometry.max_width    = (unsigned)rotate_buf_width;
+      info->geometry.max_height   = (unsigned)height;
+   }
+   else
+   {
+      unsigned drv_flags = BurnDrvGetFlags();
+
+      if (!display_auto_rotate &&
+          (drv_flags & BDF_ORIENTATION_VERTICAL))
+      {
+         info->geometry.base_width   = (unsigned)height;
+         info->geometry.base_height  = (unsigned)width;
+         info->geometry.max_width    = (unsigned)height;
+         info->geometry.max_height   = (unsigned)width;
+      }
+      else
+      {
+         info->geometry.base_width   = (unsigned)width;
+         info->geometry.base_height  = (unsigned)height;
+         info->geometry.max_width    = (unsigned)width;
+         info->geometry.max_height   = (unsigned)height;
+      }
+   }
+
+   if (!core_aspect_par)
+#if defined(DINGUX)
+      info->geometry.aspect_ratio = (4.0f / 3.0f);
+#else
+      info->geometry.aspect_ratio = display_rotated ?
+            (3.0f / 4.0f) : (4.0f / 3.0f);
+#endif
+
+   info->timing.fps               = VIDEO_REFRESH_RATE;
+   info->timing.sample_rate       = VIDEO_REFRESH_RATE * AUDIO_SEGMENT_LENGTH;
 }
 
 int VidRecalcPal()
@@ -831,58 +908,66 @@ static bool fba_init(unsigned driver, const char *game_zip_name)
 
    BurnDrvInit();
 
-   int width, height;
-   BurnDrvGetVisibleSize(&width, &height);
-   unsigned drv_flags = BurnDrvGetFlags();
-   size_t pitch_size = nBurnBpp == 2 ? sizeof(uint16_t) : sizeof(uint32_t);
-   if (drv_flags & BDF_ORIENTATION_VERTICAL)
-      nBurnPitch = height * pitch_size;
-   else
-      nBurnPitch = width * pitch_size;
-
-   unsigned rotation;
-   switch (drv_flags & (BDF_ORIENTATION_FLIPPED | BDF_ORIENTATION_VERTICAL))
-   {
-      case BDF_ORIENTATION_VERTICAL:
-         rotation = 1;
-         break;
-
-      case BDF_ORIENTATION_FLIPPED:
-         rotation = 2;
-         break;
-
-      case BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED:
-         rotation = 3;
-         break;
-
-      default:
-         rotation = 0;
-   }
-
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "[FBA] Game: %s\n", game_zip_name);
 
-   environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotation);
+   int width, height;
+   BurnDrvGetFullSize(&width, &height);
+   nBurnPitch = width * sizeof(uint16_t);
+
+   unsigned drv_flags = BurnDrvGetFlags();
+
+   if (display_auto_rotate)
+   {
+      display_rotated = (drv_flags & BDF_ORIENTATION_VERTICAL);
+      input_rotated   = false;
+   }
+   else
+   {
+      display_rotated = false;
+      input_rotated   = (drv_flags & BDF_ORIENTATION_VERTICAL);
+   }
+
+   if (display_rotated)
+   {
+      unsigned rotation = 1;
+      hw_rotate_enabled = environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rotation);
+
+      if (!hw_rotate_enabled)
+      {
+         uint16_t rotate_buf_height = (uint16_t)width;
+#if defined(DINGUX)
+         /* OpenDingux platforms do not have proper
+          * aspect ratio control - we can only select
+          * between PAR and 'fullscreen stretched'.
+          * Since vertical CPS games are meant to be
+          * displayed at a ratio of 3:4, either option
+          * produces severe visual distortion. We work
+          * around this by padding the rotated image, so
+          * the resultant rotation buffer is 'square'
+          * (this gives the correct 4:3 ratio when
+          * stretched to fit the screen)
+          * > Note: on OpenDingux, always round video
+          *   width up to the nearest multiple of 16 */
+         rotate_buf_width  = (rotate_buf_height + 0xF) & ~0xF;
+         rotate_buf_margin = (rotate_buf_width - height) >> 1;
+#else
+         rotate_buf_width  = height;
+         rotate_buf_margin = 0;
+#endif
+         g_fba_rotate_buf = (uint16_t*)calloc(1,
+               rotate_buf_width * rotate_buf_height * sizeof(uint16_t));
+      }
+   }
 
    VidRecalcPal();
 
 #ifdef FRONTEND_SUPPORTS_RGB565
-   if(nBurnBpp == 4)
-   {
-      enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
 
-      if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
-         if (log_cb)
-            log_cb(RETRO_LOG_INFO, "Frontend supports XRGB888 - will use that instead of XRGB1555.\n");
-   }
-   else
-   {
-      enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
-
-      if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
-         if (log_cb)
-            log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
-   }
+   if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
 #endif
 
    return true;
@@ -994,6 +1079,11 @@ bool retro_load_game(const struct retro_game_info *info)
 
       driver_inited = true;
       analog_controls_enabled = init_input();
+
+      /* Note: The video buffer has to be oversized
+       * like this (i.e. not just width x height) because
+       * some games actually write into the excess space... */
+      g_fba_frame = (uint16_t*)malloc(0x400 * 0x400 * sizeof(uint16_t));
 
       retval = true;
    }
@@ -1140,19 +1230,19 @@ static bool init_input(void)
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "P1 Up";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_UP;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_RIGHT : RETRO_DEVICE_ID_JOYPAD_UP;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "P1 Down";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_DOWN;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_LEFT : RETRO_DEVICE_ID_JOYPAD_DOWN;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "P1 Left";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_LEFT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_UP : RETRO_DEVICE_ID_JOYPAD_LEFT;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "P1 Right";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_RIGHT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_DOWN : RETRO_DEVICE_ID_JOYPAD_RIGHT;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "P1 Attack";
@@ -1379,19 +1469,19 @@ static bool init_input(void)
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "P2 Up";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_UP;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_RIGHT : RETRO_DEVICE_ID_JOYPAD_UP;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "P2 Down";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_DOWN;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_LEFT : RETRO_DEVICE_ID_JOYPAD_DOWN;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "P2 Left";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_LEFT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_UP : RETRO_DEVICE_ID_JOYPAD_LEFT;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "P2 Right";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_RIGHT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_DOWN : RETRO_DEVICE_ID_JOYPAD_RIGHT;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "P2 Attack";
@@ -1581,19 +1671,19 @@ static bool init_input(void)
    bind_map[PTR_INCR].nCode[1] = 2;
 
    bind_map[PTR_INCR].bii_name = "P3 Up";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_UP;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_RIGHT : RETRO_DEVICE_ID_JOYPAD_UP;
    bind_map[PTR_INCR].nCode[1] = 2;
 
    bind_map[PTR_INCR].bii_name = "P3 Down";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_DOWN;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_LEFT : RETRO_DEVICE_ID_JOYPAD_DOWN;
    bind_map[PTR_INCR].nCode[1] = 2;
 
    bind_map[PTR_INCR].bii_name = "P3 Left";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_LEFT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_UP : RETRO_DEVICE_ID_JOYPAD_LEFT;
    bind_map[PTR_INCR].nCode[1] = 2;
 
    bind_map[PTR_INCR].bii_name = "P3 Right";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_RIGHT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_DOWN : RETRO_DEVICE_ID_JOYPAD_RIGHT;
    bind_map[PTR_INCR].nCode[1] = 2;
 
    bind_map[PTR_INCR].bii_name = "P3 Attack";
@@ -1660,19 +1750,19 @@ static bool init_input(void)
    bind_map[PTR_INCR].nCode[1] = 3;
 
    bind_map[PTR_INCR].bii_name = "P4 Up";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_UP;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_RIGHT : RETRO_DEVICE_ID_JOYPAD_UP;
    bind_map[PTR_INCR].nCode[1] = 3;
 
    bind_map[PTR_INCR].bii_name = "P4 Down";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_DOWN;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_LEFT : RETRO_DEVICE_ID_JOYPAD_DOWN;
    bind_map[PTR_INCR].nCode[1] = 3;
 
    bind_map[PTR_INCR].bii_name = "P4 Left";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_LEFT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_UP : RETRO_DEVICE_ID_JOYPAD_LEFT;
    bind_map[PTR_INCR].nCode[1] = 3;
 
    bind_map[PTR_INCR].bii_name = "P4 Right";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_RIGHT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_DOWN : RETRO_DEVICE_ID_JOYPAD_RIGHT;
    bind_map[PTR_INCR].nCode[1] = 3;
 
    bind_map[PTR_INCR].bii_name = "P4 Attack";
@@ -1743,19 +1833,19 @@ static bool init_input(void)
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "Up";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_UP;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_RIGHT : RETRO_DEVICE_ID_JOYPAD_UP;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "Down";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_DOWN;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_LEFT : RETRO_DEVICE_ID_JOYPAD_DOWN;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "Left";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_LEFT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_UP : RETRO_DEVICE_ID_JOYPAD_LEFT;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "Right";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_RIGHT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_DOWN : RETRO_DEVICE_ID_JOYPAD_RIGHT;
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "Start 2";
@@ -1805,19 +1895,19 @@ static bool init_input(void)
    bind_map[PTR_INCR].nCode[1] = 0;
 
    bind_map[PTR_INCR].bii_name = "Up (Cocktail)";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_UP;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_RIGHT : RETRO_DEVICE_ID_JOYPAD_UP;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "Down (Cocktail)";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_DOWN;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_LEFT : RETRO_DEVICE_ID_JOYPAD_DOWN;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "Left (Cocktail)";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_LEFT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_UP : RETRO_DEVICE_ID_JOYPAD_LEFT;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "Right (Cocktail)";
-   bind_map[PTR_INCR].nCode[0] = RETRO_DEVICE_ID_JOYPAD_RIGHT;
+   bind_map[PTR_INCR].nCode[0] = input_rotated ? RETRO_DEVICE_ID_JOYPAD_DOWN : RETRO_DEVICE_ID_JOYPAD_RIGHT;
    bind_map[PTR_INCR].nCode[1] = 1;
 
    bind_map[PTR_INCR].bii_name = "Fire 1 (Cocktail)";
