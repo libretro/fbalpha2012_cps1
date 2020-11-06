@@ -956,7 +956,7 @@ static bool fba_init(unsigned driver, const char *game_zip_name)
          rotate_buf_margin = 0;
 #endif
          g_fba_rotate_buf = (uint16_t*)calloc(1,
-               rotate_buf_width * rotate_buf_height * sizeof(uint16_t));
+               (uint32_t)rotate_buf_width * (uint32_t)rotate_buf_height * sizeof(uint16_t));
       }
    }
 
