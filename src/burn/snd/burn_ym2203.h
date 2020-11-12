@@ -17,8 +17,6 @@ void BurnYM2203Exit();
 extern void (*BurnYM2203Update)(INT16* pSoundBuf, INT32 nSegmentEnd);
 void BurnYM2203Scan(INT32 nAction, INT32* pnMin);
 
-extern INT32 bYM2203UseSeperateVolumes;
-
 #define BURN_SND_YM2203_YM2203_ROUTE		0
 #define BURN_SND_YM2203_AY8910_ROUTE_1		1
 #define BURN_SND_YM2203_AY8910_ROUTE_2		2
