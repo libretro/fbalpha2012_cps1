@@ -263,10 +263,6 @@ void HiscoreInit()
 						HiscoreMemRange[nHiscoreNumRanges].Data = (UINT8*)malloc(HiscoreMemRange[nHiscoreNumRanges].NumBytes);
 						memset(HiscoreMemRange[nHiscoreNumRanges].Data, 0, HiscoreMemRange[nHiscoreNumRanges].NumBytes);
 					
-#if 1 && defined FBA_DEBUG
-						bprintf(PRINT_IMPORTANT, _T("Hi Score Memory Range %i Loaded - CPU %i, Address %x, Bytes %02x, Start Val %x, End Val %x\n"), nHiscoreNumRanges, HiscoreMemRange[nHiscoreNumRanges].nCpu, HiscoreMemRange[nHiscoreNumRanges].Address, HiscoreMemRange[nHiscoreNumRanges].NumBytes, HiscoreMemRange[nHiscoreNumRanges].StartValue, HiscoreMemRange[nHiscoreNumRanges].EndValue);
-#endif
-					
 						nHiscoreNumRanges++;
 					
 						mode = FETCH_DATA;
@@ -313,10 +309,6 @@ void HiscoreInit()
 			Offset += HiscoreMemRange[i].NumBytes;
 			
 			HiscoreMemRange[i].Loaded = 1;
-			
-#if 1 && defined FBA_DEBUG
-			bprintf(PRINT_IMPORTANT, _T("Hi Score Memory Range %i Loaded from file\n"), i);
-#endif
 		}
 		
 		if (Buffer) {
@@ -345,10 +337,6 @@ void HiscoreReset()
 			cpu_write_byte(HiscoreMemRange[i].Address, (UINT8)~HiscoreMemRange[i].StartValue);
 			if (HiscoreMemRange[i].NumBytes > 1) cpu_write_byte(HiscoreMemRange[i].Address + HiscoreMemRange[i].NumBytes - 1, (UINT8)~HiscoreMemRange[i].EndValue);
 			cpu_close();
-			
-#if 1 && defined FBA_DEBUG
-			bprintf(PRINT_IMPORTANT, _T("Hi Score Memory Range %i Initted\n"), i);
-#endif
 		}
 	}
 }
@@ -372,15 +360,9 @@ void HiscoreApply(void)
 			
 			if (Confirmed == 1) {
 				HiscoreMemRange[i].Applied = APPLIED_STATE_CONFIRMED;
-#if 1 && defined FBA_DEBUG
-				bprintf(PRINT_IMPORTANT, _T("Applied Hi Score Memory Range %i on frame number %i\n"), i, GetCurrentFrame());
-#endif
 			} else {
 				HiscoreMemRange[i].Applied = APPLIED_STATE_NONE;
 				HiscoreMemRange[i].ApplyNextFrame = 1;
-#if 1 && defined FBA_DEBUG
-				bprintf(PRINT_IMPORTANT, _T("Failed attempt to apply Hi Score Memory Range %i on frame number %i\n"), i, GetCurrentFrame());
-#endif
 			}
 		}
 		
