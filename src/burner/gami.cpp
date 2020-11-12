@@ -21,94 +21,6 @@ bool bLeftAltkeyMapped = false;
 
 // ---------------------------------------------------------------------------
 
-// Check if the left alt (menu) key is mapped
-#ifndef __LIBRETRO__
-void GameInpCheckLeftAlt()
-{
-	struct GameInp* pgi;
-	UINT32 i;
-
-	bLeftAltkeyMapped = false;
-
-	for (i = 0, pgi = GameInp; i < (nGameInpCount + nMacroCount); i++, pgi++) {
-
-		if (bLeftAltkeyMapped) {
-			break;
-		}
-
-		switch (pgi->nInput) {
-			case GIT_SWITCH:
-				if (pgi->Input.Switch.nCode == FBK_LALT) {
-					bLeftAltkeyMapped = true;
-				}
-				break;
-			case GIT_MACRO_AUTO:
-			case GIT_MACRO_CUSTOM:
-				if (pgi->Macro.nMode) {
-					if (pgi->Macro.Switch.nCode == FBK_LALT) {
-						bLeftAltkeyMapped = true;
-					}
-				}
-				break;
-
-			default:
-				continue;
-		}
-	}
-}
-
-// Check if the sytem mouse is mapped and set the cooperative level apropriately
-void GameInpCheckMouse()
-{
-	bool bMouseMapped = false;
-	struct GameInp* pgi;
-	UINT32 i;
-
-	for (i = 0, pgi = GameInp; i < (nGameInpCount + nMacroCount); i++, pgi++) {
-
-		if (bMouseMapped) {
-			break;
-		}
-
-		switch (pgi->nInput) {
-			case GIT_SWITCH:
-				if ((pgi->Input.Switch.nCode & 0xFF00) == 0x8000) {
-					bMouseMapped = true;
-				}
-				break;
-			case GIT_MOUSEAXIS:
-				if (pgi->Input.MouseAxis.nMouse == 0) {
-					bMouseMapped = true;
-				}
-				break;
-			case GIT_MACRO_AUTO:
-			case GIT_MACRO_CUSTOM:
-				if (pgi->Macro.nMode) {
-					if ((pgi->Macro.Switch.nCode & 0xFF00) == 0x8000) {
-						bMouseMapped = true;
-					}
-				}
-				break;
-
-			default:
-				continue;
-		}
-	}
-
-	if (bDrvOkay) {
-		if (!bRunPause) {
-			InputSetCooperativeLevel(bMouseMapped, bAlwaysProcessKeyboardInput);
-		} else {
-			InputSetCooperativeLevel(false, bAlwaysProcessKeyboardInput);
-		}
-	} else {
-		InputSetCooperativeLevel(false, false);
-	}
-}
-#endif
-
-// ---------------------------------------------------------------------------
-
 INT32 GameInpBlank(INT32 bDipSwitch)
 {
 	UINT32 i = 0;
@@ -611,7 +523,7 @@ static void GameInpInitMacros()
 	}
 }
 
-INT32 GameInpInit()
+INT32 GameInpInit(void)
 {
 	INT32 nRet = 0;
 	// Count the number of inputs
@@ -646,22 +558,23 @@ INT32 GameInpInit()
 	return 0;
 }
 
-INT32 GameInpExit()
+INT32 GameInpExit(void)
 {
-	if (GameInp) {
-		free(GameInp);
-		GameInp = NULL;
-	}
+   if (GameInp)
+   {
+      free(GameInp);
+      GameInp = NULL;
+   }
 
-	nGameInpCount = 0;
-	nMacroCount = 0;
+   nGameInpCount = 0;
+   nMacroCount = 0;
 
-	nFireButtons = 0;
+   nFireButtons = 0;
 
-	bStreetFighterLayout = false;
-	bLeftAltkeyMapped = false;
+   bStreetFighterLayout = false;
+   bLeftAltkeyMapped = false;
 
-	return 0;
+   return 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -1530,40 +1443,6 @@ INT32 GameInputAutoIni(INT32 nPlayer, TCHAR* lpszFile, bool bOverWrite)
 	return 0;
 }
 
-INT32 ConfigGameLoadHardwareDefaults()
-{
-	TCHAR *szDefaultCpsFile = _T("config/presets/cps.ini");
-	TCHAR *szDefaultNeogeoFile = _T("config/presets/neogeo.ini");
-	TCHAR *szDefaultPgmFile = _T("config/presets/pgm.ini");
-	TCHAR *szFileName = _T("");
-	INT32 nApplyHardwareDefaults = 0;
-	
-	INT32 nHardwareFlag = (BurnDrvGetHardwareCode() & HARDWARE_PUBLIC_MASK);
-
-	if (nHardwareFlag == HARDWARE_CAPCOM_CPS1 || nHardwareFlag == HARDWARE_CAPCOM_CPS1_QSOUND || nHardwareFlag == HARDWARE_CAPCOM_CPS1_GENERIC || nHardwareFlag == HARDWARE_CAPCOM_CPSCHANGER || nHardwareFlag == HARDWARE_CAPCOM_CPS2 || nHardwareFlag == HARDWARE_CAPCOM_CPS3) {
-		szFileName = szDefaultCpsFile;
-		nApplyHardwareDefaults = 1;
-	}
-	
-	if (nHardwareFlag == HARDWARE_SNK_NEOGEO) {
-		szFileName = szDefaultNeogeoFile;
-		nApplyHardwareDefaults = 1;
-	}
-	
-	if (nHardwareFlag == HARDWARE_IGS_PGM) {
-		szFileName = szDefaultPgmFile;
-		nApplyHardwareDefaults = 1;
-	}
-	
-	if (nApplyHardwareDefaults) {
-		for (INT32 nPlayer = 0; nPlayer < nMaxPlayers; nPlayer++) {
-			GameInputAutoIni(nPlayer, szFileName, true);
-		}
-	}
-
-	return 0;
-}
-
 // Auto-configure any undefined inputs to defaults
 INT32 GameInpDefault()
 {
@@ -1618,53 +1497,6 @@ INT32 GameInpDefault()
 }
 
 // ---------------------------------------------------------------------------
-// Write all the GameInps out to config file 'h'
-
-INT32 GameInpWrite(FILE* h)
-{
-	// Write input types
-	for (UINT32 i = 0; i < nGameInpCount; i++) {
-		TCHAR* szName = NULL;
-		INT32 nPad = 0;
-		szName = InputNumToName(i);
-		_ftprintf(h, _T("input  \"%s\" "), szName);
-		nPad = 16 - _tcslen(szName);
-		for (INT32 j = 0; j < nPad; j++) {
-			_ftprintf(h, _T(" "));
-		}
-		_ftprintf(h, _T("%s\n"), InpToString(GameInp + i));
-	}
-
-	_ftprintf(h, _T("\n"));
-
-	struct GameInp* pgi = GameInp + nGameInpCount;
-	for (UINT32 i = 0; i < nMacroCount; i++, pgi++) {
-		INT32 nPad = 0;
-
-		if (pgi->nInput & GIT_GROUP_MACRO) {
-			switch (pgi->nInput) {
-				case GIT_MACRO_AUTO:									// Auto-assigned macros
-					_ftprintf(h, _T("macro  \"%hs\" "), pgi->Macro.szName);
-					break;
-				case GIT_MACRO_CUSTOM:									// Custom macros
-					_ftprintf(h, _T("custom \"%hs\" "), pgi->Macro.szName);
-					break;
-				default:												// Unknown -- ignore
-					continue;
-			}
-
-			nPad = 16 - strlen(pgi->Macro.szName);
-			for (INT32 j = 0; j < nPad; j++) {
-				_ftprintf(h, _T(" "));
-			}
-			_ftprintf(h, _T("%s\n"), InpMacroToString(pgi));
-		}
-	}
-
-	return 0;
-}
-
-// ---------------------------------------------------------------------------
 
 // Read a GameInp in
 INT32 GameInpRead(TCHAR* szVal, bool bOverWrite)
@@ -1692,32 +1524,3 @@ INT32 GameInpRead(TCHAR* szVal, bool bOverWrite)
 
 	return 0;
 }
-
-INT32 GameInpMacroRead(TCHAR* szVal, bool bOverWrite)
-{
-	INT32 nRet;
-	TCHAR* szQuote = NULL;
-	TCHAR* szEnd = NULL;
-	UINT32 i = 0;
-
-	nRet = QuoteRead(&szQuote, &szEnd, szVal);
-	if (nRet) {
-		return 1;
-	}
-
-	i = MacroNameToNum(szQuote);
-	if (i != ~0U) {
-		i += nGameInpCount;
-		if (GameInp[i].Macro.nMode == 0 || bOverWrite) {
-			StringToMacro(GameInp + i, szEnd);
-		}
-	}
-
-	return 0;
-}
-
-INT32 GameInpCustomRead(TCHAR* szVal, bool bOverWrite)
-{
-	return AddCustomMacro(szVal, bOverWrite);
-}
-
