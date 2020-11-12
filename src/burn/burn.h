@@ -107,12 +107,9 @@ extern UINT32 (__cdecl *BurnHighCol) (INT32 r, INT32 g, INT32 b, INT32 i);
 
 extern UINT32 nCurrentFrame;
 
-inline static INT32 GetCurrentFrame() {
-	return nCurrentFrame;
-}
-
-inline static void SetCurrentFrame(const UINT32 n) {
-	nCurrentFrame = n;
+inline static INT32 GetCurrentFrame(void)
+{
+   return nCurrentFrame;
 }
 
 // ---------------------------------------------------------------------------
@@ -177,12 +174,6 @@ struct BurnDIPInfo {
 // ---------------------------------------------------------------------------
 
 extern bool bBurnUseASMCPUEmulation;
-
-extern UINT32 nFramesEmulated;
-extern UINT32 nFramesRendered;
-extern clock_t starttime;					// system time when emulation started and after roms loaded
-
-extern bool bForce60Hz;
 
 extern INT32 nBurnFPS;
 extern INT32 nBurnCPUSpeedAdjust;
