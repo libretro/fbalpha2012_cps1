@@ -12,22 +12,22 @@ static INT32 nTimerCount[2], nTimerStart[2];
 
 // Callbacks
 static INT32 (*pTimerOverCallback)(INT32, INT32);
-static double (*pTimerTimeCallback)();
+static double (*pTimerTimeCallback)(void);
 
 static INT32 nCPUClockspeed = 0;
-static INT32 (*pCPUTotalCycles)() = NULL;
+static INT32 (*pCPUTotalCycles)(void) = NULL;
 static INT32 (*pCPURun)(INT32) = NULL;
-static void (*pCPURunEnd)() = NULL;
+static void (*pCPURunEnd)(void) = NULL;
 
 // ---------------------------------------------------------------------------
 // Running time
 
-static double BurnTimerTimeCallbackDummy()
+static double BurnTimerTimeCallbackDummy(void)
 {
 	return 0.0;
 }
 
-extern "C" double BurnTimerGetTime()
+extern "C" double BurnTimerGetTime(void)
 {
 	return dTime + pTimerTimeCallback();
 }
@@ -43,49 +43,48 @@ INT32 BurnTimerUpdate(INT32 nCycles)
 
 	nTicksTotal = MAKE_TIMER_TICKS(nCycles, nCPUClockspeed);
 
-	while (nTicksDone < nTicksTotal) {
-		INT32 nTimer, nCyclesSegment, nTicksSegment;
+	while (nTicksDone < nTicksTotal)
+   {
+      INT32 nTimer, nCyclesSegment, nTicksSegment;
 
-		// Determine which timer fires first
-		if (nTimerCount[0] <= nTimerCount[1]) {
-			nTicksSegment = nTimerCount[0];
-		} else {
-			nTicksSegment = nTimerCount[1];
-		}
-		if (nTicksSegment > nTicksTotal) {
-			nTicksSegment = nTicksTotal;
-		}
+      // Determine which timer fires first
+      if (nTimerCount[0] <= nTimerCount[1])
+         nTicksSegment = nTimerCount[0];
+      else
+         nTicksSegment = nTimerCount[1];
+      if (nTicksSegment > nTicksTotal)
+         nTicksSegment = nTicksTotal;
 
-		nCyclesSegment = MAKE_CPU_CYLES(nTicksSegment + nTicksExtra, nCPUClockspeed);
+      nCyclesSegment = MAKE_CPU_CYLES(nTicksSegment + nTicksExtra, nCPUClockspeed);
 
-		pCPURun(nCyclesSegment - pCPUTotalCycles());
+      pCPURun(nCyclesSegment - pCPUTotalCycles());
 
-		nTicksDone = MAKE_TIMER_TICKS(pCPUTotalCycles() + 1, nCPUClockspeed) - 1;
+      nTicksDone = MAKE_TIMER_TICKS(pCPUTotalCycles() + 1, nCPUClockspeed) - 1;
 
-		nTimer = 0;
-		if (nTicksDone >= nTimerCount[0])
+      nTimer = 0;
+      if (nTicksDone >= nTimerCount[0])
       {
-			if (nTimerStart[0] == MAX_TIMER_VALUE)
-				nTimerCount[0] = MAX_TIMER_VALUE;
+         if (nTimerStart[0] == MAX_TIMER_VALUE)
+            nTimerCount[0] = MAX_TIMER_VALUE;
          else
-				nTimerCount[0] += nTimerStart[0];
-			nTimer |= 1;
-		}
-		if (nTicksDone >= nTimerCount[1]) {
-			if (nTimerStart[1] == MAX_TIMER_VALUE) {
-				nTimerCount[1] = MAX_TIMER_VALUE;
-			} else {
-				nTimerCount[1] += nTimerStart[1];
-			}
-			nTimer |= 2;
-		}
-		if (nTimer & 1) {
-			nIRQStatus |= pTimerOverCallback(0, 0);
-		}
-		if (nTimer & 2) {
-			nIRQStatus |= pTimerOverCallback(0, 1);
-		}
-	}
+            nTimerCount[0] += nTimerStart[0];
+         nTimer |= 1;
+      }
+      if (nTicksDone >= nTimerCount[1]) {
+         if (nTimerStart[1] == MAX_TIMER_VALUE) {
+            nTimerCount[1] = MAX_TIMER_VALUE;
+         } else {
+            nTimerCount[1] += nTimerStart[1];
+         }
+         nTimer |= 2;
+      }
+      if (nTimer & 1) {
+         nIRQStatus |= pTimerOverCallback(0, 0);
+      }
+      if (nTimer & 2) {
+         nIRQStatus |= pTimerOverCallback(0, 1);
+      }
+   }
 
 	return nIRQStatus;
 }
@@ -96,19 +95,17 @@ void BurnTimerEndFrame(INT32 nCycles)
 
 	BurnTimerUpdate(nCycles);
 
-	if (nTimerCount[0] < MAX_TIMER_VALUE) {
+	if (nTimerCount[0] < MAX_TIMER_VALUE)
 		nTimerCount[0] -= nTicks;
-	}
-	if (nTimerCount[1] < MAX_TIMER_VALUE) {
+	if (nTimerCount[1] < MAX_TIMER_VALUE)
 		nTimerCount[1] -= nTicks;
-	}
 
 	nTicksDone -= nTicks;
 	if (nTicksDone < 0)
 		nTicksDone = 0;
 }
 
-void BurnTimerUpdateEnd()
+void BurnTimerUpdateEnd(void)
 {
 	pCPURunEnd();
 
@@ -128,7 +125,8 @@ void BurnOPLTimerCallback(INT32 c, double period)
 {
 	pCPURunEnd();
 
-	if (period == 0.0) {
+	if (period == 0.0)
+   {
 		nTimerCount[c] = MAX_TIMER_VALUE;
 		return;
 	}
@@ -141,7 +139,8 @@ void BurnOPMTimerCallback(INT32 c, double period)
 {
 	pCPURunEnd();
 	
-	if (period == 0.0) {
+	if (period == 0.0)
+   {
 		nTimerCount[c] = MAX_TIMER_VALUE;
 		return;
 	}
@@ -208,11 +207,11 @@ void BurnTimerSetOneshot(INT32 c, double period)
 
 void BurnTimerScan(INT32 nAction, INT32* pnMin)
 {
-	if (pnMin && *pnMin < 0x029521) {
+	if (pnMin && *pnMin < 0x029521)
 		*pnMin = 0x029521;
-	}
 
-	if (nAction & ACB_DRIVER_DATA) {
+	if (nAction & ACB_DRIVER_DATA)
+   {
 		SCAN_VAR(nTimerCount);
 		SCAN_VAR(nTimerStart);
 		SCAN_VAR(dTime);
@@ -221,17 +220,15 @@ void BurnTimerScan(INT32 nAction, INT32* pnMin)
 	}
 }
 
-void BurnTimerExit()
+void BurnTimerExit(void)
 {
 	nCPUClockspeed = 0;
 	pCPUTotalCycles = NULL;
 	pCPURun = NULL;
 	pCPURunEnd = NULL;
-
-	return;
 }
 
-void BurnTimerReset()
+void BurnTimerReset(void)
 {
 	nTimerCount[0] = nTimerCount[1] = MAX_TIMER_VALUE;
 	nTimerStart[0] = nTimerStart[1] = MAX_TIMER_VALUE;
