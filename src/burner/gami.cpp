@@ -17,7 +17,6 @@ INT32 nAnalogSpeed;
 INT32 nFireButtons = 0;
 
 bool bStreetFighterLayout = false;
-bool bLeftAltkeyMapped = false;
 
 // ---------------------------------------------------------------------------
 
@@ -57,8 +56,6 @@ INT32 GameInpBlank(INT32 bDipSwitch)
 			pgi->nInput = 0;
 		}
 	}
-
-	bLeftAltkeyMapped = false;
 
 	return 0;
 }
@@ -572,7 +569,6 @@ INT32 GameInpExit(void)
    nFireButtons = 0;
 
    bStreetFighterLayout = false;
-   bLeftAltkeyMapped = false;
 
    return 0;
 }

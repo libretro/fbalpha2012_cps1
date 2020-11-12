@@ -68,20 +68,15 @@ extern INT32 nAnalogSpeed;
 extern INT32 nFireButtons;
 
 extern bool bStreetFighterLayout;
-extern bool bLeftAltkeyMapped;
 
-INT32 GameInpInit();
-INT32 GameInpExit();
+INT32 GameInpInit(void);
+INT32 GameInpExit(void);
 TCHAR* InputCodeDesc(INT32 c);
 TCHAR* InpToDesc(struct GameInp* pgi);
 TCHAR* InpMacroToDesc(struct GameInp* pgi);
-#ifndef __LIBRETRO__
-void GameInpCheckLeftAlt();
-void GameInpCheckMouse();
-#endif
 INT32 GameInpBlank(INT32 bDipSwitch);
 INT32 GameInputAutoIni(INT32 nPlayer, TCHAR* lpszFile, bool bOverWrite);
-INT32 GameInpDefault();
+INT32 GameInpDefault(void);
 INT32 GameInpRead(TCHAR* szVal, bool bOverWrite);
 
 // Player Default Controls
