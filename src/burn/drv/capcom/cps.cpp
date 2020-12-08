@@ -37,12 +37,12 @@ static UINT32 SepTable[256];
 static INT32 SepTableCalc()
 {
 	static INT32 bDone = 0;
+   INT32 i;
 	if (bDone)
 		return 0;										// Already done it
 
-	for (INT32 i = 0; i < 256; i++) {
+	for (i = 0; i < 256; i++)
 		SepTable[i] = Separate(255 - i);
-	}
 
 	bDone = 1;											// done it
 	return 0;
@@ -56,17 +56,16 @@ static INT32 LoadUp(UINT8** pRom, INT32* pnRomLen, INT32 nNum)
 
 	ri.nLen = 0;
 	BurnDrvGetRomInfo(&ri, nNum);	// Find out how big the rom is
-	if (ri.nLen <= 0) {
+	if (ri.nLen <= 0)
 		return 1;
-	}
 
 	// Load the rom
 	Rom = (UINT8*)BurnMalloc(ri.nLen);
-	if (Rom == NULL) {
+	if (Rom == NULL)
 		return 1;
-	}
 
-	if (BurnLoadRom(Rom,nNum,1)) {
+	if (BurnLoadRom(Rom,nNum,1))
+   {
 		BurnFree(Rom);
 		return 1;
 	}
@@ -78,29 +77,33 @@ static INT32 LoadUp(UINT8** pRom, INT32* pnRomLen, INT32 nNum)
 
 static INT32 LoadUpSplit(UINT8** pRom, INT32* pnRomLen, INT32 nNum, INT32 nNumRomsGroup)
 {
+	INT32 Offset = 0;
 	UINT8 *Rom;
 	struct BurnRomInfo ri;
 	UINT32 nRomSize[8], nTotalRomSize = 0;
 	INT32 i;
 
 	ri.nLen = 0;
-	for (i = 0; i < nNumRomsGroup; i++) {
+	for (i = 0; i < nNumRomsGroup; i++)
+   {
 		BurnDrvGetRomInfo(&ri, nNum + i);
 		nRomSize[i] = ri.nLen;
 	}
 	
-	for (i = 0; i < nNumRomsGroup; i++) {
+	for (i = 0; i < nNumRomsGroup; i++)
 		nTotalRomSize += nRomSize[i];
-	}
-	if (!nTotalRomSize) return 1;
+	if (!nTotalRomSize)
+      return 1;
 
 	Rom = (UINT8*)BurnMalloc(nTotalRomSize);
-	if (Rom == NULL) return 1;
+	if (Rom == NULL)
+      return 1;
 	
-	INT32 Offset = 0;
-	for (i = 0; i < nNumRomsGroup; i++) {
+	for (i = 0; i < nNumRomsGroup; i++)
+   {
 		if (i > 0) Offset += nRomSize[i - 1];
-		if (BurnLoadRom(Rom + Offset, nNum + i, 1)) {
+		if (BurnLoadRom(Rom + Offset, nNum + i, 1))
+      {
 			BurnFree(Rom);
 			return 1;
 		}
@@ -125,18 +128,22 @@ static INT32 CpsLoadOne(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 nShift)
 	INT32 i;
 
 	LoadUp(&Rom, &nRomLen, nNum);
-	if (Rom == NULL) {
+	if (Rom == NULL)
 		return 1;
-	}
 
 	nRomLen &= ~1;								// make sure even
 
-	for (i = 0, pt = Tile, pr = Rom; i < nRomLen; pt += 8) {
+	for (i = 0, pt = Tile, pr = Rom; i < nRomLen; pt += 8)
+   {
 		UINT32 Pix;						// Eight pixels
-		UINT8 b;
-		b = *pr++; i++; Pix = SepTable[b];
-		if (nWord) {
-			b = *pr++; i++; Pix |= SepTable[b] << 1;
+		UINT8 b = *pr++;
+      i++;
+      Pix     = SepTable[b];
+		if (nWord)
+      {
+			b = *pr++;
+         i++;
+         Pix |= SepTable[b] << 1;
 		}
 
 		Pix <<= nShift;
@@ -154,14 +161,13 @@ static INT32 CpsLoadOnePang(UINT8 *Tile,INT32 nNum,INT32 nWord,INT32 nShift)
 	UINT8 *pt = NULL, *pr = NULL;
 
 	LoadUp(&Rom, &nRomLen, nNum);
-	if (Rom == NULL) {
+	if (Rom == NULL)
 		return 1;
-	}
 
-	nRomLen &= ~1; // make sure even
+	nRomLen &= ~1; /* make sure even */
 
 	for (i = 0x100000, pt = Tile, pr = Rom + 0x100000; i < nRomLen; pt += 8) {
-		UINT32 Pix; // Eight pixels
+		UINT32 Pix; /* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -200,11 +206,15 @@ static INT32 CpsLoadOneHack160(UINT8 *Tile, INT32 nNum, INT32 nWord, INT32 nType
 
 	for (j = 0; j < 4; j++) {
 		for (i = 0, pt = Tile + TileOffset[j], pr = Rom1 + (0x80000 * j); i < 0x80000; pt += 8) {
-			UINT32 Pix;		// Eight pixels
+			UINT32 Pix;		/* Eight pixels */
 			UINT8 b;
-			b = *pr++; i++; Pix = SepTable[b];
+			b = *pr++;
+         i++;
+         Pix = SepTable[b];
 			if (nWord) {
-				b = *pr++; i++; Pix |= SepTable[b] << 1;
+				b = *pr++;
+            i++;
+            Pix |= SepTable[b] << 1;
 			}
 
 			Pix <<= 0;
@@ -214,9 +224,14 @@ static INT32 CpsLoadOneHack160(UINT8 *Tile, INT32 nNum, INT32 nWord, INT32 nType
 		for (i = 0, pt = Tile + TileOffset[j], pr = Rom2 + (0x80000 * j); i < 0x80000; pt += 8) {
 			UINT32 Pix;		// Eight pixels
 			UINT8 b;
-			b = *pr++; i++; Pix = SepTable[b];
-			if (nWord) {
-				b = *pr++; i++; Pix |= SepTable[b] << 1;
+			b = *pr++;
+         i++;
+         Pix = SepTable[b];
+			if (nWord)
+         {
+				b = *pr++;
+            i++;
+            Pix |= SepTable[b] << 1;
 			}
 
 			Pix <<= 2;
@@ -236,17 +251,21 @@ static INT32 CpsLoadOneBootleg(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 nShif
 	INT32 i;
 
 	LoadUp(&Rom, &nRomLen, nNum);
-	if (Rom == NULL) {
+	if (Rom == NULL)
 		return 1;
-	}
 	nRomLen &= ~1;								// make sure even
 
 	for (i = 0, pt = Tile, pr = Rom; i < 0x40000; pt += 8) {
 		UINT32 Pix;						// Eight pixels
 		UINT8 b;
-		b = *pr++; i++; Pix = SepTable[b];
-		if (nWord) {
-			b = *pr++; i++; Pix |= SepTable[b] << 1;
+		b = *pr++;
+      i++;
+      Pix = SepTable[b];
+		if (nWord)
+      {
+			b = *pr++;
+         i++;
+         Pix |= SepTable[b] << 1;
 		}
 
 		Pix <<= nShift;

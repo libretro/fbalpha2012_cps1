@@ -1,11 +1,11 @@
 #include "cps.h"
 #include "bitswap.h"
 
-// CPS (palette)
+/* CPS (palette) */
 
-UINT32* CpsPal = NULL;					// Hicolor version of palette
+UINT32* CpsPal = NULL;					/* Hicolor version of palette */
 INT32 nCpsPalCtrlReg;
-INT32 bCpsUpdatePalEveryFrame = 0;	// Some of the hacks need this as they don't write to CpsReg 0x0a
+INT32 bCpsUpdatePalEveryFrame = 0;	/* Some of the hacks need this as they don't write to CpsReg 0x0a */
 
 INT32 CpsPalInit()
 {
@@ -23,17 +23,19 @@ INT32 CpsPalExit()
 	return 0;
 }
 
-// Update CpsPal with the new palette at pNewPal (length 0xc00 bytes)
+/* Update CpsPal with the new palette at pNewPal (length 0xc00 bytes) */
 INT32 CpsPalUpdate(UINT8* pNewPal)
 {
+   INT32 nPage;
    INT32 nCtrl = CpsReg[nCpsPalCtrlReg];
    UINT16 *PaletteRAM = (UINT16*)pNewPal;
 
-   for (INT32 nPage = 0; nPage < 6; nPage++)
+   for (nPage = 0; nPage < 6; nPage++)
    {
       if (BIT(nCtrl, nPage))
       {
-         for (INT32 Offset = 0; Offset < 0x200; ++Offset)
+         INT32 Offset;
+         for (Offset = 0; Offset < 0x200; ++Offset)
          {
             INT32 Palette = BURN_ENDIAN_SWAP_INT16(*(PaletteRAM++));
             INT32 Bright = 0x0f + ((Palette >> 12) << 1);

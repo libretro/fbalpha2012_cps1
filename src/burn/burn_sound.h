@@ -1,5 +1,6 @@
-// burn_sound.h - General sound support functions
-// based on code by Daniel Moreno (ComaC) < comac2k@teleline.es >
+/* burn_sound.h - General sound support functions
+ * based on code by Daniel Moreno (ComaC) < comac2k@teleline.es >
+ */
 
 extern INT32 cmc_4p_Precalc();
 

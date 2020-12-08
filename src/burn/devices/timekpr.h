@@ -6,7 +6,7 @@
 
 UINT8 TimeKeeperRead(UINT32 offset);
 void TimeKeeperWrite(INT32 offset, UINT8 data);
-void TimeKeeperTick();
+void TimeKeeperTick(void);
 void TimeKeeperInit(INT32 type, UINT8 *data);
-void TimeKeeperExit();
+void TimeKeeperExit(void);
 void TimeKeeperScan(INT32 nAction);

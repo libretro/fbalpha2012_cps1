@@ -1,9 +1,8 @@
-// Cheat module
+/* Cheat module */
 #include <stdio.h>
 #include "burnint.h"
 
-#define CHEAT_MAXCPU	8 // enough?
-
+#define CHEAT_MAXCPU	8 /* enough? */
 
 bool bCheatsAllowed;
 CheatInfo* pCheatInfo = NULL;
@@ -11,10 +10,11 @@ CheatInfo* pCheatInfo = NULL;
 static bool bCheatsEnabled = false;
 static INT32 cheat_core_init_pointer = 0;
 
-struct cheat_core {
+struct cheat_core
+{
 	cpu_core_config *cpuconfig;
 
-	INT32 nCPU;			// which cpu
+	INT32 nCPU;			/* which cpu */
 };
 
 static struct cheat_core cpus[CHEAT_MAXCPU];
@@ -68,53 +68,53 @@ INT32 CheatEnable(INT32 nCheat, INT32 nOption)
 		return 1;
 	}
 
-	cheat_ptr = &cpus[0]; // first cpu...
+	cheat_ptr = &cpus[0]; /* first cpu... */
 	cheat_subptr = cheat_ptr->cpuconfig;
 
-	while (pCurrentCheat && nCurrentCheat <= nCheat) {
-		if (nCurrentCheat == nCheat) {
-
-			if (nOption == -1) {
+	while (pCurrentCheat && nCurrentCheat <= nCheat)
+   {
+		if (nCurrentCheat == nCheat)
+      {
+			if (nOption == -1)
 				nOption = pCurrentCheat->nDefault;
-			}
 
-			if (pCurrentCheat->nType != 1) {
+			if (pCurrentCheat->nType != 1)
+         {
 
-				// Return OK if the cheat is already active with the same option
-				if (pCurrentCheat->nCurrent == nOption) {
-					return 0;
-				}
+            /* Return OK if the cheat is already active with the same option */
+            if (pCurrentCheat->nCurrent == nOption)
+               return 0;
 
-				// Deactivate old option (if any)
-				pAddressInfo = pCurrentCheat->pOption[nOption]->AddressInfo;
-				while (pAddressInfo->nAddress) {
+            /* Deactivate old option (if any) */
+            pAddressInfo = pCurrentCheat->pOption[nOption]->AddressInfo;
+            while (pAddressInfo->nAddress) {
 
-					if (pAddressInfo->nCPU != nOpenCPU) {
+               if (pAddressInfo->nCPU != nOpenCPU) {
 
-						if (nOpenCPU != -1) {
-							cheat_subptr->close();
-						}
+                  if (nOpenCPU != -1) {
+                     cheat_subptr->close();
+                  }
 
-						nOpenCPU = pAddressInfo->nCPU;
-						cheat_ptr = &cpus[nOpenCPU];
-						cheat_subptr = cheat_ptr->cpuconfig;
-						cheat_subptr->open(cheat_ptr->nCPU);
-					}
+                  nOpenCPU = pAddressInfo->nCPU;
+                  cheat_ptr = &cpus[nOpenCPU];
+                  cheat_subptr = cheat_ptr->cpuconfig;
+                  cheat_subptr->open(cheat_ptr->nCPU);
+               }
 
-					// Write back original values to memory
-					cheat_subptr->write(pAddressInfo->nAddress, pAddressInfo->nOriginalValue);
-					pAddressInfo++;
-				}
-			}
+               /* Write back original values to memory */
+               cheat_subptr->write(pAddressInfo->nAddress, pAddressInfo->nOriginalValue);
+               pAddressInfo++;
+            }
+         }
 
-			// Activate new option
+			/* Activate new option */
 			pAddressInfo = pCurrentCheat->pOption[nOption]->AddressInfo;
-			while (pAddressInfo->nAddress) {
-
-				if (pAddressInfo->nCPU != nOpenCPU) {
-					if (nOpenCPU != -1) {
+			while (pAddressInfo->nAddress)
+         {
+				if (pAddressInfo->nCPU != nOpenCPU)
+            {
+					if (nOpenCPU != -1)
 						cheat_subptr->close();
-					}
 
 					nOpenCPU = pAddressInfo->nCPU;
 					cheat_ptr = &cpus[nOpenCPU];
@@ -122,7 +122,7 @@ INT32 CheatEnable(INT32 nCheat, INT32 nOption)
 					cheat_subptr->open(cheat_ptr->nCPU);
 				}
 
-				// Copy the original values
+				/* Copy the original values */
 				pAddressInfo->nOriginalValue = cheat_subptr->read(pAddressInfo->nAddress);
 
 				if (pCurrentCheat->nType != 0) {
@@ -137,17 +137,16 @@ INT32 CheatEnable(INT32 nCheat, INT32 nOption)
 						cheat_subptr->open(cheat_ptr->nCPU);
 					}
 
-					// Activate the cheat
+					/* Activate the cheat */
 					cheat_subptr->write(pAddressInfo->nAddress, pAddressInfo->nValue);
 				}
 
 				pAddressInfo++;
 			}
 
-			// Set cheat status and active option
-			if (pCurrentCheat->nType != 1) {
-				pCurrentCheat->nCurrent = nOption;
-			}
+			/* Set cheat status and active option */
+			if (pCurrentCheat->nType != 1)
+            pCurrentCheat->nCurrent = nOption;
 			if (pCurrentCheat->nType == 0) {
 				pCurrentCheat->nStatus = 2;
 			}
@@ -251,7 +250,7 @@ void CheatExit()
 	CheatSearchInitCallbackFunction = NULL;
 }
 
-// Cheat search
+/* Cheat search */
 
 static UINT8 *MemoryValues = NULL;
 static UINT8 *MemoryStatus = NULL;

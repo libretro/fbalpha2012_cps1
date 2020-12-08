@@ -324,17 +324,4 @@ void EEPROMScan(INT32 nAction, INT32* pnMin)
 		SCAN_VAR(locked);
 		SCAN_VAR(reset_delay);
 	}
-
-//	if (nAction & ACB_NVRAM) {
-//
-//		if (pnMin && (nAction & ACB_TYPEMASK) == ACB_NVRAM) {
-//			*pnMin = 0x02705;
-//		}
-//
-//		memset(&ba, 0, sizeof(ba));
-//  		ba.Data		= eeprom_data;
-//		ba.nLen		= MEMORY_SIZE;
-//		ba.szName	= "EEPROM memory";
-//		BurnAcb(&ba);
-//	}
 }

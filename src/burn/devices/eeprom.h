@@ -14,16 +14,16 @@ struct _eeprom_interface
 				/* before starting to return 1. */
 };
 
-// default for most in fba
+/* default for most in FBA */
 const eeprom_interface eeprom_interface_93C46 =
 {
-	6,		// address bits 6
-	16,		// data bits    16
-	"*110",		// read         1 10 aaaaaa
-	"*101",		// write        1 01 aaaaaa dddddddddddddddd
-	"*111",		// erase        1 11 aaaaaa
-	"*10000xxxx",	// lock         1 00 00xxxx
-	"*10011xxxx",	// unlock       1 00 11xxxx
+	6,		/* address bits 6 */
+	16,		/* data bits    16 */
+	"*110",		/* read         1 10 aaaaaa */
+	"*101",		/* write        1 01 aaaaaa dddddddddddddddd */
+	"*111",		/* erase        1 11 aaaaaa */
+	"*10000xxxx",	/* lock         1 00 00xxxx */
+	"*10011xxxx",	/* unlock       1 00 11xxxx */
 	1,
 	0
 };
@@ -36,16 +36,16 @@ void EEPROMInit(const eeprom_interface *interface);
 void EEPROMReset();
 void EEPROMExit();
 
-INT32 EEPROMAvailable(); // are we loading an eeprom file?
+INT32 EEPROMAvailable(); /* are we loading an EEPROM file? */
 
 INT32 EEPROMRead();
 
-// Write each individually
+/* Write each individually */
 void EEPROMWriteBit(INT32 bit);
 void EEPROMSetCSLine(INT32 state);
 void EEPROMSetClockLine(INT32 state);
 
-// Or all at once
+/* Or all at once */
 #define EEPROMWrite(clock, cs, bit)		\
 	EEPROMWriteBit(bit);		\
 	EEPROMSetCSLine(cs ? EEPROM_CLEAR_LINE : EEPROM_ASSERT_LINE);	\

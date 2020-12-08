@@ -1,4 +1,4 @@
-// Timers (for Yamaha FM cips and generic)
+/* Timers (for Yamaha FM cips and generic) */
 #include "burnint.h"
 #include "timer.h"
 #include "m68000_intf.h"
@@ -6,11 +6,11 @@
 
 #define MAX_TIMER_VALUE ((1 << 30) - 65536)
 
-double dTime;									// Time elapsed since the emulated machine was started
+double dTime;									/* Time elapsed since the emulated machine was started */
 
 static INT32 nTimerCount[2], nTimerStart[2];
 
-// Callbacks
+/* Callbacks */
 static INT32 (*pTimerOverCallback)(INT32, INT32);
 static double (*pTimerTimeCallback)(void);
 
@@ -19,8 +19,8 @@ static INT32 (*pCPUTotalCycles)(void) = NULL;
 static INT32 (*pCPURun)(INT32) = NULL;
 static void (*pCPURunEnd)(void) = NULL;
 
-// ---------------------------------------------------------------------------
-// Running time
+/* ---------------------------------------------------------------------------
+ * Running time */
 
 static double BurnTimerTimeCallbackDummy(void)
 {
@@ -32,8 +32,8 @@ extern "C" double BurnTimerGetTime(void)
 	return dTime + pTimerTimeCallback();
 }
 
-// ---------------------------------------------------------------------------
-// Update timers
+/* ---------------------------------------------------------------------------
+ * Update timers */
 
 static INT32 nTicksTotal, nTicksDone, nTicksExtra;
 
@@ -47,7 +47,7 @@ INT32 BurnTimerUpdate(INT32 nCycles)
    {
       INT32 nTimer, nCyclesSegment, nTicksSegment;
 
-      // Determine which timer fires first
+      /* Determine which timer fires first */
       if (nTimerCount[0] <= nTimerCount[1])
          nTicksSegment = nTimerCount[0];
       else
@@ -113,14 +113,10 @@ void BurnTimerUpdateEnd(void)
 }
 
 
-// ---------------------------------------------------------------------------
-// Callbacks for the sound cores
-/*
-static INT32 BurnTimerExtraCallbackDummy()
-{
-	return 0;
-}
-*/
+/* ---------------------------------------------------------------------------
+ * Callbacks for the sound cores
+ */
+
 void BurnOPLTimerCallback(INT32 c, double period)
 {
 	pCPURunEnd();
@@ -202,8 +198,9 @@ void BurnTimerSetOneshot(INT32 c, double period)
 	nTimerCount[c] += MAKE_TIMER_TICKS(pCPUTotalCycles(), nCPUClockspeed);
 }
 
-// ------------------------------------ ---------------------------------------
-// Initialisation etc.
+/* ------------------------------------ ---------------------------------------
+ * Initialisation etc.
+ */
 
 void BurnTimerScan(INT32 nAction, INT32* pnMin)
 {

@@ -1,4 +1,4 @@
-// FM timers
+/* FM timers */
 
 #define TIMER_TICKS_PER_SECOND (2048000000)
 #define MAKE_TIMER_TICKS(n, m) ((INT64)(n) * TIMER_TICKS_PER_SECOND / (m))
@@ -6,14 +6,19 @@
 
 extern "C" double BurnTimerGetTime(void);
 
-// Callbacks for various sound chips
-void BurnOPNTimerCallback(INT32 n, INT32 c, INT32 cnt, double stepTime);	// period = cnt * stepTime in s
-void BurnOPLTimerCallback(INT32 c, double period);					// period in  s
-void BurnYMFTimerCallback(INT32 n, INT32 c, double period);				// period in us
+/* Callbacks for various sound chips */
+/* period = cnt * stepTime in seconds */
+void BurnOPNTimerCallback(INT32 n, INT32 c, INT32 cnt, double stepTime);	
+/* period in seconds */
+void BurnOPLTimerCallback(INT32 c, double period);
+/* period in milliseconds */
+void BurnYMFTimerCallback(INT32 n, INT32 c, double period);
 
-// Start / stop a timer
-void BurnTimerSetRetrig(INT32 c, double period);						// period in  s
-void BurnTimerSetOneshot(INT32 c, double period);						// period in  s
+/* Start / stop a timer */
+/* period in seconds */
+void BurnTimerSetRetrig(INT32 c, double period);
+/* period in seconds */
+void BurnTimerSetOneshot(INT32 c, double period);
 
 extern double dTime;
 
