@@ -5,13 +5,6 @@
 #include "burn_sound.h"
 #include "driverlist.h"
 
-/* filler function, used if the application is not printing debug messages */
-static INT32 __cdecl BurnbprintfFiller(INT32, TCHAR* , ...) { return 0; }
-/* pointer to burner printing function */
-#ifndef bprintf
-INT32 (__cdecl *bprintf)(INT32 nStatus, TCHAR* szFormat, ...) = BurnbprintfFiller;
-#endif
-
 INT32 nBurnVer = BURN_VERSION;		/* Version number of the library */
 
 UINT32 nBurnDrvCount = 0;		/* Count of game drivers */
@@ -568,25 +561,17 @@ extern "C" INT32 BurnDrvInit(void)
 
 		/* Print the title */
 
-		bprintf(PRINT_IMPORTANT, _T("*** Starting emulation of %s - %s.\n"), BurnDrvGetText(DRV_NAME), BurnDrvGetText(DRV_FULLNAME));
-
 		// Then print the alternative titles
 
 		if (nName > 1) {
-			bprintf(PRINT_IMPORTANT, _T("    Alternative %s "), (nName > 2) ? _T("titles are") : _T("title is"));
 			pszName = BurnDrvGetText(DRV_FULLNAME);
 			nName = 1;
 			while ((pszName = BurnDrvGetText(DRV_NEXTNAME | DRV_FULLNAME)) != NULL) {
 				if (pszPosition + _tcslen(pszName) - 1022 > szText) {
 					break;
 				}
-				if (nName > 1) {
-					bprintf(PRINT_IMPORTANT, _T(SEPERATOR_1));
-				}
-				bprintf(PRINT_IMPORTANT, _T("%s"), pszName);
 				nName++;
 			}
-			bprintf(PRINT_IMPORTANT, _T(".\n"));
 		}
 	}
 #endif
@@ -644,10 +629,6 @@ INT32 BurnDrvCartridgeSetup(BurnCartrigeCommand nCommand)
 	}
 
 	BurnExtCartridgeSetupCallback(CART_INIT_END);
-
-#if defined FBA_DEBUG
-		bprintf(PRINT_NORMAL, _T("  * Loading"));
-#endif
 
 	if (BurnExtCartridgeSetupCallback(CART_INIT_START)) {
 		return 1;

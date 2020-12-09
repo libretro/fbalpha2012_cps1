@@ -48,10 +48,6 @@ UINT8 __fastcall FcrashZ80Read(UINT16 a)
 			ZetSetIRQLine(0, ZET_IRQSTATUS_NONE);
 			return FcrashSoundLatch;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Z80 #1 Read => %04X\n"), a);
-		}
 	}
 
 	return 0;
@@ -97,8 +93,6 @@ void __fastcall FcrashZ80Write(UINT16 a, UINT8 d)
       case 0xf006:
          /* ??? */
          return;
-      default:
-         bprintf(PRINT_NORMAL, _T("Z80 #1 Write => %04X, %02X\n"), a, d);
    }
 }
 

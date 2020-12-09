@@ -35,13 +35,12 @@ extern "C" double BurnTimerGetTime(void)
 /* ---------------------------------------------------------------------------
  * Update timers */
 
-static INT32 nTicksTotal, nTicksDone, nTicksExtra;
+static INT32 nTicksDone, nTicksExtra;
 
 INT32 BurnTimerUpdate(INT32 nCycles)
 {
 	INT32 nIRQStatus = 0;
-
-	nTicksTotal = MAKE_TIMER_TICKS(nCycles, nCPUClockspeed);
+	INT32 nTicksTotal = MAKE_TIMER_TICKS(nCycles, nCPUClockspeed);
 
 	while (nTicksDone < nTicksTotal)
    {
@@ -70,20 +69,18 @@ INT32 BurnTimerUpdate(INT32 nCycles)
             nTimerCount[0] += nTimerStart[0];
          nTimer |= 1;
       }
-      if (nTicksDone >= nTimerCount[1]) {
-         if (nTimerStart[1] == MAX_TIMER_VALUE) {
+      if (nTicksDone >= nTimerCount[1])
+      {
+         if (nTimerStart[1] == MAX_TIMER_VALUE) 
             nTimerCount[1] = MAX_TIMER_VALUE;
-         } else {
+         else
             nTimerCount[1] += nTimerStart[1];
-         }
          nTimer |= 2;
       }
-      if (nTimer & 1) {
+      if (nTimer & 1)
          nIRQStatus |= pTimerOverCallback(0, 0);
-      }
-      if (nTimer & 2) {
+      if (nTimer & 2)
          nIRQStatus |= pTimerOverCallback(0, 1);
-      }
    }
 
 	return nIRQStatus;
@@ -108,8 +105,6 @@ void BurnTimerEndFrame(INT32 nCycles)
 void BurnTimerUpdateEnd(void)
 {
 	pCPURunEnd();
-
-	nTicksTotal = 0;
 }
 
 

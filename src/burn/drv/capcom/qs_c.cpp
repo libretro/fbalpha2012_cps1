@@ -161,10 +161,8 @@ void QscWrite(INT32 a, INT32 d)
 	INT32 nChanNum, r;
 
 	// unknown
-	if (a >= 0x90) {
-//		bprintf(PRINT_NORMAL, "QSound: reg 0x%02X -> 0x%02X.\n", a, d);
+	if (a >= 0x90)
 		return;
-	}
 
 	QscSyncQsnd();
 
@@ -175,11 +173,8 @@ void QscWrite(INT32 a, INT32 d)
 
 		pc = QChan + nChanNum;		// Find channel
 		nPan = (d - 0x10) & 0x3F;	// nPan = 0x00 to 0x20 now
-		if (nPan > 0x20) {
+		if (nPan > 0x20)
 			nPan = 0x20;
-		}
-
-//		bprintf(PRINT_NORMAL, "QSound: ch#%i pan -> 0x%04X\n", nChanNum, d);
 
 		pc->nVolume[0] = PanningVolumes[0x20 - nPan];
 		pc->nVolume[1] = PanningVolumes[0x00 + nPan];

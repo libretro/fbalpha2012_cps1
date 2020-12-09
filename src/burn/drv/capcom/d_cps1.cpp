@@ -11549,10 +11549,6 @@ static void SetGameConfig()
 		SetCpsBId(k->CpsBId, GameHasStars);
 		SetGfxMapper(k->CpsMapperId);
 		KabukiDecodeFunction = k->DecodeFunction;
-	} else {
-#if 1 && defined FBA_DEBUG
-		bprintf(PRINT_IMPORTANT, _T("Missing Config Data\n"));
-#endif
 	}
 }
 
@@ -11622,15 +11618,6 @@ static INT32 Cps1LoadRoms(INT32 bLoad)
 		if (GameHasStars) nCpsGfxLen += 0x2000;
 		if (PangEEP) nCpsGfxLen *= 2;
 		if (nCpsPicRomNum) Cps1DisablePSnd = 1;
-		
-#if 1 && defined FBA_DEBUG
-		if (nCpsRomLen) bprintf(PRINT_IMPORTANT, _T("68K Rom Length %06X, (%i roms byteswapped, %i roms not byteswapped)\n"), nCpsRomLen, nCps68KByteswapRomNum, nCps68KNoByteswapRomNum);
-		if (nCpsZRomLen) bprintf(PRINT_IMPORTANT, _T("Z80 Rom Length %06X, (%i roms)\n"), nCpsZRomLen, nCpsZ80RomNum);
-		if (nCpsGfxLen) bprintf(PRINT_IMPORTANT, _T("Tile Rom Length %08X, (%i roms)\n"), nCpsGfxLen, nCpsTilesRomNum);
-		if (nCpsAdLen) bprintf(PRINT_IMPORTANT, _T("OKIM6295 Rom Length %08X, (%i roms)\n"), nCpsAdLen, nCpsOkim6295RomNum);
-		if (nCpsQSamLen) bprintf(PRINT_IMPORTANT, _T("QSound Rom Length %08X, (%i roms)\n"), nCpsQSamLen, nCpsQsoundRomNum);
-		if (nCpsExtraGfxLen) bprintf(PRINT_IMPORTANT, _T("Extra Tile Rom Length %08X, (%i roms)\n"), nCpsExtraGfxLen, nCpsExtraTilesRomNum);
-#endif
 	}
 
 	if (bLoad) {
@@ -11947,76 +11934,40 @@ static INT32 Captcommb2Init()
 
 UINT8 __fastcall CawingblInputReadByte(UINT32 a)
 {
-	switch (a) {
-		case 0x882000: {
-			return ~Inp000;
-		}
-		
-		case 0x882001: {
-			return ~Inp001;
-		}
-		
-		case 0x882008: {
-			return ~Inp018;
-		}
-		
-		case 0x88200a: {
-			return ~Cpi01A;
-		}
-		
-		case 0x88200c: {
-			return ~Cpi01C;
-		}
-		
-		case 0x88200e: {
-			return ~Cpi01E;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Read Byte %x\n"), a);
-		}
-	}
+   switch (a)
+   {
+      case 0x882000:
+         return ~Inp000;
+      case 0x882001:
+         return ~Inp001;
+      case 0x882008:
+         return ~Inp018;
+      case 0x88200a:
+         return ~Cpi01A;
+      case 0x88200c:
+         return ~Cpi01C;
+      case 0x88200e:
+         return ~Cpi01E;
+   }
 
-	return 0;
+   return 0;
 }
 
 UINT16 __fastcall CawingblInputReadWord(UINT32 a)
 {
-	switch (a) {
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Read Word %x\n"), a);
-		}
-	}
-
 	return 0;
 }
 
 void __fastcall CawingblInputWriteByte(UINT32 a, UINT8 d)
 {
-	switch (a) {
-		case 0x882006: {
-			FcrashSoundCommand(d);
-			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write Byte %x, %x\n"), a, d);
-		}
-	}
+   if (a == 0x882006)
+      FcrashSoundCommand(d);
 }
 
 void __fastcall CawingblInputWriteWord(UINT32 a, UINT16 d)
 {
-	switch (a) {
-		case 0x882006: {
-			FcrashSoundCommand(d);
-			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write Word %x, %x\n"), a, d);
-		}
-	}
+   if (a == 0x882006)
+      FcrashSoundCommand(d);
 }
 
 static INT32 CawingblInit()
@@ -12100,47 +12051,33 @@ static INT32 Cps1demoInit()
 
 void __fastcall DinopicScrollWrite(UINT32 a, UINT16 d)
 {
-	switch (a) {
-		case 0x980000: {
-			// scroll1 y
-			*((UINT16*)(CpsReg + 0x0e)) = BURN_ENDIAN_SWAP_INT16(d);
-			return;
-		}
-		
-		case 0x980002: {
-			// scroll1 x
-			*((UINT16*)(CpsReg + 0x0c)) = BURN_ENDIAN_SWAP_INT16(d - 0x40);
-			return;
-		}
-		
-		case 0x980004: {
-			// scroll2 y
-			*((UINT16*)(CpsReg + 0x12)) = BURN_ENDIAN_SWAP_INT16(d);
-			return;
-		}
-		
-		case 0x980006: {
-			// scroll2 x
-			*((UINT16*)(CpsReg + 0x10)) = BURN_ENDIAN_SWAP_INT16(d - 0x40);
-			return;
-		}
-		
-		case 0x980008: {
-			// scroll3 y
-			*((UINT16*)(CpsReg + 0x16)) = BURN_ENDIAN_SWAP_INT16(d);
-			return;
-		}
-		
-		case 0x98000a: {
-			// scroll3 x
-			*((UINT16*)(CpsReg + 0x14)) = BURN_ENDIAN_SWAP_INT16(d - 0x40);
-			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Write Word %x, %x\n"), a, d);
-		}
-	}
+   switch (a)
+   {
+      case 0x980000:
+         // scroll1 y
+         *((UINT16*)(CpsReg + 0x0e)) = BURN_ENDIAN_SWAP_INT16(d);
+         return;
+      case 0x980002:
+         // scroll1 x
+         *((UINT16*)(CpsReg + 0x0c)) = BURN_ENDIAN_SWAP_INT16(d - 0x40);
+         return;
+      case 0x980004:
+         // scroll2 y
+         *((UINT16*)(CpsReg + 0x12)) = BURN_ENDIAN_SWAP_INT16(d);
+         return;
+      case 0x980006:
+         // scroll2 x
+         *((UINT16*)(CpsReg + 0x10)) = BURN_ENDIAN_SWAP_INT16(d - 0x40);
+         return;
+      case 0x980008:
+         // scroll3 y
+         *((UINT16*)(CpsReg + 0x16)) = BURN_ENDIAN_SWAP_INT16(d);
+         return;
+      case 0x98000a:
+         // scroll3 x
+         *((UINT16*)(CpsReg + 0x14)) = BURN_ENDIAN_SWAP_INT16(d - 0x40);
+         return;
+   }
 }
 
 void __fastcall DinopicLayerWrite(UINT32 a, UINT16 d)
@@ -12278,76 +12215,39 @@ static INT32 DinohuntInit()
 
 UINT8 __fastcall FcrashInputReadByte(UINT32 a)
 {
-	switch (a) {
-		case 0x880000: {
-			return ~Inp000;
-		}
-		
-		case 0x880008: {
-			return ~Inp018;
-		}
-		
-		case 0x88000a: {
-			return ~Cpi01A;
-		}
-		
-		case 0x88000c: {
-			return ~Cpi01C;
-		}
-		
-		case 0x88000e: {
-			return ~Cpi01E;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Read Byte %x\n"), a);
-		}
-	}
+	switch (a)
+   {
+      case 0x880000:
+         return ~Inp000;
+      case 0x880008:
+         return ~Inp018;
+      case 0x88000a:
+         return ~Cpi01A;
+      case 0x88000c:
+         return ~Cpi01C;
+      case 0x88000e:
+         return ~Cpi01E;
+   }
 	
 	return 0;
 }
 
 UINT16 __fastcall FcrashInputReadWord(UINT32 a)
 {
-	switch (a) {
-		case 0x880000: {
-			return (~Inp000 << 8) | ~Inp001;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Read Word %x\n"), a);
-		}
-	}
+   if (a == 0x880000)
+      return (~Inp000 << 8) | ~Inp001;
 	
 	return 0;
 }
 
 void __fastcall FcrashInputWriteByte(UINT32 a, UINT8 d)
 {
-	switch (a) {
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write Byte %x, %x\n"), a, d);
-		}
-	}
 }
 
 void __fastcall FcrashInputWriteWord(UINT32 a, UINT16 d)
 {
-	switch (a) {
-		case 0x880006: {
-			FcrashSoundCommand(d);
-			return;
-		}
-		
-		case 0x890000: {
-			// ???
-			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write word %x, %x\n"), a, d);
-		}
-	}
+   if (a == 0x880006)
+      FcrashSoundCommand(d);
 }
 
 static INT32 FcrashInit()
@@ -12527,8 +12427,6 @@ void __fastcall Daimakaib88WriteWord(UINT32 a, UINT16 d)
 			return;
 		}
 	}
-	
-	bprintf(PRINT_NORMAL, _T("Write word %x, %x\n"), a, d);
 }
 
 void __fastcall Daimakaib98WriteWord(UINT32 a, UINT16 d)
@@ -12572,52 +12470,41 @@ void __fastcall Daimakaib98WriteWord(UINT32 a, UINT16 d)
 		
 		case 0x98000c: {
 			// This seems to control layer order and enable
-			switch (d) {
-				case 0: {
-					nCps1Layers[0] = 1;
-					nCps1Layers[1] = 0;
-					nCps1Layers[2] = 2;
-					nCps1Layers[3] = 3;
-					break;
-				}
-				
-				case 1: {
-					nCps1Layers[0] = 1;
-					nCps1Layers[1] = 0;
-					nCps1Layers[2] = -1;
-					nCps1Layers[3] = 3;
-					break;
-				}
-				
-				case 2: {
-					nCps1Layers[0] = 3;
-					nCps1Layers[1] = -1;
-					nCps1Layers[2] = -1;
-					nCps1Layers[3] = 1;
-					break;
-				}
-				
-				case 6: {
-					nCps1Layers[0] = -1;
-					nCps1Layers[1] = -1;
-					nCps1Layers[2] = -1;
-					nCps1Layers[3] = -1;
-					break;
-				}
-				
-				default: {
-					nCps1Layers[0] = 0;
-					nCps1Layers[1] = 0;
-					nCps1Layers[2] = 0;
-					nCps1Layers[3] = 0;
-					bprintf(PRINT_IMPORTANT, _T("Unknown value written at 0x98000c %x\n"), d);
-				}
-			}
+			switch (d)
+         {
+            case 0:
+               nCps1Layers[0] = 1;
+               nCps1Layers[1] = 0;
+               nCps1Layers[2] = 2;
+               nCps1Layers[3] = 3;
+               break;
+            case 1:
+               nCps1Layers[0] = 1;
+               nCps1Layers[1] = 0;
+               nCps1Layers[2] = -1;
+               nCps1Layers[3] = 3;
+               break;
+            case 2:
+               nCps1Layers[0] = 3;
+               nCps1Layers[1] = -1;
+               nCps1Layers[2] = -1;
+               nCps1Layers[3] = 1;
+               break;
+            case 6:
+               nCps1Layers[0] = -1;
+               nCps1Layers[1] = -1;
+               nCps1Layers[2] = -1;
+               nCps1Layers[3] = -1;
+               break;
+            default:
+               nCps1Layers[0] = 0;
+               nCps1Layers[1] = 0;
+               nCps1Layers[2] = 0;
+               nCps1Layers[3] = 0;
+         }
 			return;
 		}
 	}
-	
-	bprintf(PRINT_NORMAL, _T("Write word %x, %x\n"), a, d);
 }
 
 void __fastcall DaimakaibFFWriteByte(UINT32 a, UINT8 d)
@@ -12761,7 +12648,6 @@ void __fastcall Knightsb98WriteWord(UINT32 a, UINT16 d)
 					nCps1Layers[1] = 0;
 					nCps1Layers[2] = 2;
 					nCps1Layers[3] = 3;
-					bprintf(PRINT_IMPORTANT, _T("Unknown value written at 0x98000c %x\n"), d);
 				}
 			}
 			return;
@@ -12780,10 +12666,6 @@ void __fastcall Knightsb98WriteWord(UINT32 a, UINT16 d)
 		case 0x980024: {
 			*((UINT16*)(CpsReg + MaskAddr[3])) = BURN_ENDIAN_SWAP_INT16(d);
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Write word %x, %x\n"), a, d);
 		}
 	}
 }
@@ -12837,27 +12719,16 @@ static INT32 Knightsb2Init()
 
 UINT8 __fastcall KodbInputReadByte(UINT32 a)
 {
-	switch (a) {
-		case 0x992000: {
-			return ~Inp000;
-		}
-		
-		case 0x992001: {
-			return ~Inp001;
-		}
-		
-		case 0x992008: {
-			return ~Inp018;
-		}
-		
-		case 0x992009: {
-			return 0xff;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Read Byte %x\n"), a);
-		}
-	}
+   switch (a) {
+      case 0x992000:
+         return ~Inp000;
+      case 0x992001:
+         return ~Inp001;
+      case 0x992008:
+         return ~Inp018;
+      case 0x992009:
+         return 0xff;
+   }
 	
 	return 0;
 }
@@ -12871,8 +12742,6 @@ void __fastcall Kodb98WriteByte(UINT32 a, UINT8 d)
 			return;
 		}
 	}
-	
-	bprintf(PRINT_IMPORTANT, _T("Unknown byte value written at %x %x\n"), a, d);
 }
 
 void __fastcall Kodb98WriteWord(UINT32 a, UINT16 d)
@@ -12934,8 +12803,6 @@ void __fastcall Kodb98WriteWord(UINT32 a, UINT16 d)
 			return;
 		}
 	}
-	
-	bprintf(PRINT_IMPORTANT, _T("Unknown value written at %x %x\n"), a, d);
 }
 
 static INT32 KodbInit()
@@ -13100,10 +12967,6 @@ void __fastcall Punipic98WriteWord(UINT32 a, UINT16 d)
 						return;
 					}
 					
-					default: {
-						bprintf(PRINT_NORMAL, _T("Unknown PunipicPriorityValue %x when 0x98000e is %x\n"), PunipicPriorityValue, d);
-						return;
-					}
 				}
 			}
 			
@@ -13132,21 +12995,12 @@ void __fastcall Punipic98WriteWord(UINT32 a, UINT16 d)
 						nCps1Layers[3] = -1;
 						return;
 					}
-					
-					default: {
-						bprintf(PRINT_NORMAL, _T("Unknown PunipicPriorityValue %x when 0x98000e is %x\n"), PunipicPriorityValue, d);
-						return;
-					}
 				}
 			}
-			
-			bprintf(PRINT_NORMAL, _T("Unknown value written to 0x98000e %x\n"), d);
 			
 			return;
 		}
 	}
-	
-	bprintf(PRINT_NORMAL, _T("Write Word %x, %x\n"), a, d);
 }
 
 void __fastcall PunipicFFWriteByte(UINT32 a, UINT8 d)
@@ -13422,10 +13276,6 @@ UINT8 __fastcall Sf2rbProtReadByte(UINT32 a)
 		case 0x281201: {
 			return 0x40;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Prot Read Byte %x\n"), a);
-		}
 	}
 	
 	return 0;
@@ -13433,12 +13283,6 @@ UINT8 __fastcall Sf2rbProtReadByte(UINT32 a)
 
 UINT16 __fastcall Sf2rbProtReadWord(UINT32 a)
 {
-	switch (a) {
-		default: {
-			bprintf(PRINT_NORMAL, _T("Prot Read Word %x\n"), a);
-		}
-	}
-	
 	return 0;
 }
 
@@ -13472,10 +13316,6 @@ UINT8 __fastcall Sf2rb2ProtReadByte(UINT32 a)
 		case 0x281201: {
 			return 0x40;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Prot Read Byte %x\n"), a);
-		}
 	}
 	
 	return 0;
@@ -13483,12 +13323,6 @@ UINT8 __fastcall Sf2rb2ProtReadByte(UINT32 a)
 
 UINT16 __fastcall Sf2rb2ProtReadWord(UINT32 a)
 {
-	switch (a) {
-		default: {
-			bprintf(PRINT_NORMAL, _T("Prot Read Word %x\n"), a);
-		}
-	}
-	
 	return 0;
 }
 
@@ -13592,10 +13426,6 @@ UINT8 __fastcall Sf2mdtReadByte(UINT32 a)
 		case 0x70c01e: {
 			return ~Cpi01E;
 		}		
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Read Byte %x\n"), a);
-		}
 	}
 
 	return 0;
@@ -13603,12 +13433,6 @@ UINT8 __fastcall Sf2mdtReadByte(UINT32 a)
 
 UINT16 __fastcall Sf2mdtReadWord(UINT32 a)
 {
-	switch (a) {
-		default: {
-			bprintf(PRINT_NORMAL, _T("Read Word %x\n"), a);
-		}
-	}
-
 	return 0;
 }
 
@@ -13619,16 +13443,13 @@ void __fastcall Sf2mdtWriteByte(UINT32 a, UINT8 d)
 			Sf2mdtSoundCommand(d);
 			return;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Write Byte %x, %x\n"), a, d);
-		}
 	}
 }
 
 void __fastcall Sf2mdtWriteWord(UINT32 a, UINT16 d)
 {
-	switch (a) {
+	switch (a)
+   {
 		case 0x70810c: {
 			// scroll3 x
 			*((UINT16*)(CpsReg + 0x14)) = BURN_ENDIAN_SWAP_INT16(d + 0xffbe);
@@ -13677,10 +13498,6 @@ void __fastcall Sf2mdtWriteWord(UINT32 a, UINT16 d)
 		case 0x70d000: {
 			// nop?
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Write Word %x, %x\n"), a, d);
 		}
 	}
 }
@@ -13735,10 +13552,6 @@ void __fastcall Sf2mdtaWriteWord(UINT32 a, UINT16 d)
 		case 0x70d000: {
 			// nop?
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Write Word %x, %x\n"), a, d);
 		}
 	}
 }
@@ -13923,7 +13736,6 @@ void __fastcall Sf2ceeablScrollWrite(UINT32 a, UINT16 d)
 					nCps1Layers[1] = 3;
 					nCps1Layers[2] = 2;
 					nCps1Layers[3] = 1;
-					bprintf(PRINT_IMPORTANT, _T("Unknown value written at 0x98000c %x\n"), d);
 				}
 			}
 			return;
@@ -13933,10 +13745,6 @@ void __fastcall Sf2ceeablScrollWrite(UINT32 a, UINT16 d)
 			// scroll3 ram offset
 			*((UINT16*)(CpsReg + 0x06)) = d;
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Write Word %x, %x\n"), a, d);
 		}
 	}
 }
@@ -14020,8 +13828,6 @@ UINT8 __fastcall Sf2ceuablReadByte(UINT32 a)
 		}
 	}
 	
-//	bprintf(PRINT_NORMAL, _T("Read byte %x\n"), a);
-	
 	return 0;
 }
 
@@ -14035,8 +13841,6 @@ void __fastcall Sf2ceuablWriteByte(UINT32 a, UINT8 d)
 			return;
 		}
 	}
-	
-//	bprintf(PRINT_NORMAL, _T("Write byte %x, %x\n"), a, d);
 }
 
 void __fastcall Sf2ceuablWriteWord(UINT32 a, UINT16 d)
@@ -14165,8 +13969,6 @@ void __fastcall Sf2ceuablWriteWord(UINT32 a, UINT16 d)
 			return;
 		}
 	}
-	
-//	bprintf(PRINT_NORMAL, _T("Write word %x, %x\n"), a, d);
 }
 
 static INT32 Sf2ceuablInit()
@@ -14215,12 +14017,6 @@ static INT32 Sf2ceuab4Init()
 
 UINT8 __fastcall Sf2dongbProtReadByte(UINT32 a)
 {
-	switch (a) {
-		default: {
-			bprintf(PRINT_NORMAL, _T("Prot Read Byte %x\n"), a);
-		}
-	}
-	
 	return 0;
 }
 
@@ -14233,10 +14029,6 @@ UINT16 __fastcall Sf2dongbProtReadWord(UINT32 a)
 		
 		case 0x1f7040: {
 			return 0x0210;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Prot Read Word %x\n"), a);
 		}
 	}
 	
@@ -14399,10 +14191,6 @@ UINT8 __fastcall WofhInputReadByte(UINT32 a)
 		case 0x880e78: {
 			return WofhProtValue; // protection
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Read Byte %x\n"), a);
-		}
 	}
 	
 	return 0x00;
@@ -14422,10 +14210,6 @@ void __fastcall WofhInputWriteByte(UINT32 a, UINT8 d)
 			PsndCode = d;
 			return;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write Byte %x, %x\n"), a, d);
-		}
 	}
 }
 
@@ -14437,10 +14221,6 @@ void __fastcall WofhInputWriteWord(UINT32 a, UINT16 d)
 
 			PsndCode = d & 0xff;
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write word %x, %x\n"), a, d);
 		}
 	}
 }
@@ -14642,10 +14422,6 @@ UINT8 __fastcall Wof3sjInputReadByte(UINT32 a)
 		case 0x880e7e: {
 			return 0xff;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Read Byte %x\n"), a);
-		}
 	}
 	
 	return 0;
@@ -14665,10 +14441,6 @@ void __fastcall Wof3sjInputWriteByte(UINT32 a, UINT8 d)
 			PsndCode = d;
 			return;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write Byte %x, %x\n"), a, d);
-		}
 	}
 }
 
@@ -14680,10 +14452,6 @@ void __fastcall Wof3sjInputWriteWord(UINT32 a, UINT16 d)
 
 			PsndCode = d & 0xff;
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Input Write word %x, %x\n"), a, d);
 		}
 	}
 }
@@ -14831,14 +14599,9 @@ void __fastcall Wofb98WriteWord(UINT32 a, UINT16 d)
 					nCps1Layers[1] = 0;
 					nCps1Layers[2] = 2;
 					nCps1Layers[3] = 3;
-					bprintf(PRINT_IMPORTANT, _T("Unknown value written at 0x98000c %x\n"), d);
 				}
 			}
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Write word %x, %x\n"), a, d);
 		}
 	}
 }

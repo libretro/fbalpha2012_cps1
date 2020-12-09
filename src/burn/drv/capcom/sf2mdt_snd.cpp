@@ -45,10 +45,6 @@ UINT8 __fastcall Sf2mdtZ80Read(UINT16 a)
 			ZetSetIRQLine(0, ZET_IRQSTATUS_NONE);
 			return Sf2mdtSoundLatch;
 		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Z80 #1 Read => %04X\n"), a);
-		}
 	}
 
 	return 0;
@@ -85,10 +81,6 @@ void __fastcall Sf2mdtZ80Write(UINT16 a, UINT8 d)
 		case 0xe800: {
 			Sf2mdtSampleBuffer2 = d;
 			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Z80 #1 Write => %04X, %02X\n"), a, d);
 		}
 	}
 }

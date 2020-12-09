@@ -163,16 +163,12 @@ void __fastcall CPSQSoundF0WriteByte(UINT32 sekAddress, UINT8 byteValue)
 #if 0
 UINT8 __fastcall CPSExtraNVRAMReadByte(UINT32 sekAddress)
 {
-//	bprintf(PRINT_NORMAL, _T("  - 0x%06X read.\n"), sekAddress);
-
 	sekAddress &= 0x3FFF;
 	return CpsRam660[sekAddress];
 }
 
 void __fastcall CPSExtraNVRAMWriteByte(UINT32 sekAddress, UINT8 byteValue)
 {
-//	bprintf(PRINT_NORMAL, _T("  - 0x%06X -> %02X\n"), sekAddress, byteValue);
-
 	sekAddress &= 0x3FFF;
 	CpsRam660[sekAddress] = byteValue;
 }
@@ -187,7 +183,6 @@ void __fastcall CpsWriteSpriteByte(UINT32 sekAddress, UINT8 byteValue)
 {
 	if (prevline != SekCurrentScanline()) {
 		prevline = SekCurrentScanline();
-//		bprintf(PRINT_NORMAL, _T("  - sb (%3i)\n"), prevline);
 	}
 
 	sekAddress &= 0x1FFF;
@@ -198,7 +193,6 @@ void __fastcall CpsWriteSpriteWord(UINT32 sekAddress, UINT16 wordValue)
 {
 	if (prevline != SekCurrentScanline()) {
 		prevline = SekCurrentScanline();
-//		bprintf(PRINT_NORMAL, _T("  - sw (%3i)\n"), prevline);
 	}
 
 	sekAddress &= 0x1FFE;
@@ -210,7 +204,6 @@ void __fastcall CpsWriteSpriteWord(UINT32 sekAddress, UINT16 wordValue)
 UINT8 __fastcall haxx0rReadByte(UINT32 sekAddress)
 {
 	sekAddress &= 0xFFFF;
-	bprintf(PRINT_NORMAL, _T("    QS %06X read (%02X)\n"), sekAddress, CpsEncZRom[sekAddress]);
 	return CpsEncZRom[sekAddress];
 }
 

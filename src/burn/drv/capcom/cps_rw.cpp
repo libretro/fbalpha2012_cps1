@@ -227,8 +227,6 @@ static UINT8 CpsReadPort(const UINT32 ia)
 		}	
 	}
 	
-//	bprintf(PRINT_NORMAL, _T("Read Port %x\n"), ia);
-
 	return d;
 }
 
@@ -299,8 +297,6 @@ void CpsWritePort(const UINT32 ia, UINT8 d)
 			return;
 		}
 	}
-	
-//	bprintf(PRINT_NORMAL, _T("Write Port %x, %x\n"), ia, d);
 }
 
 UINT8 __fastcall CpsReadByte(UINT32 a)
@@ -315,8 +311,6 @@ UINT8 __fastcall CpsReadByte(UINT32 a)
 	}
 	
 	if (Dinohunt && a == 0xfc0001) return (UINT8)~Inpc001;
-	
-//	bprintf(PRINT_NORMAL, _T("Read Byte %x\n"), a);
 	
 	return 0x00;
 }
@@ -336,21 +330,15 @@ void __fastcall CpsWriteByte(UINT32 a,UINT8 d)
 			return;
 		}
 	}
-	
-//	bprintf(PRINT_NORMAL, _T("Write Byte %x, %x\n"), a, d);
 }
 
 UINT16 __fastcall CpsReadWord(UINT32 a)
 {
-	if ((a & 0xFF8FFF) == 0x800100 + CpsMProt[3]) {
+	if ((a & 0xFF8FFF) == 0x800100 + CpsMProt[3])
 		return (UINT16)((nCalc[0] * nCalc[1]) >> 16);
-	}
 	// ports mirrored between 0x800000 and 0x807fff
-	if ((a & 0xFF8FFF) == 0x800100 + CpsMProt[2]) {
+	if ((a & 0xFF8FFF) == 0x800100 + CpsMProt[2])
 		return (UINT16)((nCalc[0] * nCalc[1]));
-	}
-	
-//	bprintf(PRINT_NORMAL, _T("Read Word %x\n"), a);
 	
 	SEK_DEF_READ_WORD(0, a);
 }
@@ -369,13 +357,11 @@ void __fastcall CpsWriteWord(UINT32 a, UINT16 d)
 		}
 	}
 	
-//	bprintf(PRINT_NORMAL, _T("Write Word %x, %x\n"), a, d);
-	
 	SEK_DEF_WRITE_WORD(0, a, d);
 }
 
 // Reset all inputs to zero
-static INT32 InpBlank()
+static INT32 InpBlank(void)
 {
 #define INP(nnn) Inp##nnn = 0; memset(CpsInp##nnn, 0, sizeof(CpsInp##nnn));
 	CPSINPSET
