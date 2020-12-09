@@ -279,11 +279,7 @@ void HiscoreInit(void)
    if (nHiscoreNumRanges) HiscoresInUse = 1;
 
    TCHAR szFilename[MAX_PATH];
-#ifdef __LIBRETRO__
    snprintf(szFilename, sizeof(szFilename), "%s%c%s.hi", g_save_dir, slash, BurnDrvGetText(DRV_NAME));
-#else
-   _stprintf(szFilename, _T("%s%s.hi"), szAppHiscorePath, BurnDrvGetText(DRV_NAME));
-#endif
 
    fp = _tfopen(szFilename, _T("r"));
    INT32 Offset = 0;

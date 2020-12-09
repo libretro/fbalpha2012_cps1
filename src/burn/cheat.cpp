@@ -228,17 +228,18 @@ void CheatExit()
 		CheatInfo* pCurrentCheat = pCheatInfo;
 		CheatInfo* pNextCheat;
 
-		do {
-			pNextCheat = pCurrentCheat->pNext;
-			for (INT32 i = 0; i < CHEAT_MAX_OPTIONS; i++) {
-				if (pCurrentCheat->pOption[i]) {
-					free(pCurrentCheat->pOption[i]);
-				}
-			}
-			if (pCurrentCheat) {
-				free(pCurrentCheat);
-			}
-		} while ((pCurrentCheat = pNextCheat) != 0);
+		do
+      {
+         INT32 i;
+         pNextCheat = pCurrentCheat->pNext;
+         for (i = 0; i < CHEAT_MAX_OPTIONS; i++)
+         {
+            if (pCurrentCheat->pOption[i])
+               free(pCurrentCheat->pOption[i]);
+         }
+         if (pCurrentCheat)
+            free(pCurrentCheat);
+      } while ((pCurrentCheat = pNextCheat) != 0);
 	}
 
 	memset (cpus, 0, sizeof(cheat_core));
@@ -306,8 +307,10 @@ void CheatSearchStart()
 	
 	if (CheatSearchInitCallbackFunction) CheatSearchInitCallbackFunction();
 
-	for (nAddress = 0; nAddress < nMemorySize; nAddress++) {
-		if (MemoryStatus[nAddress] == NOT_IN_RESULTS) continue;
+	for (nAddress = 0; nAddress < nMemorySize; nAddress++)
+   {
+		if (MemoryStatus[nAddress] == NOT_IN_RESULTS)
+         continue;
 		MemoryValues[nAddress] = cheat_subptr->read(nAddress);
 	}
 	
@@ -323,8 +326,10 @@ static void CheatSearchGetResults()
 	memset(CheatSearchShowResultAddresses, 0, CHEATSEARCH_SHOWRESULTS);
 	memset(CheatSearchShowResultValues, 0, CHEATSEARCH_SHOWRESULTS);
 	
-	for (nAddress = 0; nAddress < nMemorySize; nAddress++) {		
-		if (MemoryStatus[nAddress] == IN_RESULTS) {
+	for (nAddress = 0; nAddress < nMemorySize; nAddress++)
+   {
+		if (MemoryStatus[nAddress] == IN_RESULTS)
+      {
 			CheatSearchShowResultAddresses[nResultsPos] = nAddress;
 			CheatSearchShowResultValues[nResultsPos] = MemoryValues[nAddress];
 			nResultsPos++;
@@ -343,14 +348,17 @@ UINT32 CheatSearchValueNoChange()
 	if (nActiveCPU >= 0) cheat_subptr->close();
 	cheat_subptr->open(0);
 	
-	for (nAddress = 0; nAddress < nMemorySize; nAddress++) {
-		if (MemoryStatus[nAddress] == NOT_IN_RESULTS) continue;
-		if (cheat_subptr->read(nAddress) == MemoryValues[nAddress]) {
+	for (nAddress = 0; nAddress < nMemorySize; nAddress++)
+   {
+		if (MemoryStatus[nAddress] == NOT_IN_RESULTS)
+         continue;
+		if (cheat_subptr->read(nAddress) == MemoryValues[nAddress])
+      {
 			MemoryValues[nAddress] = cheat_subptr->read(nAddress);
 			nMatchedAddresses++;
-		} else {
-			MemoryStatus[nAddress] = NOT_IN_RESULTS;
 		}
+      else
+			MemoryStatus[nAddress] = NOT_IN_RESULTS;
 	}
 
 	cheat_subptr->close();
@@ -372,15 +380,18 @@ UINT32 CheatSearchValueChange()
 	if (nActiveCPU >= 0) cheat_subptr->close();
 	cheat_subptr->open(0);
 	
-	for (nAddress = 0; nAddress < nMemorySize; nAddress++) {
-		if (MemoryStatus[nAddress] == NOT_IN_RESULTS) continue;
-		if (cheat_subptr->read(nAddress) != MemoryValues[nAddress]) {
-			MemoryValues[nAddress] = cheat_subptr->read(nAddress);
-			nMatchedAddresses++;
-		} else {
-			MemoryStatus[nAddress] = NOT_IN_RESULTS;
-		}
-	}
+	for (nAddress = 0; nAddress < nMemorySize; nAddress++)
+   {
+      if (MemoryStatus[nAddress] == NOT_IN_RESULTS)
+         continue;
+      if (cheat_subptr->read(nAddress) != MemoryValues[nAddress])
+      {
+         MemoryValues[nAddress] = cheat_subptr->read(nAddress);
+         nMatchedAddresses++;
+      }
+      else
+         MemoryStatus[nAddress] = NOT_IN_RESULTS;
+   }
 	
 	cheat_subptr->close();
 	if (nActiveCPU >= 0) cheat_subptr->open(nActiveCPU);
@@ -446,25 +457,6 @@ UINT32 CheatSearchValueIncreased()
 	if (nMatchedAddresses <= CHEATSEARCH_SHOWRESULTS) CheatSearchGetResults();
 	
 	return nMatchedAddresses;
-}
-
-void CheatSearchDumptoFile()
-{
-	FILE *fp = fopen("cheatsearchdump.txt", "wt");
-	UINT32 nAddress;
-	
-	if (fp) {
-		char Temp[256];
-		
-		for (nAddress = 0; nAddress < nMemorySize; nAddress++) {
-			if (MemoryStatus[nAddress] == IN_RESULTS) {
-				sprintf(Temp, "Address %08X Value %02X\n", nAddress, MemoryValues[nAddress]);
-				fwrite(Temp, 1, strlen(Temp), fp);
-			}
-		}
-		
-		fclose(fp);
-	}
 }
 
 void CheatSearchExcludeAddressRange(UINT32 nStart, UINT32 nEnd)

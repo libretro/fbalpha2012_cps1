@@ -113,7 +113,7 @@ unsigned char Z80Vector = 0;
 
 #define VERBOSE 0
 
-#define LOG(x)	//do { if (VERBOSE) logerror x; } while (0)
+#define LOG(x)
 
 /* execute main opcodes inside a big switch statement */
 #ifndef BIG_SWITCH
@@ -2127,8 +2127,6 @@ OP(xycb,fe) { WM( EA, SET(7,RM(EA)) );							} /* SET  7,(XY+o)    */
 OP(xycb,ff) { A = SET(7, RM(EA) ); WM( EA,A );					} /* SET  7,A=(XY+o)  */
 
 OP(illegal,1) {
-//	logerror("Z80 #%d ill. opcode $%02x $%02x\n",
-//			cpu_getactivecpu(), cpu_readop((PCD-1)&0xffff), cpu_readop(PCD));
 }
 
 /**********************************************************
@@ -2715,8 +2713,6 @@ OP(fd,ff) { illegal_1(); op_ff();								} /* DB   FD          */
 
 OP(illegal,2)
 {
-//	logerror("Z80 #%d ill. opcode $ed $%02x\n",
-//			cpu_getactivecpu(), cpu_readop((PCD-1)&0xffff));
 }
 
 /**********************************************************

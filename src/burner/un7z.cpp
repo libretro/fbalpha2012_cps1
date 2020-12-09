@@ -37,7 +37,7 @@
 
 ***************************************************************************/
 
-// this is based on unzip.c, with modifications needed to use the 7zip library
+/* this is based on unzip.c, with modifications needed to use the 7zip library */
 
 /***************************************************************************
 	Above notices are from MAME
@@ -177,8 +177,6 @@ void FileInStream_CreateVTable(CFileInStream *p)
 
 static size_t FileOutStream_Write(void *, const void *, size_t size)
 {
-//  CFileOutStream *p = (CFileOutStream *)pp;
-//  File_Write(&p->file, data, &size);
   return size;
 }
 
@@ -225,11 +223,9 @@ int _7z_search_crc_match(_7z_file *new_7z, UINT32 search_crc, const char* search
 	for (unsigned int i = 0; i < new_7z->db.db.NumFiles; i++)
 	{
 		const CSzFileItem *f = new_7z->db.db.Files + i;
-		size_t len;
+		size_t len = SzArEx_GetFileNameUtf16(&new_7z->db, i, NULL);
 
-		len = SzArEx_GetFileNameUtf16(&new_7z->db, i, NULL);
-
-		// if it's a directory entry we don't care about it..
+		/* if it's a directory entry we don't care about it.. */
 		if (f->IsDir)
 			continue;
 
@@ -239,9 +235,7 @@ int _7z_search_crc_match(_7z_file *new_7z, UINT32 search_crc, const char* search
 			tempSize = len;
 			temp = (UInt16 *)SZipAlloc(NULL, tempSize * sizeof(temp[0]));
 			if (temp == 0)
-			{
-				return -1; // memory error
-			}
+				return -1; /* memory error */
 		}
 
 		bool crcmatch = false;
@@ -259,9 +253,9 @@ int _7z_search_crc_match(_7z_file *new_7z, UINT32 search_crc, const char* search
 			for (j=0;j<search_filename_length;j++)
 			{
 				UINT8 sn = search_filename[j];
-				UINT16 zn = temp[j]; // these are utf16
+				UINT16 zn = temp[j]; /* these are utf16 */
 
-				// MAME filenames are always lowercase so be case insensitive
+				/* MAME filenames are always lowercase so be case insensitive */
 				if ((zn>=0x41) && (zn<=0x5a)) zn+=0x20;
 
 				if (sn != zn) break;
@@ -293,7 +287,6 @@ int _7z_search_crc_match(_7z_file *new_7z, UINT32 search_crc, const char* search
 
 		if (found) 
 		{
-		//	printf("found %S %d %08x %08x %08x %s %d\n", temp, len, crc, search_crc, size, search_filename, search_filename_length);
 			new_7z->curr_file_idx = i;
 			new_7z->uncompressed_length = size;
 			new_7z->crc = crc;

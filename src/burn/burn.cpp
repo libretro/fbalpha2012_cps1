@@ -5,18 +5,18 @@
 #include "burn_sound.h"
 #include "driverlist.h"
 
-// filler function, used if the application is not printing debug messages
+/* filler function, used if the application is not printing debug messages */
 static INT32 __cdecl BurnbprintfFiller(INT32, TCHAR* , ...) { return 0; }
-// pointer to burner printing function
+/* pointer to burner printing function */
 #ifndef bprintf
 INT32 (__cdecl *bprintf)(INT32 nStatus, TCHAR* szFormat, ...) = BurnbprintfFiller;
 #endif
 
-INT32 nBurnVer = BURN_VERSION;		// Version number of the library
+INT32 nBurnVer = BURN_VERSION;		/* Version number of the library */
 
-UINT32 nBurnDrvCount = 0;		// Count of game drivers
-UINT32 nBurnDrvActive = ~0U;	// Which game driver is selected
-UINT32 nBurnDrvSelect[8] = { ~0U, ~0U, ~0U, ~0U, ~0U, ~0U, ~0U, ~0U }; // Which games are selected (i.e. loaded but not necessarily active)
+UINT32 nBurnDrvCount = 0;		/* Count of game drivers */
+UINT32 nBurnDrvActive = ~0U;	/* Which game driver is selected */
+UINT32 nBurnDrvSelect[8] = { ~0U, ~0U, ~0U, ~0U, ~0U, ~0U, ~0U, ~0U }; /* Which games are selected (i.e. loaded but not necessarily active) */
 									
 #if defined BUILD_A68K
 bool bBurnUseASMCPUEmulation = true;
@@ -24,22 +24,22 @@ bool bBurnUseASMCPUEmulation = true;
 bool bBurnUseASMCPUEmulation = false;
 #endif
 
-UINT32 nCurrentFrame;			// Framecount for emulated game
+UINT32 nCurrentFrame;			/* Framecount for emulated game */
 
 INT32 nBurnFPS = 6000;
-INT32 nBurnCPUSpeedAdjust = 0x0100;	// CPU speed adjustment (clock * nBurnCPUSpeedAdjust / 0x0100)
+INT32 nBurnCPUSpeedAdjust = 0x0100;	/* CPU speed adjustment (clock * nBurnCPUSpeedAdjust / 0x0100) */
 
-// Burn Draw:
-UINT8* pBurnDraw = NULL;	// Pointer to correctly sized bitmap
-INT32 nBurnPitch = 0;					// Pitch between each line
-INT32 nBurnBpp;						// Bytes per pixel (2, 3, or 4)
+/* Burn Draw: */
+UINT8* pBurnDraw = NULL;	/* Pointer to correctly sized bitmap */
+INT32 nBurnPitch = 0;					/* Pitch between each line */
+INT32 nBurnBpp;						/* Bytes per pixel (2, 3, or 4) */
 
-INT32 nBurnSoundRate = 0;				// sample rate of sound or zero for no sound
-INT32 nBurnSoundLen = 0;				// length in samples per frame
-INT16* pBurnSoundOut = NULL;		// pointer to output buffer
+INT32 nBurnSoundRate = 0;				/* sample rate of sound or zero for no sound */
+INT32 nBurnSoundLen = 0;				/* length in samples per frame */
+INT16* pBurnSoundOut = NULL;		/* pointer to output buffer */
 
-INT32 nInterpolation = 1;				// Desired interpolation level for ADPCM/PCM sound
-INT32 nFMInterpolation = 0;			// Desired interpolation level for FM sound
+INT32 nInterpolation = 1;				/* Desired interpolation level for ADPCM/PCM sound */
+INT32 nFMInterpolation = 0;			/* Desired interpolation level for FM sound */
 
 UINT8 nBurnLayer = 0xFF;	// Can be used externally to select which layers to show
 UINT8 nSpriteEnable = 0xFF;	// Can be used externally to select which Sprites to show
@@ -83,21 +83,26 @@ INT32 BurnGetZipName(char** pszName, UINT32 i)
       INT32 nOldBurnDrvSelect = nBurnDrvActive;
       UINT32 j = pDriver[nBurnDrvActive]->szBoardROM ? 1 : 0;
 
-      // Try BIOS/board ROMs first
-      if (i == 1 && j == 1) // There is a BIOS/board ROM
+      /* Try BIOS/board ROMs first */
+      if (i == 1 && j == 1) /* There is a BIOS/board ROM */
          pszGameName = pDriver[nBurnDrvActive]->szBoardROM;
 
-      if (pszGameName == NULL) {
-         // Go through the list to seek out the parent
-         while (j < i) {
+      if (pszGameName == NULL)
+      {
+         /* Go through the list to seek out the parent */
+         while (j < i)
+         {
             char* pszParent = pDriver[nBurnDrvActive]->szParent;
             pszGameName = NULL;
 
-            if (pszParent == NULL) // No parent
+            if (pszParent == NULL) /* No parent */
                break;
 
             for (nBurnDrvActive = 0; nBurnDrvActive < nBurnDrvCount; nBurnDrvActive++) {
-               if (strcmp(pszParent, pDriver[nBurnDrvActive]->szShortName) == 0) {	// Found parent
+               if (strcmp(pszParent,
+                        pDriver[nBurnDrvActive]->szShortName) == 0)
+               {
+                  /* Found parent */
                   pszGameName = pDriver[nBurnDrvActive]->szShortName;
                   break;
                }
@@ -123,14 +128,15 @@ INT32 BurnGetZipName(char** pszName, UINT32 i)
 	return 0;
 }
 
-// ----------------------------------------------------------------------------
-// Static functions which forward to each driver's data and functions
+/* ----------------------------------------------------------------------------
+ * Static functions which forward to each driver's data and functions
+ */
 
 INT32 BurnStateMAMEScan(INT32 nAction, INT32* pnMin);
-void BurnStateExit();
-INT32 BurnStateInit();
+void BurnStateExit(void);
+INT32 BurnStateInit(void);
 
-// Get the text fields for the driver in TCHARs
+/* Get the text fields for the driver in TCHARs */
 extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 {
 	char* pszStringA = NULL;
@@ -180,8 +186,7 @@ extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 				} else {
 
 #if !defined (_UNICODE)
-
-					// Ensure all of the Unicode titles are printable in the current locale
+					/* Ensure all of the Unicode titles are printable in the current locale */
 					pszCurrentNameW = pDriver[nBurnDrvActive]->szFullNameW;
 					if (pszCurrentNameW && pszCurrentNameW[0]) {
 						INT32 nRet;
@@ -191,7 +196,7 @@ extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 							pszCurrentNameW += wcslen(pszCurrentNameW) + 1;
 						} while	(nRet >= 0 && pszCurrentNameW[0]);
 
-						// If all titles can be printed, we can use the Unicode versions
+						/* If all titles can be printed, we can use the Unicode versions */
 						if (nRet >= 0) {
 							pszStringW = pszCurrentNameW = pDriver[nBurnDrvActive]->szFullNameW;
 						}
@@ -362,7 +367,7 @@ extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 }
 
 
-// Get the ASCII text fields for the driver in ASCII format;
+/* Get the ASCII text fields for the driver in ASCII format; */
 extern "C" char* BurnDrvGetTextA(UINT32 i)
 {
 	switch (i) {
@@ -401,51 +406,52 @@ void BurnLocalisationSetName(char *szName, TCHAR *szLongName)
 }
 #endif
 
-// Get the zip names for the driver
+/* Get the zip names for the driver */
 extern "C" INT32 BurnDrvGetZipName(char** pszName, UINT32 i)
 {
-	if (pDriver[nBurnDrvActive]->GetZipName) {									// Forward to drivers function
+   /* Forward to drivers function */
+	if (pDriver[nBurnDrvActive]->GetZipName)
 		return pDriver[nBurnDrvActive]->GetZipName(pszName, i);
-	}
 
-	return BurnGetZipName(pszName, i);											// Forward to general function
+	return BurnGetZipName(pszName, i); /* Forward to general function */
 }
 
-extern "C" INT32 BurnDrvGetRomInfo(struct BurnRomInfo* pri, UINT32 i)		// Forward to drivers function
+/* Forward to drivers function */
+extern "C" INT32 BurnDrvGetRomInfo(struct BurnRomInfo* pri, UINT32 i)		
 {
 	return pDriver[nBurnDrvActive]->GetRomInfo(pri, i);
 }
 
-extern "C" INT32 BurnDrvGetRomName(char** pszName, UINT32 i, INT32 nAka)		// Forward to drivers function
+extern "C" INT32 BurnDrvGetRomName(char** pszName, UINT32 i, INT32 nAka)
 {
 	return pDriver[nBurnDrvActive]->GetRomName(pszName, i, nAka);
 }
 
-extern "C" INT32 BurnDrvGetInputInfo(struct BurnInputInfo* pii, UINT32 i)	// Forward to drivers function
+extern "C" INT32 BurnDrvGetInputInfo(struct BurnInputInfo* pii, UINT32 i)
 {
 	return pDriver[nBurnDrvActive]->GetInputInfo(pii, i);
 }
 
 extern "C" INT32 BurnDrvGetDIPInfo(struct BurnDIPInfo* pdi, UINT32 i)
 {
-	if (pDriver[nBurnDrvActive]->GetDIPInfo) {									// Forward to drivers function
+   /* Forward to drivers function */
+	if (pDriver[nBurnDrvActive]->GetDIPInfo)
 		return pDriver[nBurnDrvActive]->GetDIPInfo(pdi, i);
-	}
 
-	return 1;																	// Fail automatically
+	return 1; /* Fail automatically */
 }
 
-extern "C" INT32 BurnDrvGetSampleInfo(struct BurnSampleInfo* pri, UINT32 i)		// Forward to drivers function
+extern "C" INT32 BurnDrvGetSampleInfo(struct BurnSampleInfo* pri, UINT32 i)
 {
 	return pDriver[nBurnDrvActive]->GetSampleInfo(pri, i);
 }
 
-extern "C" INT32 BurnDrvGetSampleName(char** pszName, UINT32 i, INT32 nAka)		// Forward to drivers function
+extern "C" INT32 BurnDrvGetSampleName(char** pszName, UINT32 i, INT32 nAka)
 {
 	return pDriver[nBurnDrvActive]->GetSampleName(pszName, i, nAka);
 }
 
-// Get the screen size
+/* Get the screen size */
 extern "C" INT32 BurnDrvGetVisibleSize(INT32* pnWidth, INT32* pnHeight)
 {
 	*pnWidth =pDriver[nBurnDrvActive]->nWidth;
@@ -475,7 +481,7 @@ extern "C" INT32 BurnDrvGetFullSize(INT32* pnWidth, INT32* pnHeight)
 	return 0;
 }
 
-// Get screen aspect ratio
+/* Get screen aspect ratio */
 extern "C" INT32 BurnDrvGetAspect(INT32* pnXAspect, INT32* pnYAspect)
 {
 	*pnXAspect = pDriver[nBurnDrvActive]->nXAspect;
@@ -505,50 +511,49 @@ extern "C" INT32 BurnDrvSetAspect(INT32 pnXAspect,INT32 pnYAspect)
 	return 0;	
 }
 
-// Get the hardware code
+/* Get the hardware code */
 extern "C" INT32 BurnDrvGetHardwareCode()
 {
 	return pDriver[nBurnDrvActive]->Hardware;
 }
 
-// Get flags, including BDF_GAME_WORKING flag
-extern "C" INT32 BurnDrvGetFlags()
+/* Get flags, including BDF_GAME_WORKING flag */
+extern "C" INT32 BurnDrvGetFlags(void)
 {
 	return pDriver[nBurnDrvActive]->Flags;
 }
 
-// Return BDF_WORKING flag
-extern "C" bool BurnDrvIsWorking()
+/* Return BDF_WORKING flag */
+extern "C" bool BurnDrvIsWorking(void)
 {
 	return pDriver[nBurnDrvActive]->Flags & BDF_GAME_WORKING;
 }
 
-// Return max. number of players
-extern "C" INT32 BurnDrvGetMaxPlayers()
+/* Return max. number of players */
+extern "C" INT32 BurnDrvGetMaxPlayers(void)
 {
 	return pDriver[nBurnDrvActive]->Players;
 }
 
-// Return genre flags
-extern "C" INT32 BurnDrvGetGenreFlags()
+/* Return genre flags */
+extern "C" INT32 BurnDrvGetGenreFlags(void)
 {
 	return pDriver[nBurnDrvActive]->Genre;
 }
 
-// Return family flags
-extern "C" INT32 BurnDrvGetFamilyFlags()
+/* Return family flags */
+extern "C" INT32 BurnDrvGetFamilyFlags(void)
 {
 	return pDriver[nBurnDrvActive]->Family;
 }
 
-// Init game emulation (loading any needed roms)
-extern "C" INT32 BurnDrvInit()
+/* Init game emulation (loading any needed roms) */
+extern "C" INT32 BurnDrvInit(void)
 {
 	INT32 nReturnValue;
 
-	if (nBurnDrvActive >= nBurnDrvCount) {
+	if (nBurnDrvActive >= nBurnDrvCount)
 		return 1;
-	}
 
 #if defined (FBA_DEBUG)
 	{
@@ -561,7 +566,7 @@ extern "C" INT32 BurnDrvInit()
 			nName++;
 		}
 
-		// Print the title
+		/* Print the title */
 
 		bprintf(PRINT_IMPORTANT, _T("*** Starting emulation of %s - %s.\n"), BurnDrvGetText(DRV_NAME), BurnDrvGetText(DRV_FULLNAME));
 
@@ -593,14 +598,14 @@ extern "C" INT32 BurnDrvInit()
 	BurnStateInit();	
 	BurnInitMemoryManager();
 
-	nReturnValue = pDriver[nBurnDrvActive]->Init();	// Forward to drivers function
+	nReturnValue = pDriver[nBurnDrvActive]->Init();	/* Forward to drivers function */
 
 	nMaxPlayers = pDriver[nBurnDrvActive]->Players;
 	
 	return nReturnValue;
 }
 
-// Exit game emulation
+/* Exit game emulation */
 extern "C" INT32 BurnDrvExit()
 {
 	CheatExit();
@@ -612,7 +617,7 @@ extern "C" INT32 BurnDrvExit()
 	
 	pBurnDrvPalette = NULL;	
 	
-	INT32 nRet = pDriver[nBurnDrvActive]->Exit();			// Forward to drivers function
+	INT32 nRet = pDriver[nBurnDrvActive]->Exit();			/* Forward to drivers function */
 	
 	BurnExitMemoryManager();
 #if defined FBA_DEBUG
@@ -655,30 +660,31 @@ INT32 BurnDrvCartridgeSetup(BurnCartrigeCommand nCommand)
 	return 0;
 }
 
-// Do one frame of game emulation
-extern "C" INT32 BurnDrvFrame()
+/* Do one frame of game emulation */
+extern "C" INT32 BurnDrvFrame(void)
 {
 	HiscoreApply();
-	return pDriver[nBurnDrvActive]->Frame();		// Forward to drivers function
+	return pDriver[nBurnDrvActive]->Frame();		/* Forward to drivers function */
 }
 
-// Force redraw of the screen
-extern "C" INT32 BurnDrvRedraw()
+/* Force redraw of the screen */
+extern "C" INT32 BurnDrvRedraw(void)
 {
-	if (pDriver[nBurnDrvActive]->Redraw) {
-		return pDriver[nBurnDrvActive]->Redraw();	// Forward to drivers function
-	}
+	if (pDriver[nBurnDrvActive]->Redraw)
+		return pDriver[nBurnDrvActive]->Redraw();	/* Forward to drivers function */
 
-	return 1;										// No funtion provide, so simply return
+	return 1;										/* No funtion provide, so simply return */
 }
 
-// Refresh Palette
+/* Refresh Palette */
 extern "C" INT32 BurnRecalcPal()
 {
-	if (nBurnDrvActive < nBurnDrvCount) {
+	if (nBurnDrvActive < nBurnDrvCount)
+   {
 		UINT8* pr = pDriver[nBurnDrvActive]->pRecalcPal;
-		if (pr == NULL) return 1;
-		*pr = 1;									// Signal for the driver to refresh it's palette
+		if (pr == NULL)
+         return 1;
+		*pr = 1; /* Signal for the driver to refresh its palette */
 	}
 
 	return 0;
@@ -689,18 +695,15 @@ extern "C" INT32 BurnDrvGetPaletteEntries()
 	return pDriver[nBurnDrvActive]->nPaletteEntries;
 }
 
-// ----------------------------------------------------------------------------
-
 INT32 (__cdecl *BurnExtProgressRangeCallback)(double fProgressRange) = NULL;
 INT32 (__cdecl *BurnExtProgressUpdateCallback)(double fProgress, const TCHAR* pszText, bool bAbs) = NULL;
 
 INT32 BurnSetProgressRange(double fProgressRange)
 {
-	if (BurnExtProgressRangeCallback) {
-		return BurnExtProgressRangeCallback(fProgressRange);
-	}
+   if (BurnExtProgressRangeCallback)
+      return BurnExtProgressRangeCallback(fProgressRange);
 
-	return 1;
+   return 1;
 }
 
 INT32 BurnUpdateProgress(double fProgress, const TCHAR* pszText, bool bAbs)
@@ -711,8 +714,6 @@ INT32 BurnUpdateProgress(double fProgress, const TCHAR* pszText, bool bAbs)
 
 	return 1;
 }
-
-// ----------------------------------------------------------------------------
 
 INT32 BurnSetRefreshRate(double dFrameRate)
 {
@@ -728,10 +729,9 @@ inline static INT32 BurnClearSize(INT32 w, INT32 h)
 
 	w *= nBurnBpp;
 
-	// clear the screen to zero
-	for (pl = pBurnDraw, y = 0; y < h; pl += nBurnPitch, y++) {
+	/* clear the screen to zero */
+	for (pl = pBurnDraw, y = 0; y < h; pl += nBurnPitch, y++)
 		memset(pl, 0x00, w);
-	}
 
 	return 0;
 }
@@ -749,11 +749,12 @@ INT32 BurnClearScreen()
 	return 0;
 }
 
-// Byteswaps an area of memory
+/* Byteswaps an area of memory */
 INT32 BurnByteswap(UINT8* pMem, INT32 nLen)
 {
 	nLen >>= 1;
-	for (INT32 i = 0; i < nLen; i++, pMem += 2) {
+	for (INT32 i = 0; i < nLen; i++, pMem += 2)
+   {
 		UINT8 t = pMem[0];
 		pMem[0] = pMem[1];
 		pMem[1] = t;
@@ -762,66 +763,46 @@ INT32 BurnByteswap(UINT8* pMem, INT32 nLen)
 	return 0;
 }
 
-// Application-defined rom loading function:
+/* Application-defined rom loading function: */
 INT32 (__cdecl *BurnExtLoadRom)(UINT8 *Dest, INT32 *pnWrote, INT32 i) = NULL;
 
-// Application-defined colour conversion function
+/* Application-defined colour conversion function */
 static UINT32 __cdecl BurnHighColFiller(INT32, INT32, INT32, INT32) { return (UINT32)(~0); }
 UINT32 (__cdecl *BurnHighCol) (INT32 r, INT32 g, INT32 b, INT32 i) = BurnHighColFiller;
 
-// ----------------------------------------------------------------------------
-// Savestate support
+/* ----------------------------------------------------------------------------
+ * Savestate support
+ */
 
-// Application-defined callback for processing the area
+/* Application-defined callback for processing the area */
 static INT32 __cdecl DefAcb (struct BurnArea* /* pba */) { return 1; }
 INT32 (__cdecl *BurnAcb) (struct BurnArea* pba) = DefAcb;
 
-// Scan driver data
+/* Scan driver data */
 INT32 BurnAreaScan(INT32 nAction, INT32* pnMin)
 {
 	INT32 nRet = 0;
 
-	// Handle any MAME-style variables
-	if (nAction & ACB_DRIVER_DATA) {
+	/* Handle any MAME-style variables */
+	if (nAction & ACB_DRIVER_DATA)
 		nRet = BurnStateMAMEScan(nAction, pnMin);
-	}
 
-	// Forward to the driver
-	if (pDriver[nBurnDrvActive]->AreaScan) {
+	/* Forward to the driver */
+	if (pDriver[nBurnDrvActive]->AreaScan)
 		nRet |= pDriver[nBurnDrvActive]->AreaScan(nAction, pnMin);
-	}
 
 	return nRet;
 }
 
-// ----------------------------------------------------------------------------
-// Wrappers for MAME-specific function calls
+/* ----------------------------------------------------------------------------
+ * Wrappers for MAME-specific function calls
+ */
 
 #include "driver.h"
 
-// ----------------------------------------------------------------------------
-// Wrapper for MAME logerror calls
-
-#if defined (FBA_DEBUG) && defined (MAME_USE_LOGERROR)
-void logerror(char* szFormat, ...)
-{
-	static char szLogMessage[1024];
-
-	va_list vaFormat;
-	va_start(vaFormat, szFormat);
-
-	_vsnprintf(szLogMessage, 1024, szFormat, vaFormat);
-
-	va_end(vaFormat);
-
-	bprintf(PRINT_ERROR, _T("%hs"), szLogMessage);
-
-	return;
-}
-#endif
-
-// ----------------------------------------------------------------------------
-// Wrapper for MAME state_save_register_* calls
+/* ----------------------------------------------------------------------------
+ * Wrapper for MAME state_save_register_* calls
+ */
 
 struct BurnStateEntry { BurnStateEntry* pNext; BurnStateEntry* pPrev; char szName[256]; void* pValue; UINT32 nSize; };
 
@@ -831,19 +812,17 @@ static BurnPostloadFunction BurnPostload[8];
 
 static void BurnStateRegister(const char* module, INT32 instance, const char* name, void* val, UINT32 size)
 {
-	// Allocate new node
+	/* Allocate new node */
 	BurnStateEntry* pNewEntry = (BurnStateEntry*)malloc(sizeof(BurnStateEntry));
-	if (pNewEntry == NULL) {
+	if (pNewEntry == NULL)
 		return;
-	}
 
 	memset(pNewEntry, 0, sizeof(BurnStateEntry));
 
-	// Link the new node
+	/* Link the new node */
 	pNewEntry->pNext = pStateEntryAnchor;
-	if (pStateEntryAnchor) {
+	if (pStateEntryAnchor)
 		pStateEntryAnchor->pPrev = pNewEntry;
-	}
 	pStateEntryAnchor = pNewEntry;
 
 	sprintf(pNewEntry->szName, "%s:%s %i", module, name, instance);
@@ -882,44 +861,48 @@ INT32 BurnStateInit()
 
 INT32 BurnStateMAMEScan(INT32 nAction, INT32* pnMin)
 {
-	if (nAction & ACB_VOLATILE) {
+   if (nAction & ACB_VOLATILE)
+   {
+      /* Return minimum compatible version */
+      if (pnMin && *pnMin < 0x029418)
+         *pnMin = 0x029418;
 
-		if (pnMin && *pnMin < 0x029418) {						// Return minimum compatible version
-			*pnMin = 0x029418;
-		}
+      if (pStateEntryAnchor)
+      {
+         struct BurnArea ba;
+         BurnStateEntry* pCurrentEntry = pStateEntryAnchor;
 
-		if (pStateEntryAnchor) {
-			struct BurnArea ba;
-			BurnStateEntry* pCurrentEntry = pStateEntryAnchor;
+         do {
+            ba.Data		= pCurrentEntry->pValue;
+            ba.nLen		= pCurrentEntry->nSize;
+            ba.nAddress = 0;
+            ba.szName	= pCurrentEntry->szName;
+            BurnAcb(&ba);
+         } while ((pCurrentEntry = pCurrentEntry->pNext) != 0);
+      }
 
-			do {
-			   	ba.Data		= pCurrentEntry->pValue;
-				ba.nLen		= pCurrentEntry->nSize;
-				ba.nAddress = 0;
-				ba.szName	= pCurrentEntry->szName;
-				BurnAcb(&ba);
+      if (nAction & ACB_WRITE)
+      {
+         for (INT32 i = 0; i < 8; i++)
+         {
+            if (BurnPostload[i])
+               BurnPostload[i]();
+         }
+      }
+   }
 
-			} while ((pCurrentEntry = pCurrentEntry->pNext) != 0);
-		}
-
-		if (nAction & ACB_WRITE) {
-			for (INT32 i = 0; i < 8; i++) {
-				if (BurnPostload[i]) {
-					BurnPostload[i]();
-				}
-			}
-		}
-	}
-
-	return 0;
+   return 0;
 }
 
-// wrapper functions
+/* wrapper functions */
 
 extern "C" void state_save_register_func_postload(void (*pFunction)())
 {
-	for (INT32 i = 0; i < 8; i++) {
-		if (BurnPostload[i] == NULL) {
+   INT32 i;
+	for (i = 0; i < 8; i++)
+   {
+		if (BurnPostload[i] == NULL)
+      {
 			BurnPostload[i] = pFunction;
 			break;
 		}

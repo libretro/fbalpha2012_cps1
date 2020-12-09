@@ -46,7 +46,6 @@ UINT32 CheatSearchValueNoChange();
 UINT32 CheatSearchValueChange();
 UINT32 CheatSearchValueDecreased();
 UINT32 CheatSearchValueIncreased();
-void CheatSearchDumptoFile();
 
 typedef void (*CheatSearchInitCallback)();
 extern CheatSearchInitCallback CheatSearchInitCallbackFunction;

@@ -1,7 +1,8 @@
-// FB Alpha - Emulator for MC68000/Z80 based arcade games
-//            Refer to the "license.txt" file for more info
+/* FB Alpha - Emulator for MC68000/Z80 based arcade games
+ *            Refer to the "license.txt" file for more info
 
-// Burner emulation library
+ * Burner emulation library
+ */
 
 #ifdef __cplusplus
  extern "C" {
@@ -26,10 +27,7 @@
 extern TCHAR szAppHiscorePath[MAX_PATH];
 extern TCHAR szAppSamplesPath[MAX_PATH];
 
-// Enable the MAME logerror() function in debug builds
-// #define MAME_USE_LOGERROR
-
-// Give access to the CPUID function for various compilers
+/* Give access to the CPUID function for various compilers */
 #if defined (__GNUC__)
  #define CPUID(f,ra,rb,rc,rd) __asm__ __volatile__ ("cpuid"											\
  													: "=a" (ra), "=b" (rb), "=c" (rc), "=d" (rd)	\
@@ -83,27 +81,28 @@ __extension__ typedef long long				INT64;
 #include "cheat.h"
 #include "hiscore.h"
 
-extern INT32 nBurnVer;						// Version number of the library
+extern INT32 nBurnVer;						/* Version number of the library */
 
 enum BurnCartrigeCommand { CART_INIT_START, CART_INIT_END, CART_EXIT };
 
-// ---------------------------------------------------------------------------
-// Callbacks
+/* ---------------------------------------------------------------------------
+ * Callbacks
+ */
 
-// Application-defined rom loading function
+/* Application-defined rom loading function */
 extern INT32 (__cdecl *BurnExtLoadRom)(UINT8* Dest, INT32* pnWrote, INT32 i);
 
-// Application-defined progress indicator functions
+/* Application-defined progress indicator functions */
 extern INT32 (__cdecl *BurnExtProgressRangeCallback)(double dProgressRange);
 extern INT32 (__cdecl *BurnExtProgressUpdateCallback)(double dProgress, const TCHAR* pszText, bool bAbs);
 
-// Application-defined catridge initialisation function
+/* Application-defined catridge initialisation function */
 extern INT32 (__cdecl *BurnExtCartridgeSetupCallback)(BurnCartrigeCommand nCommand);
 
-// Application-defined colour conversion function
+/* Application-defined colour conversion function */
 extern UINT32 (__cdecl *BurnHighCol) (INT32 r, INT32 g, INT32 b, INT32 i);
 
-// ---------------------------------------------------------------------------
+/* --------------------------------------------------------------------------- */
 
 extern UINT32 nCurrentFrame;
 
@@ -112,10 +111,11 @@ inline static INT32 GetCurrentFrame(void)
    return nCurrentFrame;
 }
 
-// ---------------------------------------------------------------------------
-// Driver info structures
+/* ---------------------------------------------------------------------------
+ * Driver info structures
 
-// ROMs
+ * ROMs
+ */
 
 #define BRF_PRG				(1 << 20)
 #define BRF_GRA				(1 << 21)
@@ -139,7 +139,7 @@ struct BurnSampleInfo {
 	UINT32 nFlags;
 };
 
-// Inputs
+/* Inputs */
 
 #define BIT_DIGITAL			(1)
 
@@ -155,13 +155,13 @@ struct BurnInputInfo {
 	char* szName;
 	UINT8 nType;
 	union {
-		UINT8* pVal;					// Most inputs use a char*
-		UINT16* pShortVal;				// All analog inputs use a short*
+		UINT8* pVal;					   /* Most inputs use a char* */
+		UINT16* pShortVal;				/* All analog inputs use a short* */
 	};
 	char* szInfo;
 };
 
-// DIPs
+/* DIPs */
 
 struct BurnDIPInfo {
 	INT32 nInput;
@@ -171,33 +171,33 @@ struct BurnDIPInfo {
 	char* szText;
 };
 
-// ---------------------------------------------------------------------------
+/* --------------------------------------------------------------------------- */
 
 extern bool bBurnUseASMCPUEmulation;
 
 extern INT32 nBurnFPS;
 extern INT32 nBurnCPUSpeedAdjust;
 
-extern UINT32 nBurnDrvCount;			// Count of game drivers
-extern UINT32 nBurnDrvActive;			// Which game driver is selected
-extern UINT32 nBurnDrvSelect[8];		// Which games are selected (i.e. loaded but not necessarily active)
+extern UINT32 nBurnDrvCount;			/* Count of game drivers */
+extern UINT32 nBurnDrvActive;			/* Which game driver is selected */
+extern UINT32 nBurnDrvSelect[8];		/* Which games are selected (i.e. loaded but not necessarily active) */
 
 extern INT32 nMaxPlayers;
 
-extern UINT8 *pBurnDraw;			// Pointer to correctly sized bitmap
-extern INT32 nBurnPitch;						// Pitch between each line
-extern INT32 nBurnBpp;						// Bytes per pixel (2, 3, or 4)
+extern UINT8 *pBurnDraw;			/* Pointer to correctly sized bitmap */
+extern INT32 nBurnPitch;						/* Pitch between each line */
+extern INT32 nBurnBpp;						/* Bytes per pixel (2, 3, or 4) */
 
-extern UINT8 nBurnLayer;			// Can be used externally to select which layers to show
-extern UINT8 nSpriteEnable;			// Can be used externally to select which Sprites to show
-extern UINT8 nSkipFrame;			// Can be used to skip rendering of the current frame
+extern UINT8 nBurnLayer;			/* Can be used externally to select which layers to show */
+extern UINT8 nSpriteEnable;			/* Can be used externally to select which Sprites to show */
+extern UINT8 nSkipFrame;			/* Can be used to skip rendering of the current frame */
 
-extern INT32 nBurnSoundRate;					// Samplerate of sound
-extern INT32 nBurnSoundLen;					// Length in samples per frame
-extern INT16* pBurnSoundOut;				// Pointer to output buffer
+extern INT32 nBurnSoundRate;					/* Samplerate of sound */
+extern INT32 nBurnSoundLen;					/* Length in samples per frame */
+extern INT16* pBurnSoundOut;				/* Pointer to output buffer */
 
-extern INT32 nInterpolation;					// Desired interpolation level for ADPCM/PCM sound
-extern INT32 nFMInterpolation;				// Desired interpolation level for FM sound
+extern INT32 nInterpolation;					/* Desired interpolation level for ADPCM/PCM sound */
+extern INT32 nFMInterpolation;				/* Desired interpolation level for FM sound */
 
 extern UINT32 *pBurnDrvPalette;
 
@@ -228,13 +228,14 @@ INT32 BurnUpdateProgress(double dProgressStep, const TCHAR* pszText, bool bAbs);
 
 void BurnLocalisationSetName(char *szName, TCHAR *szLongName);
 
-// ---------------------------------------------------------------------------
-// Retrieve driver information
+/* ---------------------------------------------------------------------------
+ * Retrieve driver information
+ */
 
 #define DRV_NAME		 (0)
 #define DRV_DATE		 (1)
 #define DRV_FULLNAME	 (2)
-//#define DRV_MEDIUMNAME	 (3)
+/*#define DRV_MEDIUMNAME	 (3) */
 #define DRV_COMMENT		 (4)
 #define DRV_MANUFACTURER (5)
 #define DRV_SYSTEM		 (6)
@@ -274,10 +275,11 @@ void Reinitialise();
 extern bool bDoIpsPatch;
 void IpsApplyPatches(UINT8* base, char* rom_name);
 
-// ---------------------------------------------------------------------------
-// Flags used with the Burndriver structure
+/* ---------------------------------------------------------------------------
+ * Flags used with the Burndriver structure
 
-// Flags for the flags member
+ * Flags for the flags member
+ */
 #define BDF_GAME_WORKING								(1 << 0)
 #define BDF_ORIENTATION_FLIPPED							(1 << 1)
 #define BDF_ORIENTATION_VERTICAL						(1 << 2)
@@ -291,8 +293,9 @@ void IpsApplyPatches(UINT8* base, char* rom_name);
 #define BDF_DEMO										(1 << 10)
 #define BDF_HISCORE_SUPPORTED							(1 << 11)
 
-// Flags for the hardware member
-// Format: 0xDDEEFFFF, where EE: Manufacturer, DD: Hardware platform, FFFF: Flags (used by driver)
+/* Flags for the hardware member
+ * Format: 0xDDEEFFFF, where EE: Manufacturer, DD: Hardware platform, FFFF: Flags (used by driver)
+ */
 
 #define HARDWARE_PUBLIC_MASK							(0xFFFF0000)
 
@@ -370,25 +373,25 @@ void IpsApplyPatches(UINT8* base, char* rom_name);
 #define HARDWARE_TOAPLAN_MISC							(HARDWARE_PREFIX_TOAPLAN | 0x00040000)
 
 #define HARDWARE_SNK_NEOGEO								(HARDWARE_PREFIX_SNK | 0x00010000)
-#define HARDWARE_SNK_SWAPP								(0x0001)	// Swap code roms
-#define HARDWARE_SNK_SWAPV								(0x0002)	// Swap sound roms
-#define HARDWARE_SNK_SWAPC								(0x0004)	// Swap sprite roms
-#define HARDWARE_SNK_CMC42								(0x0008)	// CMC42 encryption chip
-#define HARDWARE_SNK_CMC50								(0x0010)	// CMC50 encryption chip
-#define HARDWARE_SNK_ALTERNATE_TEXT						(0x0020)	// KOF2000 text layer banks
-#define HARDWARE_SNK_SMA_PROTECTION						(0x0040)	// SMA protection
-#define HARDWARE_SNK_KOF2K3								(0x0080)	// KOF2K3 hardware
-#define HARDWARE_SNK_ENCRYPTED_M1						(0x0100)	// M1 encryption
-#define HARDWARE_SNK_P32								(0x0200)	// SWAP32 P ROMs
+#define HARDWARE_SNK_SWAPP								(0x0001)	/* Swap code roms */
+#define HARDWARE_SNK_SWAPV								(0x0002)	/* Swap sound roms */
+#define HARDWARE_SNK_SWAPC								(0x0004)	/* Swap sprite roms */
+#define HARDWARE_SNK_CMC42								(0x0008)	/* CMC42 encryption chip */
+#define HARDWARE_SNK_CMC50								(0x0010)	/* CMC50 encryption chip */
+#define HARDWARE_SNK_ALTERNATE_TEXT						(0x0020)	/* KOF2000 text layer banks */
+#define HARDWARE_SNK_SMA_PROTECTION						(0x0040)	/* SMA protection */
+#define HARDWARE_SNK_KOF2K3								(0x0080)	/* KOF2K3 hardware */
+#define HARDWARE_SNK_ENCRYPTED_M1						(0x0100)	/* M1 encryption */
+#define HARDWARE_SNK_P32								(0x0200)	/* SWAP32 P ROMs */
 #define HARDWARE_SNK_SPRITE32							(0x0400)
 
 #define HARDWARE_SNK_CONTROLMASK						(0xF000)
-#define HARDWARE_SNK_JOYSTICK							(0x0000)	// Uses joysticks
-#define HARDWARE_SNK_PADDLE								(0x1000)	// Uses joysticks or paddles
-#define HARDWARE_SNK_TRACKBALL							(0x2000)	// Uses a trackball
-#define HARDWARE_SNK_4_JOYSTICKS						(0x3000)	// Uses 4 joysticks
-#define HARDWARE_SNK_MAHJONG							(0x4000)	// Uses a special mahjong controller
-#define HARDWARE_SNK_GAMBLING							(0x5000)	// Uses gambling controls
+#define HARDWARE_SNK_JOYSTICK							(0x0000)	/* Uses joysticks */
+#define HARDWARE_SNK_PADDLE								(0x1000)	/* Uses joysticks or paddles */
+#define HARDWARE_SNK_TRACKBALL							(0x2000)	/* Uses a trackball */
+#define HARDWARE_SNK_4_JOYSTICKS						(0x3000)	/* Uses 4 joysticks */
+#define HARDWARE_SNK_MAHJONG							(0x4000)	/* Uses a special mahjong controller */
+#define HARDWARE_SNK_GAMBLING							(0x5000)	/* Uses gambling controls */
 
 #define HARDWARE_SNK_MVS								(HARDWARE_PREFIX_SNK | 0x00020000)
 #define HARDWARE_SNK_NEOCD								(HARDWARE_PREFIX_SNK | 0x00030000)
@@ -492,7 +495,7 @@ void IpsApplyPatches(UINT8* base, char* rom_name);
 #define HARDWARE_PCENGINE_TG16							(HARDWARE_PREFIX_PCENGINE | 0x00020000)
 #define HARDWARE_PCENGINE_SGX							(HARDWARE_PREFIX_PCENGINE | 0x00030000)
 
-// flags for the genre member
+/* flags for the genre member */
 #define GBF_HORSHOOT									(1 << 0)
 #define GBF_VERSHOOT									(1 << 1)
 #define GBF_SCRFIGHT									(1 << 2)
@@ -514,7 +517,7 @@ void IpsApplyPatches(UINT8* base, char* rom_name);
 #define GBF_RACING										(1 << 18)
 #define GBF_SHOOT										(1 << 19)
 
-// flags for the family member
+/* flags for the family member */
 #define FBF_MSLUG										(1 << 0)
 #define FBF_SF											(1 << 1)
 #define FBF_KOF											(1 << 2)
@@ -526,6 +529,6 @@ void IpsApplyPatches(UINT8* base, char* rom_name);
 #define FBF_PWRINST										(1 << 8)
 
 #ifdef __cplusplus
- } // End of extern "C"
+ } /* End of extern "C" */
 #endif
 

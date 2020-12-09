@@ -24,13 +24,6 @@
 		#undef USE_MAME_TIMERS
 	#endif
 #endif
-#ifdef USE_MAME_TIMERS
-	/*#define LOG_CYM_FILE*/
-	#ifdef LOG_CYM_FILE
-		FILE * cymfile = NULL;
-	#endif
-#endif
-
 
 /* struct describing a single operator */
 typedef struct{
@@ -539,16 +532,7 @@ static void init_tables(void)
 			tl_tab[ x*2+0 + i*2*TL_RES_LEN ] =  tl_tab[ x*2+0 ]>>i;
 			tl_tab[ x*2+1 + i*2*TL_RES_LEN ] = -tl_tab[ x*2+0 + i*2*TL_RES_LEN ];
 		}
-	#if 0
-		logerror("tl %04i", x*2);
-		for (i=0; i<13; i++)
-			logerror(", [%02i] %4i", i*2, tl_tab[ x*2 /*+1*/ + i*2*TL_RES_LEN ]);
-		logerror("\n");
-	#endif
 	}
-	/*logerror("TL_TAB_LEN = %i (%i bytes)\n",TL_TAB_LEN, (int)sizeof(tl_tab));*/
-	/*logerror("ENV_QUIET= %i\n",ENV_QUIET );*/
-
 
 	for (i=0; i<SIN_LEN; i++)
 	{
@@ -571,7 +555,6 @@ static void init_tables(void)
 			n = n>>1;
 
 		sin_tab[ i ] = n*2 + (m>=0.0? 0: 1 );
-		/*logerror("sin [0x%4x]= %4i (tl_tab value=%8x)\n", i, sin_tab[i],tl_tab[sin_tab[i]]);*/
 	}
 
 
@@ -580,7 +563,6 @@ static void init_tables(void)
 	{
 		m = (i!=15 ? i : i+16) * (4.0/ENV_STEP);   /* every 3 'dB' except for all bits = 1 = 45+48 'dB' */
 		d1l_tab[i] = m;
-		/*logerror("d1l_tab[%02x]=%08x\n",i,d1l_tab[i] );*/
 	}
 
 #ifdef SAVE_SAMPLE
@@ -606,8 +588,6 @@ static void init_chip_tables(YM2151 *chip)
 	double scaler;
 
 	scaler = ( (double)chip->clock / 64.0 ) / ( (double)chip->sampfreq );
-	/*logerror("scaler    = %20.15f\n", scaler);*/
-
 
 	/* this loop calculates Hertz values for notes from c-0 to b-7 */
 	/* including 64 'cents' (100/64 that is 1.5625 of real cent) per note */
@@ -617,39 +597,31 @@ static void init_chip_tables(YM2151 *chip)
 	mult = (1<<(FREQ_SH-10)); /* -10 because phaseinc_rom table values are already in 10.10 format */
 
 	for (i=0; i<768; i++)
-	{
-		/* 3.4375 Hz is note A; C# is 4 semitones higher */
-		Hz = 1000;
+   {
+      /* 3.4375 Hz is note A; C# is 4 semitones higher */
+      Hz = 1000;
 #if 0
-/* Hz is close, but not perfect */
-		//Hz = scaler * 3.4375 * pow (2, (i + 4 * 64 ) / 768.0 );
-		/* calculate phase increment */
-		phaseinc = (Hz*SIN_LEN) / (double)chip->sampfreq;
+      /* Hz is close, but not perfect */
+      //Hz = scaler * 3.4375 * pow (2, (i + 4 * 64 ) / 768.0 );
+      /* calculate phase increment */
+      phaseinc = (Hz*SIN_LEN) / (double)chip->sampfreq;
 #endif
 
-		phaseinc = phaseinc_rom[i];	/* real chip phase increment */
-		phaseinc *= scaler;			/* adjust */
+      phaseinc = phaseinc_rom[i];	/* real chip phase increment */
+      phaseinc *= scaler;			/* adjust */
 
 
-		/* octave 2 - reference octave */
-		chip->freq[ 768+2*768+i ] = ((int)(phaseinc*mult)) & 0xffffffc0; /* adjust to X.10 fixed point */
-		/* octave 0 and octave 1 */
-		for (j=0; j<2; j++)
-		{
-			chip->freq[768 + j*768 + i] = (chip->freq[ 768+2*768+i ] >> (2-j) ) & 0xffffffc0; /* adjust to X.10 fixed point */
-		}
-		/* octave 3 to 7 */
-		for (j=3; j<8; j++)
-		{
-			chip->freq[768 + j*768 + i] = chip->freq[ 768+2*768+i ] << (j-2);
-		}
-
-	#if 0
-			pom = (double)chip->freq[ 768+2*768+i ] / ((double)(1<<FREQ_SH));
-			pom = pom * (double)chip->sampfreq / (double)SIN_LEN;
-			logerror("1freq[%4i][%08x]= real %20.15f Hz  emul %20.15f Hz\n", i, chip->freq[ 768+2*768+i ], Hz, pom);
-	#endif
-	}
+      /* octave 2 - reference octave */
+      chip->freq[ 768+2*768+i ] = ((int)(phaseinc*mult)) & 0xffffffc0; /* adjust to X.10 fixed point */
+      /* octave 0 and octave 1 */
+      for (j=0; j<2; j++)
+      {
+         chip->freq[768 + j*768 + i] = (chip->freq[ 768+2*768+i ] >> (2-j) ) & 0xffffffc0; /* adjust to X.10 fixed point */
+      }
+      /* octave 3 to 7 */
+      for (j=3; j<8; j++)
+         chip->freq[768 + j*768 + i] = chip->freq[ 768+2*768+i ] << (j-2);
+   }
 
 	/* octave -1 (all equal to: oct 0, _KC_00_, _KF_00_) */
 	for (i=0; i<768; i++)
@@ -666,15 +638,6 @@ static void init_chip_tables(YM2151 *chip)
 		}
 	}
 
-#if 0
-		for (i=0; i<11*768; i++)
-		{
-			pom = (double)chip->freq[i] / ((double)(1<<FREQ_SH));
-			pom = pom * (double)chip->sampfreq / (double)SIN_LEN;
-			logerror("freq[%4i][%08x]= emul %20.15f Hz\n", i, chip->freq[i], pom);
-		}
-#endif
-
 	mult = (1<<FREQ_SH);
 	for (j=0; j<4; j++)
 	{
@@ -689,15 +652,6 @@ static void init_chip_tables(YM2151 *chip)
 			chip->dt1_freq[ (j+0)*32 + i ] = phaseinc * mult;
 			chip->dt1_freq[ (j+4)*32 + i ] = -chip->dt1_freq[ (j+0)*32 + i ];
 
-#if 0
-			{
-				int x = j*32 + i;
-				pom = (double)chip->dt1_freq[x] / mult;
-				pom = pom * (double)chip->sampfreq / (double)SIN_LEN;
-				logerror("DT1(%03i)[%02i %02i][%08x]= real %19.15f Hz  emul %19.15f Hz\n",
-						 x, j, i, chip->dt1_freq[x], Hz, pom);
-			}
-#endif
 		}
 	}
 
@@ -735,7 +689,6 @@ static void init_chip_tables(YM2151 *chip)
 		j = (65536.0 / (double)(j*32.0));	/* number of samples per one shift of the shift register */
 		/*chip->noise_tab[i] = j * 64;*/	/* number of chip clock cycles per one shift */
 		chip->noise_tab[i] = j * 64 * scaler;
-		/*logerror("noise_tab[%02x]=%08x\n", i, chip->noise_tab[i]);*/
 	}
 }
 
@@ -1032,15 +985,6 @@ void YM2151WriteReg(int n, int r, int v)
 	chip->status |= 0x80;	/* set busy flag for 64 chip clock cycles */
 #endif
 
-#ifdef LOG_CYM_FILE
-	if ((cymfile) && (r!=0) )
-	{
-		fputc( (unsigned char)r, cymfile );
-		fputc( (unsigned char)v, cymfile );
-	}
-#endif
-
-
 	switch(r & 0xe0){
 	case 0x00:
 		switch(r){
@@ -1162,7 +1106,6 @@ void YM2151WriteReg(int n, int r, int v)
 			break;
 
 		default:
-			logerror("YM2151 Write %02x to undocumented register #%02x\n",v,r);
 			break;
 		}
 		break;
@@ -1325,22 +1268,10 @@ void YM2151WriteReg(int n, int r, int v)
 	}
 }
 
-
-#ifdef LOG_CYM_FILE
-static void cymfile_callback (int n)
-{
-	if (cymfile)
-		fputc( (unsigned char)0, cymfile );
-}
-#endif
-
-
 int YM2151ReadStatus( int n )
 {
 	return YMPSG[n].status;
 }
-
-
 
 //#ifdef USE_MAME_TIMERS
 #if 0 // disabled for now due to crashing in debug+map+symbols build
@@ -1506,7 +1437,6 @@ int YM2151Init(int num, int clock, int rate)
 
 		YMPSG[i].eg_timer_add  = (1<<EG_SH)  * (clock/64.0) / YMPSG[i].sampfreq;
 		YMPSG[i].eg_timer_overflow = ( 3 ) * (1<<EG_SH);
-		/*logerror("YM2151[init] eg_timer_add=%8x eg_timer_overflow=%8x\n", YMPSG[i].eg_timer_add, YMPSG[i].eg_timer_overflow);*/
 
 #ifdef USE_MAME_TIMERS
 /* this must be done _before_ a call to YM2151ResetChip() */
@@ -1517,16 +1447,7 @@ int YM2151Init(int num, int clock, int rate)
 		YMPSG[i].tim_B      = 0;
 #endif
 		YM2151ResetChip(i);
-		/*logerror("YM2151[init] clock=%i sampfreq=%i\n", YMPSG[i].clock, YMPSG[i].sampfreq);*/
 	}
-
-#ifdef LOG_CYM_FILE
-	cymfile = fopen("2151_.cym","wb");
-	if (cymfile)
-		timer_pulse ( TIME_IN_HZ(110), 0, cymfile_callback); /*110 Hz pulse timer*/
-	else
-		logerror("Could not create file 2151_.cym\n");
-#endif
 
 	return 0;
 }
@@ -1540,11 +1461,6 @@ void YM2151Shutdown()
 
 	free (YMPSG);
 	YMPSG = NULL;
-
-#ifdef LOG_CYM_FILE
-	fclose (cymfile);
-	cymfile = NULL;
-#endif
 
 #ifdef SAVE_SAMPLE
 	fclose(sample[8]);
@@ -1643,25 +1559,14 @@ INLINE signed int op_calc(YM2151Operator * OP, unsigned int env, signed int pm)
 
 INLINE signed int op_calc1(YM2151Operator * OP, unsigned int env, signed int pm)
 {
-	UINT32 p;
-	INT32  i;
-
-
-	i = (OP->phase & ~FREQ_MASK) + pm;
-
-/*logerror("i=%08x (i>>16)&511=%8i phase=%i [pm=%08x] ",i, (i>>16)&511, OP->phase>>FREQ_SH, pm);*/
-
-	p = (env<<3) + sin_tab[ (i>>FREQ_SH) & SIN_MASK];
-
-/*logerror("(p&255=%i p>>8=%i) out= %i\n", p&255,p>>8, tl_tab[p&255]>>(p>>8) );*/
+	INT32  i = (OP->phase & ~FREQ_MASK) + pm;
+	UINT32 p = (env<<3) + sin_tab[ (i>>FREQ_SH) & SIN_MASK];
 
 	if (p >= TL_TAB_LEN)
 		return 0;
 
 	return tl_tab[p];
 }
-
-
 
 #define volume_calc(OP) ((OP)->tl + ((UINT32)(OP)->volume) + (AM & (OP)->AMmask))
 
@@ -2471,4 +2376,3 @@ void YM2151SetPortWriteHandler(int n, write8_handler handler)
 {
 	YMPSG[n].porthandler = handler;
 }
-

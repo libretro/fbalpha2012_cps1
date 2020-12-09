@@ -1,4 +1,4 @@
-// Zip module
+/* Zip module */
 #include "burner.h"
 #include "unzip.h"
 
@@ -13,7 +13,7 @@
 static INT32 nFileType = ZIPFN_FILETYPE_NONE;
 
 static unzFile Zip = NULL;
-static INT32 nCurrFile = 0; // The current file we are pointing to
+static INT32 nCurrFile = 0; /* The current file we are pointing to */
 
 #ifdef INCLUDE_7Z_SUPPORT
 static _7z_file* _7ZipFile = NULL;
@@ -74,7 +74,7 @@ INT32 ZipClose()
 	return 0;
 }
 
-// Get the contents of a zip file into an array of ZipEntrys
+/* Get the contents of a zip file into an array of ZipEntrys */
 INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 {
 	if (nFileType == ZIPFN_FILETYPE_ZIP && Zip == NULL) return 1;
@@ -91,7 +91,7 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 		unzGetGlobalInfo(Zip, &ZipGlobalInfo);
 		INT32 nListLen = ZipGlobalInfo.number_entry;
 
-		// Make an array of File Entries
+		/* Make an array of File Entries */
 		struct ZipEntry* List = (struct ZipEntry *)malloc(nListLen * sizeof(struct ZipEntry));
 		if (List == NULL) { unzClose(Zip); return 1; }
 		memset(List, 0, nListLen * sizeof(struct ZipEntry));
@@ -99,7 +99,7 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 		INT32 nRet = unzGoToFirstFile(Zip);
 		if (nRet != UNZ_OK) { unzClose(Zip); return 1; }
 
-		// Step through all of the files, until we get to the end
+		/* Step through all of the files, until we get to the end */
 		INT32 nNextRet = 0;
 
 		for (nCurrFile = 0, nNextRet = UNZ_OK;
@@ -112,7 +112,7 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 			nRet = unzGetCurrentFileInfo(Zip, &FileInfo, NULL, 0, NULL, 0, NULL, 0);
 			if (nRet != UNZ_OK) continue;
 
-			// Allocate space for the filename
+			/* Allocate space for the filename */
 			char* szName = (char *)malloc(FileInfo.size_filename + 1);
 			if (szName == NULL) continue;
 
@@ -124,7 +124,7 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 			List[nCurrFile].nCrc = FileInfo.crc;
 		}
 
-		// return the file list
+		/* return the file list */
 		*pList = List;
 		if (pnListCount != NULL) *pnListCount = nListLen;
 
@@ -139,7 +139,7 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 		
 		INT32 nListLen = _7ZipFile->db.db.NumFiles;
 
-		// Make an array of File Entries
+		/* Make an array of File Entries */
 		struct ZipEntry* List = (struct ZipEntry *)malloc(nListLen * sizeof(struct ZipEntry));
 		if (List == NULL) return 1;
 		memset(List, 0, nListLen * sizeof(struct ZipEntry));
@@ -149,16 +149,15 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 			
 			size_t len = SzArEx_GetFileNameUtf16(&_7ZipFile->db, i, NULL);
 
-			// if it's a directory entry we don't care about it..
+			/* if it's a directory entry we don't care about it.. */
 			if (f->IsDir) continue;
 
 			if (len > tempSize) {
 				SZipFree(NULL, temp);
 				tempSize = len;
 				temp = (UInt16 *)SZipAlloc(NULL, tempSize * sizeof(temp[0]));
-				if (temp == 0) {
-					return 1; // memory error
-				}
+				if (temp == 0)
+					return 1; /* memory error */
 			}
 			
 			UINT64 size = f->Size;
@@ -166,7 +165,7 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 			
 			SzArEx_GetFileNameUtf16(&_7ZipFile->db, i, temp);
 			
-			// convert filename to char
+			/* convert filename to char */
 			char *szFileName = NULL;
 			szFileName = (char*)malloc(len * 2 * sizeof(char*));
 			if (szFileName == NULL) continue;
@@ -183,7 +182,7 @@ INT32 ZipGetList(struct ZipEntry** pList, INT32* pnListCount)
 			nCurrFile++;
 		}
 		
-		// return the file list
+		/* return the file list */
 		*pList = List;
 		if (pnListCount != NULL) *pnListCount = nListLen;
 		
@@ -209,13 +208,13 @@ INT32 ZipLoadFile(UINT8* Dest, INT32 nLen, INT32* pnWrote, INT32 nEntry)
 	if (nFileType == ZIPFN_FILETYPE_ZIP) {
 		if (nEntry < nCurrFile)
 		{
-			// We'll have to go through the zip file again to get to our entry
+			/* We'll have to go through the zip file again to get to our entry */
 			nRet = unzGoToFirstFile(Zip);
 			if (nRet != UNZ_OK) return 1;
 			nCurrFile = 0;
 		}
 
-		// Now step through to the file we need
+		/* Now step through to the file we need */
 		while (nCurrFile < nEntry)
 		{
 			nRet = unzGoToNextFile(Zip);
@@ -227,7 +226,7 @@ INT32 ZipLoadFile(UINT8* Dest, INT32 nLen, INT32* pnWrote, INT32 nEntry)
 		if (nRet != UNZ_OK) return 1;
 
 		nRet = unzReadCurrentFile(Zip, Dest, nLen);
-		// Return how many bytes were copied
+		/* Return how many bytes were copied */
 		if (nRet >= 0 && pnWrote != NULL) *pnWrote = nRet;
 
 		nRet = unzCloseCurrentFile(Zip);
@@ -245,10 +244,11 @@ INT32 ZipLoadFile(UINT8* Dest, INT32 nLen, INT32* pnWrote, INT32 nEntry)
 		_7z_error _7zerr = _7z_file_decompress(_7ZipFile, Dest, nLen, &nWrote);
 		if (_7zerr != _7ZERR_NONE) return 1;
 		
-		// Return how many bytes were copied
-		if (_7zerr == _7ZERR_NONE && pnWrote != NULL) *pnWrote = (INT32)nWrote;
+		/* Return how many bytes were copied */
+		if (_7zerr == _7ZERR_NONE && pnWrote != NULL)
+         *pnWrote = (INT32)nWrote;
 		
-		// use zlib crc32 module to calc crc of decompressed data, and check against 7z header
+		/* use zlib crc32 module to calc crc of decompressed data, and check against 7z header */
 		UINT32 nCalcCrc = crc32(0, Dest, nWrote);
 		if (nCalcCrc != f->Crc) return 2;
 	}
@@ -257,7 +257,7 @@ INT32 ZipLoadFile(UINT8* Dest, INT32 nLen, INT32* pnWrote, INT32 nEntry)
 	return 0;
 }
 
-// Load one file directly, added by regret
+/* Load one file directly, added by regret */
 INT32 __cdecl ZipLoadOneFile(char* arcName, const char* fileName, void** Dest, INT32* pnWrote)
 {
 	if (ZipOpen(arcName)) {
@@ -281,28 +281,30 @@ INT32 __cdecl ZipLoadOneFile(char* arcName, const char* fileName, void** Dest, I
 		unz_file_info FileInfo;
 		memset(&FileInfo, 0, sizeof(FileInfo));
 
-		if (fileName != NULL) {
-			// Step through all of the files, until we get to the end
-			INT32 nNextRet = 0;
-			char szName[MAX_PATH] = "";
+		if (fileName != NULL)
+      {
+         /* Step through all of the files, until we get to the end */
+         INT32 nNextRet = 0;
+         char szName[MAX_PATH] = "";
 
-			for (nCurrFile = 0, nNextRet = UNZ_OK;
-				nCurrFile < nListLen && nNextRet == UNZ_OK;
-				nCurrFile++, nNextRet = unzGoToNextFile(Zip))
-			{
-				nRet = unzGetCurrentFileInfo(Zip, &FileInfo, szName, MAX_PATH, NULL, 0, NULL, 0);
-				if (nRet != UNZ_OK) continue;
+         for (nCurrFile = 0, nNextRet = UNZ_OK;
+               nCurrFile < nListLen && nNextRet == UNZ_OK;
+               nCurrFile++, nNextRet = unzGoToNextFile(Zip))
+         {
+            nRet = unzGetCurrentFileInfo(Zip, &FileInfo, szName, MAX_PATH, NULL, 0, NULL, 0);
+            if (nRet != UNZ_OK) continue;
 
-				if (!strcmp(szName, fileName)) {
-					break;
-				}
-			}
+            if (!strcmp(szName, fileName)) {
+               break;
+            }
+         }
 
-			if (nCurrFile == nListLen) {
-				ZipClose();
-				return 1; // didn't find
-			}
-		}
+         if (nCurrFile == nListLen)
+         {
+            ZipClose();
+            return 1; /* didn't find */
+         }
+      }
 		else {
 			nRet = unzGetCurrentFileInfo(Zip, &FileInfo, NULL, 0, NULL, 0, NULL, 0);
 			if (nRet != UNZ_OK) {
@@ -311,7 +313,7 @@ INT32 __cdecl ZipLoadOneFile(char* arcName, const char* fileName, void** Dest, I
 			}
 		}
 
-		// Extract file
+		/* Extract file */
 		nRet = unzOpenCurrentFile(Zip);
 		if (nRet != UNZ_OK) {
 			unzCloseCurrentFile(Zip);
@@ -329,8 +331,9 @@ INT32 __cdecl ZipLoadOneFile(char* arcName, const char* fileName, void** Dest, I
 		}
 
 		nRet = unzReadCurrentFile(Zip, *Dest, FileInfo.uncompressed_size);
-		// Return how many bytes were copied
-		if (nRet >= 0 && pnWrote != NULL) *pnWrote = nRet;
+		/* Return how many bytes were copied */
+		if (nRet >= 0 && pnWrote != NULL)
+         *pnWrote = nRet;
 
 		nRet = unzCloseCurrentFile(Zip);
 		ZipClose();
@@ -378,10 +381,10 @@ INT32 __cdecl ZipLoadOneFile(char* arcName, const char* fileName, void** Dest, I
 			return 1;
 		}
 		
-		// Return how many bytes were copied
+		/* Return how many bytes were copied */
 		if (_7zerr == _7ZERR_NONE && pnWrote != NULL) *pnWrote = (INT32)nWrote;
 		
-		// use zlib crc32 module to calc crc of decompressed data, and check against 7z header
+		/* use zlib crc32 module to calc crc of decompressed data, and check against 7z header */
 		UINT32 nCalcCrc = crc32(0, (const Bytef*)*Dest, nWrote);
 		if (nCalcCrc != f->Crc) {
 			ZipClose();
