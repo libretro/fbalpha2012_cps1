@@ -812,8 +812,6 @@ INT32 GfxRomBankMapper(INT32 Type, INT32 Code)
 		++Range;
 	}
 
-//	bprintf(PRINT_NORMAL, _T("tile %02x/%04x out of range\n"), Type,Code>>Shift);
-
 	return -1;
 }
 
@@ -923,9 +921,7 @@ void SetCpsBId(INT32 CpsBId, INT32 bStars)
 			nCpsPalCtrlReg = 0x6a;
   			
 			CpsLayEn[1] = 0x02;
-			//CpsLayEn[2] = 0x0c;
 			CpsLayEn[2] = 0x04;
-			//CpsLayEn[3] = 0x0c;
 			CpsLayEn[3] = 0x08;
 			if (bStars) {
 				CpsLayEn[4] = 0x00;

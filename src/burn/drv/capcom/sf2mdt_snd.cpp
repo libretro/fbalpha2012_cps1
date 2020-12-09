@@ -2,9 +2,10 @@
 #include "burn_ym2151.h"
 #include "msm5205.h"
 
-// sf2mdt_snd.cpp
-// Sound support for games using similar sound to Street Fighter 2: Magic Delta Turbo
-// 1 x YM2151 and 2 x MSM5205
+/* sf2mdt_snd.cpp
+ * Sound support for games using similar sound to Street Fighter 2: Magic Delta Turbo
+ * 1 x YM2151 and 2 x MSM5205
+ */
 
 static UINT8 *Sf2mdtZ80Ram = NULL;
 static INT32 Sf2mdtZ80BankAddress = 0;

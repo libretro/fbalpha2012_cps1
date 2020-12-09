@@ -1,41 +1,39 @@
 #include "cps.h"
-// QSound
+/* QSound */
 
 static INT32 nQsndCyclesExtra;
 
 static INT32 qsndTimerOver(INT32, INT32)
 {
-//	bprintf(PRINT_NORMAL, _T("  - IRQ -> 1.\n"));
 	ZetSetIRQLine(0xFF, ZET_IRQSTATUS_AUTO);
 
 	return 0;
 }
 
-INT32 QsndInit()
+INT32 QsndInit(void)
 {
-	INT32 nRate;
+	INT32 nRate = 11025;
 
-	// Init QSound z80
-	if (QsndZInit()) {
+	/* Init QSound z80 */
+	if (QsndZInit())
 		return 1;
-	}
 	BurnTimerInit(qsndTimerOver, NULL);
 
-	if (Cps1Qs == 1) {
+	if (Cps1Qs == 1)
+   {
 		nCpsZ80Cycles = 6000000 * 100 / nBurnFPS;
 		BurnTimerAttachZet(6000000);
-	} else {
+	}
+   else
+   {
 		nCpsZ80Cycles = 8000000 * 100 / nBurnFPS;
 		BurnTimerAttachZet(8000000);
 	}
 
-	if (nBurnSoundRate >= 0) {
+	if (nBurnSoundRate >= 0)
 		nRate = nBurnSoundRate;
-	} else {
-		nRate = 11025;
-	}
 
-	QscInit(nRate);		// Init QSound chip
+	QscInit(nRate);		/* Init QSound chip */
 
 	return 0;
 }
@@ -45,7 +43,7 @@ void QsndSetRoute(INT32 nIndex, double nVolume, INT32 nRouteDir)
 	QscSetRoute(nIndex, nVolume, nRouteDir);
 }
 
-void QsndReset()
+void QsndReset(void)
 {
 	ZetOpen(0);
 	BurnTimerReset();
@@ -55,48 +53,49 @@ void QsndReset()
 	nQsndCyclesExtra = 0;
 }
 
-void QsndExit()
+void QsndExit(void)
 {
-	QscExit();							// Exit QSound chip
+	QscExit();							/* Exit QSound chip */
 	QsndZExit();
 }
 
 INT32 QsndScan(INT32 nAction)
 {
-	if (nAction & ACB_DRIVER_DATA) {
-		QsndZScan(nAction);				// Scan Z80
-		QscScan(nAction);				// Scan QSound Chip
+	if (nAction & ACB_DRIVER_DATA)
+   {
+		QsndZScan(nAction);				/* Scan Z80 */
+		QscScan(nAction);				/* Scan QSound Chip */
 	}
 
 	return 0;
 }
 
-void QsndNewFrame()
+void QsndNewFrame(void)
 {
-	ZetNewFrame();
+   ZetNewFrame();
 
-	ZetOpen(0);
-	ZetIdle(nQsndCyclesExtra);
+   ZetOpen(0);
+   ZetIdle(nQsndCyclesExtra);
 
-	QscNewFrame();
+   QscNewFrame();
 }
 
-void QsndEndFrame()
+void QsndEndFrame(void)
 {
-	BurnTimerEndFrame(nCpsZ80Cycles);
-	if (pBurnSoundOut) QscUpdate(nBurnSoundLen);
+   BurnTimerEndFrame(nCpsZ80Cycles);
+   if (pBurnSoundOut)
+      QscUpdate(nBurnSoundLen);
 
-	nQsndCyclesExtra = ZetTotalCycles() - nCpsZ80Cycles;
-	ZetClose();
+   nQsndCyclesExtra = ZetTotalCycles() - nCpsZ80Cycles;
+   ZetClose();
 }
 
-void QsndSyncZ80()
+void QsndSyncZ80(void)
 {
-	int nCycles = (INT64)SekTotalCycles() * nCpsZ80Cycles / nCpsCycles;
+   int nCycles = (INT64)SekTotalCycles() * nCpsZ80Cycles / nCpsCycles;
 
-	if (nCycles <= ZetTotalCycles()) {
-		return;
-	}
+   if (nCycles <= ZetTotalCycles())
+      return;
 
-	BurnTimerUpdate(nCycles);
+   BurnTimerUpdate(nCycles);
 }

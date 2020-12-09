@@ -2,9 +2,10 @@
 #include "burn_ym2203.h"
 #include "msm5205.h"
 
-// fcrash_snd.cpp
-// Sound support for games using similar sound to Final Crash
-// 2 x YM2203 and 2 x MSM5205
+/* fcrash_snd.cpp
+ * Sound support for games using similar sound to Final Crash
+ * 2 x YM2203 and 2 x MSM5205
+ */
 
 static UINT8 *FcrashZ80Ram = NULL;
 static INT32 FcrashZ80BankAddress = 0;
@@ -58,58 +59,47 @@ UINT8 __fastcall FcrashZ80Read(UINT16 a)
 
 void __fastcall FcrashZ80Write(UINT16 a, UINT8 d)
 {
-	switch (a) {
-		case 0xd800: {
-			BurnYM2203Write(0, 0, d);
-			return;
-		}
-		
-		case 0xd801: {
-			BurnYM2203Write(0, 1, d);
-			return;
-		}
-		
-		case 0xdc00: {
-			BurnYM2203Write(1, 0, d);
-			return;
-		}
-		
-		case 0xdc01: {
-			BurnYM2203Write(1, 1, d);
-			return;
-		}
-		
-		case 0xe000: {
-			MSM5205SetRoute(0, (d & 0x08) ? 0 : 0.25, BURN_SND_ROUTE_BOTH);
-			MSM5205SetRoute(1, (d & 0x10) ? 0 : 0.25, BURN_SND_ROUTE_BOTH);
+   switch (a)
+   {
+      case 0xd800:
+         BurnYM2203Write(0, 0, d);
+         return;
 
-			FcrashZ80BankAddress = (d & 0x07) * 0x4000;
-			ZetMapArea(0x8000, 0xbfff, 0, CpsZRom + FcrashZ80BankAddress);
-			ZetMapArea(0x8000, 0xbfff, 2, CpsZRom + FcrashZ80BankAddress);
-			return;
-		}
-		
-		case 0xe800: {
-			FcrashSampleBuffer1 = d;
-			return;
-		}
-		
-		case 0xec00: {
-			FcrashSampleBuffer2 = d;
-			return;
-		}
-		
-		case 0xf002:
-		case 0xf004:
-		case 0xf006: {
-			// ???
-			return;
-		}
-		
-		default: {
-			bprintf(PRINT_NORMAL, _T("Z80 #1 Write => %04X, %02X\n"), a, d);
-		}
-	}
+      case 0xd801:
+         BurnYM2203Write(0, 1, d);
+         return;
+
+      case 0xdc00:
+         BurnYM2203Write(1, 0, d);
+         return;
+      case 0xdc01:
+         BurnYM2203Write(1, 1, d);
+         return;
+      case 0xe000:
+         MSM5205SetRoute(0, (d & 0x08) ? 0 : 0.25, BURN_SND_ROUTE_BOTH);
+         MSM5205SetRoute(1, (d & 0x10) ? 0 : 0.25, BURN_SND_ROUTE_BOTH);
+
+         FcrashZ80BankAddress = (d & 0x07) * 0x4000;
+         ZetMapArea(0x8000, 0xbfff, 0, CpsZRom + FcrashZ80BankAddress);
+         ZetMapArea(0x8000, 0xbfff, 2, CpsZRom + FcrashZ80BankAddress);
+         return;
+
+      case 0xe800:
+         FcrashSampleBuffer1 = d;
+         return;
+
+      case 0xec00:
+         FcrashSampleBuffer2 = d;
+         return;
+
+      case 0xf002:
+      case 0xf004:
+      case 0xf006:
+         /* ??? */
+         return;
+      default:
+         bprintf(PRINT_NORMAL, _T("Z80 #1 Write => %04X, %02X\n"), a, d);
+   }
 }
 
 inline static INT32 FcrashSynchroniseStream(INT32 nSoundRate)
@@ -127,9 +117,8 @@ static void FcrashMSM5205Vck0()
 	MSM5205DataWrite(0, FcrashSampleBuffer1 & 0x0f);
 	FcrashSampleBuffer1 >>= 4;
 	FcrashSampleSelect1 ^= 1;
-	if (FcrashSampleSelect1 == 0) {
+	if (FcrashSampleSelect1 == 0)
 		ZetNmi();
-	}
 }
 
 static void FcrashMSM5205Vck1()
@@ -139,7 +128,7 @@ static void FcrashMSM5205Vck1()
 	FcrashSampleSelect2 ^= 1;
 }
 
-INT32 FcrashSoundInit()
+INT32 FcrashSoundInit(void)
 {
 	FcrashZ80Ram = (UINT8*)BurnMalloc(0x800);
 	
@@ -177,7 +166,7 @@ INT32 FcrashSoundInit()
 	return 0;
 }
 
-INT32 FcrashSoundReset()
+INT32 FcrashSoundReset(void)
 {
 	ZetOpen(0);
 	ZetReset();
@@ -197,7 +186,7 @@ INT32 FcrashSoundReset()
 	return 0;
 }
 
-INT32 FcrashSoundExit()
+INT32 FcrashSoundExit(void)
 {
 	ZetExit();
 	BurnYM2203Exit();
@@ -219,7 +208,7 @@ INT32 FcrashSoundExit()
 	return 0;
 }
 
-void FcrashSoundFrameStart()
+void FcrashSoundFrameStart(void)
 {
 	FcrashMSM5205Interleave = MSM5205CalcInterleave(0, 24000000 / 6);
 	FcrashSoundPos = 0;
@@ -229,16 +218,19 @@ void FcrashSoundFrameStart()
 	ZetOpen(0);	
 }
 
-void FcrashSoundFrameEnd()
+void FcrashSoundFrameEnd(void)
 {
-	for (INT32 i = FcrashSoundPos; i < FcrashMSM5205Interleave; i++) {
-		BurnTimerUpdate((i + 1) * FcrashCyclesPerSegment);
-		MSM5205Update();
-		FcrashSoundPos = i;
-	}
+   INT32 i;
+	for (i = FcrashSoundPos; i < FcrashMSM5205Interleave; i++)
+   {
+      BurnTimerUpdate((i + 1) * FcrashCyclesPerSegment);
+      MSM5205Update();
+      FcrashSoundPos = i;
+   }
 	BurnTimerEndFrame(nCpsZ80Cycles);
 	
-	if (pBurnSoundOut) {
+	if (pBurnSoundOut)
+   {
 		BurnYM2203Update(pBurnSoundOut, nBurnSoundLen);
 		MSM5205Render(0, pBurnSoundOut, nBurnSoundLen);
 		MSM5205Render(1, pBurnSoundOut, nBurnSoundLen);
@@ -248,30 +240,32 @@ void FcrashSoundFrameEnd()
 
 INT32 FcrashScanSound(INT32 nAction, INT32 *pnMin)
 {
-	if (nAction & ACB_MEMORY_RAM) {
-		struct BurnArea ba;
-		memset(&ba, 0, sizeof(ba));
+   if (nAction & ACB_MEMORY_RAM)
+   {
+      struct BurnArea ba;
+      memset(&ba, 0, sizeof(ba));
 
-		ba.Data = FcrashZ80Ram;
-		ba.nLen = 0x00800;
-		ba.szName = "FcrashZ80Ram";
-		BurnAcb(&ba);
-	}
-	
-	if (nAction & ACB_DRIVER_DATA) {
-		ZetScan(nAction);
-		
-		BurnYM2203Scan(nAction, pnMin);
-		MSM5205Scan(nAction, pnMin);
-		
-		SCAN_VAR(FcrashZ80BankAddress);
-		SCAN_VAR(FcrashSoundLatch);
-		SCAN_VAR(FcrashSampleBuffer1);
-		SCAN_VAR(FcrashSampleBuffer2);
-		SCAN_VAR(FcrashSampleSelect1);
-		SCAN_VAR(FcrashSampleSelect2);
-		SCAN_VAR(FcrashSoundPos);
-	}
+      ba.Data   = FcrashZ80Ram;
+      ba.nLen   = 0x00800;
+      ba.szName = "FcrashZ80Ram";
+      BurnAcb(&ba);
+   }
 
-	return 0;
+   if (nAction & ACB_DRIVER_DATA)
+   {
+      ZetScan(nAction);
+
+      BurnYM2203Scan(nAction, pnMin);
+      MSM5205Scan(nAction, pnMin);
+
+      SCAN_VAR(FcrashZ80BankAddress);
+      SCAN_VAR(FcrashSoundLatch);
+      SCAN_VAR(FcrashSampleBuffer1);
+      SCAN_VAR(FcrashSampleBuffer2);
+      SCAN_VAR(FcrashSampleSelect1);
+      SCAN_VAR(FcrashSampleSelect2);
+      SCAN_VAR(FcrashSoundPos);
+   }
+
+   return 0;
 }

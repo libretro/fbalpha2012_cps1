@@ -1,11 +1,11 @@
-// PSound (CPS1 sound)
+/* PSound (CPS1 sound) */
 #include "cps.h"
 #include "driver.h"
 extern "C" {
  #include "ym2151.h"
 }
 
-UINT8 PsndCode, PsndFade;						// Sound code/fade sent to the z80 program
+UINT8 PsndCode, PsndFade;						/* Sound code/fade sent to the z80 program */
 
 static INT32 nSyncPeriod;
 static INT32 nSyncNext;
@@ -27,12 +27,12 @@ INT32 PsndInit()
 	nCpsZ80Cycles = 4000000 * 100 / nBurnFPS;
 	nSyncPeriod = nCpsZ80Cycles / 32;
 
-	// Init PSound z80
+	/* Init PSound z80 */
 	if (PsndZInit()!= 0) {
 		return 1;
 	}
 
-	// Init PSound mixing (not critical if it fails)
+	/* Init PSound mixing (not critical if it fails) */
 	PsmInit();
 
 	YM2151SetIrqHandler(0, &drvYM2151IRQHandler);
@@ -54,15 +54,18 @@ INT32 PsndExit()
 
 INT32 PsndScan(INT32 nAction)
 {
-	if (nAction & ACB_DRIVER_DATA) {
-		SCAN_VAR(nCyclesDone); SCAN_VAR(nSyncNext);
-		PsndZScan(nAction);							// Scan Z80
-		SCAN_VAR(PsndCode); SCAN_VAR(PsndFade);		// Scan sound info
+	if (nAction & ACB_DRIVER_DATA)
+   {
+		SCAN_VAR(nCyclesDone);
+      SCAN_VAR(nSyncNext);
+		PsndZScan(nAction);							      /* Scan Z80 */
+		SCAN_VAR(PsndCode);
+      SCAN_VAR(PsndFade);		                     /* Scan sound info */
 	}
 	return 0;
 }
 
-void PsndNewFrame()
+void PsndNewFrame(void)
 {
 	ZetNewFrame();
 	PsmNewFrame();
@@ -74,11 +77,12 @@ void PsndNewFrame()
 
 INT32 PsndSyncZ80(INT32 nCycles)
 {
-	while (nSyncNext < nCycles) {
-		PsmUpdate(nSyncNext * nBurnSoundLen / nCpsZ80Cycles);
-		ZetRun(nSyncNext - ZetTotalCycles());
-		nSyncNext += nSyncPeriod;
-	}
+	while (nSyncNext < nCycles)
+   {
+      PsmUpdate(nSyncNext * nBurnSoundLen / nCpsZ80Cycles);
+      ZetRun(nSyncNext - ZetTotalCycles());
+      nSyncNext += nSyncPeriod;
+   }
 
 	nCyclesDone = ZetRun(nCycles - ZetTotalCycles());
 

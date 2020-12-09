@@ -1,4 +1,4 @@
-// Burner Game Control
+/* Burner Game Control */
 #include "burner.h"
 
 static char szPlay[4][4]={"p1 ", "p2 ", "p3 ", "p4 "};
@@ -6,12 +6,12 @@ static char szPlay[4][4]={"p1 ", "p2 ", "p3 ", "p4 "};
 #define KEY(x) { pgi->nInput = GIT_SWITCH; pgi->Input.Switch.nCode = (UINT16)(x); }
 #define MACRO(x) { pgi->Macro.nMode = 1; pgi->Macro.Switch.nCode = (UINT16)(x); }
 
-// Configure the misc game controls
+/* Configure the misc game controls */
 INT32 GamcMisc(struct GameInp* pgi, char* szi, INT32 nPlayer)
 {
 	switch (nPlayer) {
 		case 0:
-			// Set general controls according to Player 1 settings
+			/* Set general controls according to Player 1 settings */
 			if (strcmp(szi, "diag") == 0) {
 				KEY(FBK_F2);
 				return 0;
@@ -56,7 +56,7 @@ INT32 GamcMisc(struct GameInp* pgi, char* szi, INT32 nPlayer)
 				return 0;
 			}
 			
-			// Mahjong controls
+			/* Mahjong controls */
 			if (strcmp(szi, "mah a") == 0) {
 				KEY(FBK_A);
 				return 0;
@@ -172,7 +172,7 @@ INT32 GamcMisc(struct GameInp* pgi, char* szi, INT32 nPlayer)
 				return 0;
 			}
 
-			// Player 1 controls
+			/* Player 1 controls */
 			if (strcmp(szi, "p1 start") == 0) {
 				KEY(FBK_1);
 				return 0;
@@ -256,11 +256,11 @@ static void SetSliderKey(struct GameInp* pgi, INT32 k0, INT32 k1, INT32 nSlide)
 	pgi->Input.Slider.SliderAxis.nSlider[1] = (UINT8)k1;
 
 	if (nSlide == 2) {
-		// Sliding
+		/* Sliding */
 		pgi->Input.Slider.nSliderSpeed = 0x0700;
 		pgi->Input.Slider.nSliderCenter = 0;
 	} else {
-		// Sliding (centering)
+		/* Sliding (centering) */
 		pgi->Input.Slider.nSliderSpeed = 0x0E00;
 		pgi->Input.Slider.nSliderCenter = 10;
 	}
@@ -271,7 +271,7 @@ INT32 GamcAnalogKey(struct GameInp* pgi, char* szi, INT32 nPlayer, INT32 nSlide)
 	char *szSearch = NULL;
 	INT32 k0 = 0, k1 = 0;
 	szSearch = szPlay[nPlayer & 3];
-	if (_strnicmp(szSearch, szi, 3) != 0) {			// Not our player
+	if (_strnicmp(szSearch, szi, 3) != 0) {			/* Not our player */
 		return 1;
 	}
 	szi += 3;

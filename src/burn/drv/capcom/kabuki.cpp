@@ -1,4 +1,4 @@
-// This file is based on the MAME source code (see http://www.mame.net/)
+/* This file is based on the MAME source code (see http://www.mame.net/) */
 
 /***************************************************************************
 
@@ -89,9 +89,7 @@ Slam Masters                             54321076  65432107    3131     19
 
 ***************************************************************************/
 
-// #include "driver.h"
 #include "cps.h"
-
 
 static INT32 bitswap1(INT32 src,INT32 key,INT32 select)
 {
