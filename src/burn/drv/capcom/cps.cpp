@@ -1,5 +1,5 @@
 #include "cps.h"
-// CPS (general)
+/* CPS (general) */
 
 INT32 Cps = 0;							// 1 = CPS1, 2 = CPS2, 3 = CPS Changer
 INT32 Cps1Qs = 0;
@@ -20,7 +20,7 @@ UINT8 *CpsStar=NULL;
 UINT32 nCpsGfxScroll[4]={0,0,0,0}; // Offset to Scroll tiles
 UINT32 nCpsGfxMask=0;	  // Address mask
 
-// Separate out the bits of a byte
+/* Separate out the bits of a byte */
 inline static UINT32 Separate(UINT32 b)
 {
 	UINT32 a = b;									// 00000000 00000000 00000000 11111111
@@ -298,10 +298,10 @@ static INT32 CpsLoadOneBootlegType2(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 
 	if (Rom == NULL) {
 		return 1;
 	}
-	nRomLen &= ~1;								// make sure even
+	nRomLen &= ~1;								/* make sure even */
 
 	for (i = 0, pt = Tile, pr = Rom; i < 0x40000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -313,7 +313,7 @@ static INT32 CpsLoadOneBootlegType2(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 
 	}
 
 	for (i = 0, pt = Tile + 4, pr = Rom + 0x40000; i < 0x40000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -325,7 +325,7 @@ static INT32 CpsLoadOneBootlegType2(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 
 	}
 	
 	for (i = 0, pt = Tile + 0x200000, pr = Rom + 0x80000; i < 0x40000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -337,7 +337,7 @@ static INT32 CpsLoadOneBootlegType2(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 
 	}
 
 	for (i = 0, pt = Tile + 0x200004, pr = Rom + 0xc0000; i < 0x40000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -362,10 +362,10 @@ static INT32 CpsLoadOneBootlegType2Small(UINT8* Tile, INT32 nNum, INT32 nWord, I
 	if (Rom == NULL) {
 		return 1;
 	}
-	nRomLen &= ~1;								// make sure even
+	nRomLen &= ~1;								/* make sure even */
 
 	for (i = 0, pt = Tile, pr = Rom; i < 0x40000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -377,7 +377,7 @@ static INT32 CpsLoadOneBootlegType2Small(UINT8* Tile, INT32 nNum, INT32 nWord, I
 	}
 
 	for (i = 0, pt = Tile + 4, pr = Rom + 0x40000; i < 0x40000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -402,10 +402,10 @@ static INT32 CpsLoadOneBootlegType2SmallSingle(UINT8* Tile, INT32 nNum, INT32 nW
 	if (Rom == NULL) {
 		return 1;
 	}
-	nRomLen &= ~1;								// make sure even
+	nRomLen &= ~1;								/* make sure even */
 
 	for (i = 0, pt = Tile, pr = Rom; i < 0x40000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -430,10 +430,10 @@ static INT32 CpsLoadOneBootlegType3(UINT8 *Tile, INT32 nNum, INT32 nWord, INT32 
 	if (Rom == NULL) {
 		return 1;
 	}
-	nRomLen &= ~1;								// make sure even
+	nRomLen &= ~1;								/* make sure even */
 
 	for (i = 0, pt = Tile, pr = Rom; i < nRomLen; pt += 4) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -458,10 +458,10 @@ static INT32 CpsLoadOneBootlegType3Swap(UINT8 *Tile, INT32 nNum, INT32 nWord, IN
 	if (Rom == NULL) {
 		return 1;
 	}
-	nRomLen &= ~1;								// make sure even
+	nRomLen &= ~1;								/* make sure even */
 
 	for (i = 0, pt = Tile, pr = Rom; i < nRomLen; pt += 4) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -494,10 +494,10 @@ static INT32 CpsLoadOneSf2ebbl(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 nShif
 	if (Rom == NULL) {
 		return 1;
 	}
-	nRomLen &= ~1;								// make sure even
+	nRomLen &= ~1;								/* make sure even */
 
 	for (i = 0, pt = Tile, pr = Rom; i < 0x10000; pt += 8) {
-		UINT32 Pix;						// Eight pixels
+		UINT32 Pix;						/* Eight pixels */
 		UINT8 b;
 		b = *pr++; i++; Pix = SepTable[b];
 		if (nWord) {
@@ -531,9 +531,8 @@ static INT32 CpsLoadOneSf2koryu(UINT8* Tile, INT32 nNum, INT32 nWord, INT32 nShi
 	INT32 i;
 
 	LoadUp(&Rom, &nRomLen, nNum);
-	if (Rom == NULL) {
+	if (Rom == NULL)
 		return 1;
-	}
 
 	nRomLen &= ~1;								// make sure even
 	
@@ -1277,9 +1276,9 @@ static INT32 CpsGetROMs(bool bLoad)
 	return 0;
 }
 
-// ----------------------------------------------------------------
+/* ---------------------------------------------------------------- */
 
-INT32 CpsInit()
+INT32 CpsInit(void)
 {
 	INT32 nMemLen, i;
 	
@@ -1300,7 +1299,7 @@ INT32 CpsInit()
 		nMemLen += nCpsZRomLen * 2;
 	}
 
-	// Allocate Gfx, Rom and Z80 Roms
+	/* Allocate Gfx, Rom and Z80 Roms */
 	CpsGfx = (UINT8*)BurnMalloc(nMemLen);
 	if (CpsGfx == NULL) {
 		return 1;
@@ -1318,33 +1317,32 @@ INT32 CpsInit()
 	CpsQSam =(INT8*)(CpsZRom + nCpsZRomLen);
 	CpsAd   =(UINT8*)(CpsQSam + nCpsQSamLen);
 
-	// Create Gfx addr mask
-	for (i = 0; i < 31; i++) {
-		if ((1 << i) >= (INT32)nCpsGfxLen) {
+	/* Create Gfx addr mask */
+	for (i = 0; i < 31; i++)
+   {
+		if ((1 << i) >= (INT32)nCpsGfxLen)
 			break;
-		}
 	}
 	nCpsGfxMask = (1 << i) - 1;
 
-	// Offset to Scroll tiles
-	if (!(Cps & 1)) {
+	/* Offset to Scroll tiles */
+	if (!(Cps & 1))
 		nCpsGfxScroll[1] = nCpsGfxScroll[2] = nCpsGfxScroll[3] = 0x800000;
-	} else {
+   else
 		nCpsGfxScroll[1] = nCpsGfxScroll[2] = nCpsGfxScroll[3] = 0;
-	}
 
 #if 0
 	if (nCpsZRomLen>=5) {
-		// 77->cfff and rst 00 in case driver doesn't load
+		/* 77->cfff and rst 00 in case driver doesn't load */
 		CpsZRom[0] = 0x3E; CpsZRom[1] = 0x77;
 		CpsZRom[2] = 0x32; CpsZRom[3] = 0xFF; CpsZRom[4] = 0xCF;
 		CpsZRom[5] = 0xc7;
 	}
 #endif
 
-	SepTableCalc();									  // Precalc the separate table
+	SepTableCalc();									  /* Precalc the separate table */
 
-	CpsReset = 0; Cpi01A = Cpi01C = Cpi01E = 0;		  // blank other inputs
+	CpsReset = 0; Cpi01A = Cpi01C = Cpi01E = 0;		  /* blank other inputs */
 
 	// Use this as default - all CPS-2 games use it
 	SetCpsBId(CPS_B_21_DEF, 0);
@@ -1371,7 +1369,7 @@ INT32 CpsExit()
 	CpsRom = CpsZRom = CpsAd = CpsStar = NULL;
 	CpsQSam = NULL;
 
-	// All Memory is allocated to this (this is the only one we can free)
+	/* All Memory is allocated to this (this is the only one we can free) */
 	BurnFree(CpsGfx);
 	
 	BurnFree(CpsCode);
