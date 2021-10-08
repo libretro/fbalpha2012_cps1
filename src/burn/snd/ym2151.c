@@ -13,18 +13,6 @@
 #include "state.h"
 #include "ym2151.h"
 
-
-/* undef this to not use MAME timer system */
-// #define USE_MAME_TIMERS
-
-/*#define FM_EMU*/
-#ifdef FM_EMU
-	#define INLINE static __inline__
-	#ifdef USE_MAME_TIMERS
-		#undef USE_MAME_TIMERS
-	#endif
-#endif
-
 /* struct describing a single operator */
 typedef struct{
 	UINT32		phase;					/* accumulated operator phase */
@@ -115,20 +103,12 @@ typedef struct
 	UINT32		status;					/* chip status (BUSY, IRQ Flags) */
 	UINT8		connect[8];				/* channels connections */
 
-#ifdef USE_MAME_TIMERS
-/* ASG 980324 -- added for tracking timers */
-	void		*timer_A;
-	void		*timer_B;
-	double		timer_A_time[1024];		/* timer A times for MAME */
-	double		timer_B_time[256];		/* timer B times for MAME */
-#else
 	UINT8		tim_A;					/* timer A enable (0-disabled) */
 	UINT8		tim_B;					/* timer B enable (0-disabled) */
 	INT32		tim_A_val;				/* current value of timer A */
 	INT32		tim_B_val;				/* current value of timer B */
 	UINT32		tim_A_tab[1024];		/* timer A deltas */
 	UINT32		tim_B_tab[256];			/* timer B deltas */
-#endif
 	UINT32		timer_A_index;			/* timer A index */
 	UINT32		timer_B_index;			/* timer B index */
 	UINT32		timer_A_index_old;		/* timer A previous index */
@@ -486,22 +466,11 @@ static signed int chanout[8];
 static signed int m2,c1,c2; /* Phase Modulation input for operators 2,3,4 */
 static signed int mem;		/* one sample delay memory */
 
-
-/* save output as raw 16-bit sample */
-/* #define SAVE_SAMPLE */
-/* #define SAVE_SEPARATE_CHANNELS */
-#if defined SAVE_SAMPLE || defined SAVE_SEPARATE_CHANNELS
-static FILE *sample[9];
-#endif
-
-
 /* own PI definition */
 #ifdef PI
-	#undef PI
+#undef PI
 #endif
 #define PI 3.14159265358979323846
-
-
 
 static void init_tables(void)
 {
@@ -564,20 +533,6 @@ static void init_tables(void)
 		m = (i!=15 ? i : i+16) * (4.0/ENV_STEP);   /* every 3 'dB' except for all bits = 1 = 45+48 'dB' */
 		d1l_tab[i] = m;
 	}
-
-#ifdef SAVE_SAMPLE
-	sample[8]=fopen("sampsum.pcm","wb");
-#endif
-#ifdef SAVE_SEPARATE_CHANNELS
-	sample[0]=fopen("samp0.pcm","wb");
-	sample[1]=fopen("samp1.pcm","wb");
-	sample[2]=fopen("samp2.pcm","wb");
-	sample[3]=fopen("samp3.pcm","wb");
-	sample[4]=fopen("samp4.pcm","wb");
-	sample[5]=fopen("samp5.pcm","wb");
-	sample[6]=fopen("samp6.pcm","wb");
-	sample[7]=fopen("samp7.pcm","wb");
-#endif
 }
 
 
@@ -663,21 +618,13 @@ static void init_chip_tables(YM2151 *chip)
 	{
 		/* ASG 980324: changed to compute both tim_A_tab and timer_A_time */
 		pom= ( 64.0  *  (1024.0-i) / (double)chip->clock );
-		#ifdef USE_MAME_TIMERS
-			chip->timer_A_time[i] = pom;
-		#else
 			chip->tim_A_tab[i] = pom * (double)chip->sampfreq * mult;  /* number of samples that timer period takes (fixed point) */
-		#endif
 	}
 	for (i=0; i<256; i++)
 	{
 		/* ASG 980324: changed to compute both tim_B_tab and timer_B_time */
 		pom= ( 1024.0 * (256.0-i)  / (double)chip->clock );
-		#ifdef USE_MAME_TIMERS
-			chip->timer_B_time[i] = pom;
-		#else
 			chip->tim_B_tab[i] = pom * (double)chip->sampfreq * mult;  /* number of samples that timer period takes (fixed point) */
-		#endif
 	}
 
 	/* calculate noise periods table */
@@ -743,48 +690,6 @@ INLINE void envelope_KONKOFF(YM2151Operator * op, int v)
 	else
 		KEY_OFF(op+3,~1)
 }
-
-
-#ifdef USE_MAME_TIMERS
-static void timer_callback_a (int n)
-{
-	YM2151 *chip = &YMPSG[n];
-	timer_adjust(chip->timer_A, chip->timer_A_time[ chip->timer_A_index ], n, 0);
-	chip->timer_A_index_old = chip->timer_A_index;
-	if (chip->irq_enable & 0x04)
-	{
-		int oldstate = chip->status & 3;
-		chip->status |= 1;
-		if ((!oldstate) && (chip->irqhandler)) (*chip->irqhandler)(1);
-	}
-	if (chip->irq_enable & 0x80)
-		chip->csm_req = 2;		/* request KEY ON / KEY OFF sequence */
-}
-static void timer_callback_b (int n)
-{
-	YM2151 *chip = &YMPSG[n];
-	timer_adjust(chip->timer_B, chip->timer_B_time[ chip->timer_B_index ], n, 0);
-	chip->timer_B_index_old = chip->timer_B_index;
-	if (chip->irq_enable & 0x08)
-	{
-		int oldstate = chip->status & 3;
-		chip->status |= 2;
-		if ((!oldstate) && (chip->irqhandler)) (*chip->irqhandler)(1);
-	}
-}
-#if 0
-static void timer_callback_chip_busy (int n)
-{
-	YM2151 *chip = &YMPSG[n];
-	chip->status &= 0x7f;	/* reset busy flag */
-}
-#endif
-#endif
-
-
-
-
-
 
 INLINE void set_connect( YM2151Operator *om1, int cha, int v)
 {
@@ -1035,53 +940,23 @@ void YM2151WriteReg(int n, int r, int v)
 			}
 
 			if (v&0x02){	/* load and start timer B */
-				#ifdef USE_MAME_TIMERS
-				/* ASG 980324: added a real timer */
-				/* start timer _only_ if it wasn't already started (it will reload time value next round) */
-					if (!timer_enable(chip->timer_B, 1))
-					{
-						timer_adjust(chip->timer_B, chip->timer_B_time[ chip->timer_B_index ], n, 0);
-						chip->timer_B_index_old = chip->timer_B_index;
-					}
-				#else
 					if (!chip->tim_B)
 					{
 						chip->tim_B = 1;
 						chip->tim_B_val = chip->tim_B_tab[ chip->timer_B_index ];
 					}
-				#endif
 			}else{		/* stop timer B */
-				#ifdef USE_MAME_TIMERS
-				/* ASG 980324: added a real timer */
-					timer_enable(chip->timer_B, 0);
-				#else
 					chip->tim_B = 0;
-				#endif
 			}
 
 			if (v&0x01){	/* load and start timer A */
-				#ifdef USE_MAME_TIMERS
-				/* ASG 980324: added a real timer */
-				/* start timer _only_ if it wasn't already started (it will reload time value next round) */
-					if (!timer_enable(chip->timer_A, 1))
-					{
-						timer_adjust(chip->timer_A, chip->timer_A_time[ chip->timer_A_index ], n, 0);
-						chip->timer_A_index_old = chip->timer_A_index;
-					}
-				#else
 					if (!chip->tim_A)
 					{
 						chip->tim_A = 1;
 						chip->tim_A_val = chip->tim_A_tab[ chip->timer_A_index ];
 					}
-				#endif
 			}else{		/* stop timer A */
-				#ifdef USE_MAME_TIMERS
-				/* ASG 980324: added a real timer */
-					timer_enable(chip->timer_A, 0);
-				#else
 					chip->tim_A = 0;
-				#endif
 			}
 			break;
 
@@ -1273,130 +1148,9 @@ int YM2151ReadStatus( int n )
 	return YMPSG[n].status;
 }
 
-//#ifdef USE_MAME_TIMERS
-#if 0 // disabled for now due to crashing in debug+map+symbols build
-/*
-*	state save support for MAME
-*/
-static void ym2151_postload_refresh(void)
-{
-	int i,j;
-
-	for (i=0; i<YMNumChips; i++)
-	{
-		for (j=0; j<8; j++)
-		{
-			set_connect(&YMPSG[i].oper[j*4], YMPSG[i].connect[j], j);
-		}
-	}
-}
-
-static void ym2151_state_save_register( int numchips )
-{
-	int i,j;
-	char buf1[20];
-
-	for (i=0; i<numchips; i++)
-	{
-		/* save all 32 operators of chip #i */
-		for (j=0; j<32; j++)
-		{
-			YM2151Operator *op;
-
-			sprintf(buf1,"YM2151.op%02i",j);
-			op = &YMPSG[i].oper[(j&7)*4+(j>>3)];
-
-			state_save_register_UINT32 (buf1, i, "phase", &op->phase, 1);
-			state_save_register_UINT32 (buf1, i, "freq" , &op->freq,  1);
-			state_save_register_INT32  (buf1, i, "dt1"  , &op->dt1,   1);
-			state_save_register_UINT32 (buf1, i, "mul"  , &op->mul,   1);
-			state_save_register_UINT32 (buf1, i, "dt1_i", &op->dt1_i, 1);
-			state_save_register_UINT32 (buf1, i, "dt2"  , &op->dt2,   1);
-			/* operators connection is saved in chip data block */
-			state_save_register_INT32  (buf1, i, "mem_v" ,&op->mem_value,1);
-
-			state_save_register_UINT32 (buf1, i, "fb_sh", &op->fb_shift,   1);
-			state_save_register_INT32  (buf1, i, "fb_c" , &op->fb_out_curr,1);
-			state_save_register_INT32  (buf1, i, "fb_p" , &op->fb_out_prev,1);
-			state_save_register_UINT32 (buf1, i, "kc"   , &op->kc,    1);
-			state_save_register_UINT32 (buf1, i, "kc_i" , &op->kc_i,  1);
-			state_save_register_UINT32 (buf1, i, "pms"  , &op->pms,   1);
-			state_save_register_UINT32 (buf1, i, "ams"  , &op->ams,   1);
-			state_save_register_UINT32 (buf1, i, "AMmask",&op->AMmask,1);
-
-			state_save_register_UINT32 (buf1, i, "state" ,&op->state,     1);
-			state_save_register_UINT8  (buf1, i, "e_shAR",&op->eg_sh_ar,  1);
-			state_save_register_UINT8  (buf1, i, "e_slAR",&op->eg_sel_ar, 1);
-			state_save_register_UINT32 (buf1, i, "tl"    ,&op->tl,        1);
-			state_save_register_INT32  (buf1, i, "volume",&op->volume,    1);
-			state_save_register_UINT8  (buf1, i, "e_shD1",&op->eg_sh_d1r, 1);
-			state_save_register_UINT8  (buf1, i, "e_slD1",&op->eg_sel_d1r,1);
-			state_save_register_UINT32 (buf1, i, "d1l"   ,&op->d1l,       1);
-			state_save_register_UINT8  (buf1, i, "e_shD2",&op->eg_sh_d2r, 1);
-			state_save_register_UINT8  (buf1, i, "e_slD2",&op->eg_sel_d2r,1);
-			state_save_register_UINT8  (buf1, i, "e_shRR",&op->eg_sh_rr,  1);
-			state_save_register_UINT8  (buf1, i, "e_slRR",&op->eg_sel_rr, 1);
-
-			state_save_register_UINT32 (buf1, i, "key"   ,&op->key, 1);
-			state_save_register_UINT32 (buf1, i, "ks"    ,&op->ks,  1);
-			state_save_register_UINT32 (buf1, i, "ar"    ,&op->ar,  1);
-			state_save_register_UINT32 (buf1, i, "d1r"   ,&op->d1r, 1);
-			state_save_register_UINT32 (buf1, i, "d2r"   ,&op->d2r, 1);
-			state_save_register_UINT32 (buf1, i, "rr"    ,&op->rr,  1);
-
-			state_save_register_UINT32 (buf1, i, "rsrvd0",&op->reserved0, 1);
-			state_save_register_UINT32 (buf1, i, "rsrvd1",&op->reserved1, 1);
-		}
-
-		sprintf(buf1,"YM2151.registers");
-
-		state_save_register_UINT32 (buf1, i, "pan"     , &YMPSG[i].pan[0], 16);
-
-		state_save_register_UINT32 (buf1, i, "eg_cnt"  , &YMPSG[i].eg_cnt,           1);
-		state_save_register_UINT32 (buf1, i, "eg_tmr"  , &YMPSG[i].eg_timer,         1);
-		state_save_register_UINT32 (buf1, i, "eg_tmra" , &YMPSG[i].eg_timer_add,     1);
-		state_save_register_UINT32 (buf1, i, "eg_ovr"  , &YMPSG[i].eg_timer_overflow,1);
-
-		state_save_register_UINT32 (buf1, i, "lfo_phas", &YMPSG[i].lfo_phase,      1);
-		state_save_register_UINT32 (buf1, i, "lfo_tmr" , &YMPSG[i].lfo_timer,      1);
-		state_save_register_UINT32 (buf1, i, "lfo_tmra", &YMPSG[i].lfo_timer_add,  1);
-		state_save_register_UINT32 (buf1, i, "lfo_ovr" , &YMPSG[i].lfo_overflow,   1);
-		state_save_register_UINT32 (buf1, i, "lfo_ctr" , &YMPSG[i].lfo_counter,    1);
-		state_save_register_UINT32 (buf1, i, "lfo_ctra", &YMPSG[i].lfo_counter_add,1);
-		state_save_register_UINT8  (buf1, i, "lfo_wsel", &YMPSG[i].lfo_wsel, 1);
-		state_save_register_UINT8  (buf1, i, "amd"     , &YMPSG[i].amd, 1);
-		state_save_register_INT8   (buf1, i, "pmd"     , &YMPSG[i].pmd, 1);
-		state_save_register_UINT32 (buf1, i, "lfa"     , &YMPSG[i].lfa, 1);
-		state_save_register_INT32  (buf1, i, "lfp"     , &YMPSG[i].lfp, 1);
-
-		state_save_register_UINT8  (buf1, i, "test"    , &YMPSG[i].test,1);
-		state_save_register_UINT8  (buf1, i, "ct"      , &YMPSG[i].ct,  1);
-
-		state_save_register_UINT32 (buf1, i, "noise"   , &YMPSG[i].noise,     1);
-		state_save_register_UINT32 (buf1, i, "noiseRNG", &YMPSG[i].noise_rng, 1);
-		state_save_register_UINT32 (buf1, i, "noise_p" , &YMPSG[i].noise_p,   1);
-		state_save_register_UINT32 (buf1, i, "noise_f" , &YMPSG[i].noise_f,   1);
-
-		state_save_register_UINT32 (buf1, i, "csm_req" , &YMPSG[i].csm_req,   1);
-		state_save_register_UINT32 (buf1, i, "irq_ena" , &YMPSG[i].irq_enable,1);
-		state_save_register_UINT32 (buf1, i, "status"  , &YMPSG[i].status,    1);
-
-		state_save_register_UINT32 (buf1, i, "TimAind" , &YMPSG[i].timer_A_index, 1);
-		state_save_register_UINT32 (buf1, i, "TimBind" , &YMPSG[i].timer_B_index, 1);
-		state_save_register_UINT32 (buf1, i, "TimAold" , &YMPSG[i].timer_A_index_old, 1);
-		state_save_register_UINT32 (buf1, i, "TimBold" , &YMPSG[i].timer_B_index_old, 1);
-
-		state_save_register_UINT8  (buf1, i, "connect" , &YMPSG[i].connect[0], 8);
-	}
-
-	state_save_register_func_postload(ym2151_postload_refresh);
-}
-#else
 static void ym2151_state_save_register( int numchips )
 {
 }
-#endif
-
 
 /*
 *	Initialize YM2151 emulator(s).
@@ -1438,14 +1192,8 @@ int YM2151Init(int num, int clock, int rate)
 		YMPSG[i].eg_timer_add  = (1<<EG_SH)  * (clock/64.0) / YMPSG[i].sampfreq;
 		YMPSG[i].eg_timer_overflow = ( 3 ) * (1<<EG_SH);
 
-#ifdef USE_MAME_TIMERS
-/* this must be done _before_ a call to YM2151ResetChip() */
-		YMPSG[i].timer_A = timer_alloc(timer_callback_a);
-		YMPSG[i].timer_B = timer_alloc(timer_callback_b);
-#else
 		YMPSG[i].tim_A      = 0;
 		YMPSG[i].tim_B      = 0;
-#endif
 		YM2151ResetChip(i);
 	}
 
@@ -1461,20 +1209,6 @@ void YM2151Shutdown()
 
 	free (YMPSG);
 	YMPSG = NULL;
-
-#ifdef SAVE_SAMPLE
-	fclose(sample[8]);
-#endif
-#ifdef SAVE_SEPARATE_CHANNELS
-	fclose(sample[0]);
-	fclose(sample[1]);
-	fclose(sample[2]);
-	fclose(sample[3]);
-	fclose(sample[4]);
-	fclose(sample[5]);
-	fclose(sample[6]);
-	fclose(sample[7]);
-#endif
 }
 
 
@@ -1511,16 +1245,10 @@ void YM2151ResetChip(int num)
 	chip->test= 0;
 
 	chip->irq_enable = 0;
-#ifdef USE_MAME_TIMERS
-	/* ASG 980324 -- reset the timers before writing to the registers */
-	timer_enable(chip->timer_A, 0);
-	timer_enable(chip->timer_B, 0);
-#else
 	chip->tim_A      = 0;
 	chip->tim_B      = 0;
 	chip->tim_A_val  = 0;
 	chip->tim_B_val  = 0;
-#endif
 	chip->timer_A_index = 0;
 	chip->timer_B_index = 0;
 	chip->timer_A_index_old = 0;
@@ -2191,60 +1919,14 @@ INLINE signed int acc_calc(signed int value)
 
 /* first macro saves left and right channels to mono file */
 /* second macro saves left and right channels to stereo file */
-#if 0	/*MONO*/
-	#ifdef SAVE_SEPARATE_CHANNELS
-	  #define SAVE_SINGLE_CHANNEL(j) \
-	  {	signed int pom= -(chanout[j] & PSG->pan[j*2]); \
-		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
-		fputc((unsigned short)pom&0xff,sample[j]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[j]);  }
-	#else
 	  #define SAVE_SINGLE_CHANNEL(j)
-	#endif
-#else	/*STEREO*/
-	#ifdef SAVE_SEPARATE_CHANNELS
-	  #define SAVE_SINGLE_CHANNEL(j) \
-	  {	signed int pom = -(chanout[j] & PSG->pan[j*2]); \
-		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
-		fputc((unsigned short)pom&0xff,sample[j]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[j]); \
-		pom = -(chanout[j] & PSG->pan[j*2+1]); \
-		if (pom > 32767) pom = 32767; else if (pom < -32768) pom = -32768; \
-		fputc((unsigned short)pom&0xff,sample[j]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[j]); \
-	  }
-	#else
-	  #define SAVE_SINGLE_CHANNEL(j)
-	#endif
-#endif
 
 /* first macro saves left and right channels to mono file */
 /* second macro saves left and right channels to stereo file */
 #if 1	/*MONO*/
-	#ifdef SAVE_SAMPLE
-	  #define SAVE_ALL_CHANNELS \
-	  {	signed int pom = outl; \
-		/*pom = acc_calc(pom);*/ \
-		/*fprintf(sample[8]," %i\n",pom);*/ \
-		fputc((unsigned short)pom&0xff,sample[8]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[8]); \
-	  }
-	#else
 	  #define SAVE_ALL_CHANNELS
-	#endif
 #else	/*STEREO*/
-	#ifdef SAVE_SAMPLE
-	  #define SAVE_ALL_CHANNELS \
-	  {	signed int pom = outl; \
-		fputc((unsigned short)pom&0xff,sample[8]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[8]); \
-		pom = outr; \
-		fputc((unsigned short)pom&0xff,sample[8]); \
-		fputc(((unsigned short)pom>>8)&0xff,sample[8]); \
-	  }
-	#else
 	  #define SAVE_ALL_CHANNELS
-	#endif
 #endif
 
 
@@ -2265,9 +1947,6 @@ void YM2151UpdateOne(int num, INT16 **buffers, int length)
 
 	PSG = &YMPSG[num];
 
-#ifdef USE_MAME_TIMERS
-		/* ASG 980324 - handled by real timers now */
-#else
 	if (PSG->tim_B)
 	{
 		PSG->tim_B_val -= ( length << TIMER_SH );
@@ -2282,7 +1961,6 @@ void YM2151UpdateOne(int num, INT16 **buffers, int length)
 			}
 		}
 	}
-#endif
 
 	for (i=0; i<length; i++)
 	{
@@ -2342,9 +2020,6 @@ void YM2151UpdateOne(int num, INT16 **buffers, int length)
 
 		SAVE_ALL_CHANNELS
 
-#ifdef USE_MAME_TIMERS
-		/* ASG 980324 - handled by real timers now */
-#else
 		/* calculate timer A */
 		if (PSG->tim_A)
 		{
@@ -2362,7 +2037,6 @@ void YM2151UpdateOne(int num, INT16 **buffers, int length)
 					PSG->csm_req = 2;	/* request KEY ON / KEY OFF sequence */
 			}
 		}
-#endif
 		advance();
 	}
 }

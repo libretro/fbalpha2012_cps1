@@ -265,15 +265,6 @@ INT32 CpsMemInit(void)
 
 INT32 CpsMemExit(void)
 {
-#if 0
-	FILE* fp = fopen("mem.raw", "wb");
-	if (fp)
-   {
-		fwrite(CpsRam660, 1, 0x4000, fp);
-		fclose(fp);
-	}
-#endif
-
 	/* Deallocate all used memory */
 	BurnFree(CpsMem);
 	

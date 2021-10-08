@@ -8,8 +8,6 @@
 #include "inflate.h"
 #include "inffast.h"
 
-#ifndef ASMINF
-
 /* Allow machine dependent optimization for post-increment or pre-increment.
    Based on testing to date,
    Pre-increment preferred for:
@@ -322,19 +320,3 @@ unsigned start;         /* inflate()'s starting value for strm->avail_out */
     state->bits = bits;
     return;
 }
-
-/*
-   inflate_fast() speedups that turned out slower (on a PowerPC G3 750CXe):
-   - Using bit fields for code structure
-   - Different op definition to avoid & for extra bits (do & for table bits)
-   - Three separate decoding do-loops for direct, window, and wnext == 0
-   - Special case for distance > 1 copies to do overlapped load and store copy
-   - Explicit branch predictions (based on measured branch probabilities)
-   - Deferring match copy and interspersed it with decoding subsequent codes
-   - Swapping literal/length else
-   - Swapping window/direct else
-   - Larger unrolled copy loops (three is about right)
-   - Moving len -= 3 statement into middle of loop
- */
-
-#endif /* !ASMINF */

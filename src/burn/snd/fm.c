@@ -537,31 +537,6 @@ static INT32 lfo_pm_table[128*8*32]; /* 128 combinations of 7 bits meaningful (o
 #define OUTD_LEFT   2
 #define OUTD_CENTER 3
 
-
-/* save output as raw 16-bit sample */
-/* #define SAVE_SAMPLE */
-
-#ifdef SAVE_SAMPLE
-static FILE *sample[1];
-	#if 1	/*save to MONO file */
-		#define SAVE_ALL_CHANNELS \
-		{	signed int pom = lt; \
-			fputc((unsigned short)pom&0xff,sample[0]); \
-			fputc(((unsigned short)pom>>8)&0xff,sample[0]); \
-		}
-	#else	/*save to STEREO file */
-		#define SAVE_ALL_CHANNELS \
-		{	signed int pom = lt; \
-			fputc((unsigned short)pom&0xff,sample[0]); \
-			fputc(((unsigned short)pom>>8)&0xff,sample[0]); \
-			pom = rt; \
-			fputc((unsigned short)pom&0xff,sample[0]); \
-			fputc(((unsigned short)pom>>8)&0xff,sample[0]); \
-		}
-	#endif
-#endif
-
-
 /* struct describing a single operator (SLOT) */
 typedef struct
 {
@@ -1748,12 +1723,6 @@ static int init_tables(void)
 		}
 	}
 
-
-
-#ifdef SAVE_SAMPLE
-	sample[0]=fopen("sampsum.pcm","wb");
-#endif
-
 	return 1;
 
 }
@@ -1762,10 +1731,6 @@ static int init_tables(void)
 
 static void FMCloseTable( void )
 {
-#ifdef SAVE_SAMPLE
-	fclose(sample[0]);
-#endif
-	return;
 }
 
 
@@ -2279,10 +2244,6 @@ void YM2203UpdateOne(int num, INT16 *buffer, int length)
 			lt >>= FINAL_SH;
 
 			Limit( lt , MAXOUT, MINOUT );
-
-			#ifdef SAVE_SAMPLE
-				SAVE_ALL_CHANNELS
-			#endif
 
 			/* buffering */
 			buf[i] = lt;
