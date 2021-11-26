@@ -43,6 +43,7 @@ static int16_t g_audio_buf[AUDIO_SEGMENT_LENGTH * 2];
 
 static uint16_t rotate_buf_width  = 0;
 static uint16_t rotate_buf_margin = 0;
+static bool libretro_supports_option_categories = false;
 
 // libretro globals
 
@@ -62,7 +63,8 @@ void retro_set_environment(retro_environment_t cb)
 {
    environ_cb = cb;
 
-   libretro_set_core_options(environ_cb);
+   libretro_set_core_options(environ_cb,
+         &libretro_supports_option_categories);
 }
 
 char g_rom_dir[1024];
