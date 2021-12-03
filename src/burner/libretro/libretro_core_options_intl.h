@@ -39,7 +39,7 @@ extern "C" {
 */
 /* RETRO_LANGUAGE_AR */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_AR NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_AR "سرعة CPU (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_AR "تمكين الإفراط في تسجيل المعالج المحاكي. يمكن أن يقلل من التباطؤ، ولكن يمكن أن يسبب خلل."
 #define FBA2012CPS1_HISCORES_LABEL_AR NULL
 #define FBA2012CPS1_HISCORES_INFO_0_AR NULL
@@ -56,7 +56,7 @@ extern "C" {
 #define FBA2012CPS1_FRAMESKIP_LABEL_AR NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_AR NULL
 #define OPTION_VAL_AUTO_AR "تلقائي"
-#define OPTION_VAL_MANUAL_AR NULL
+#define OPTION_VAL_MANUAL_AR "يدوي"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_AR NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_AR "عندما يتم تعيين 'Frameskip' إلى 'يدوي'، يحدد عتبة شغل التخزين المؤقت الصوتي (النسبة المئوية) التي سيتم تخطي الأطر أدناه. فارتفاع القيم يقلل من خطر التشويش بالتسبب في انخفاض الأطر بصورة أكثر تواترا."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_AR NULL
@@ -1663,7 +1663,7 @@ struct retro_core_options_v2 options_da = {
 
 /* RETRO_LANGUAGE_DE */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_DE NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_DE "CPU-Geschwindigkeit (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_DE "Aktiviert das Übertakten der emulierten CPU. Kann Slowdown verringern, aber Glitches verursachen."
 #define FBA2012CPS1_HISCORES_LABEL_DE NULL
 #define FBA2012CPS1_HISCORES_INFO_0_DE NULL
@@ -2690,7 +2690,7 @@ struct retro_core_options_v2 options_fa = {
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_FI NULL
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_FI "Äänisuodatin"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_FI NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_FI NULL
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_FI "Äänen suodatustaso (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_FI NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_FI "Kuvanohitus"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_FI "Ohita kuvia välttääksesi äänipuskurin ali ajon (säröily). Parantaa suorituskykyä visuaalisen tasaisuuden kustannuksella. \"Automaatti\" ohittaa kehykset käyttöliittymän asetusten mukaan. \"Manuaalinen\" käyttää \"Kuvienohituksen arvo (%)\" -asetusta."
@@ -2902,7 +2902,7 @@ struct retro_core_options_v2 options_fi = {
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_FR "Seuil de saut d'images (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_FR "Lorsque 'Saut d'images' est réglé sur 'Manuel', spécifie le seuil d'occupation du tampon audio (pourcentage) en dessous duquel des images seront sautées. Des valeurs plus élevées réduisent le risque de crépitements en faisant sauter des images plus fréquemment."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_FR "Touche de diagnostic"
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_FR "Activer puis reprendre le contenu pour ouvrir le menu de service."
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_FR "Activer cette option puis reprendre le contenu pour ouvrir le menu de service."
 
 struct retro_core_option_v2_category option_cats_fr[] = {
    { NULL, NULL, NULL },
@@ -5116,14 +5116,14 @@ struct retro_core_options_v2 options_oc = {
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_PL "Prędkość procesora (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_PL "Umożliwia przeciążenie emulowanego CPU. Może zmniejszyć spowolnienie, ale może powodować glitche."
-#define FBA2012CPS1_HISCORES_LABEL_PL NULL
-#define FBA2012CPS1_HISCORES_INFO_0_PL NULL
+#define FBA2012CPS1_HISCORES_LABEL_PL "Najlepsze wyniki"
+#define FBA2012CPS1_HISCORES_INFO_0_PL "Umożliwia zapisywanie najlepszych wyników w obsługiwanych grach. Wymaga umieszczenia pliku 'hiscore.dat' w folderze system/fbalpha2012/."
 #define FBA2012CPS1_ASPECT_LABEL_PL NULL
 #define FBA2012CPS1_ASPECT_INFO_0_PL NULL
 #define OPTION_VAL_DAR_PL NULL
 #define OPTION_VAL_PAR_PL NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_PL NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_PL NULL
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_PL "Automatycznie obracaj ekran podczas uruchamiania gier wyrównanych w pionie. Gdy wyłączone, wejście D-Pad zostanie obrócone, aby pasowało do kierunku ekranu."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_PL "Filtr audio"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_PL NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_PL NULL
@@ -5321,10 +5321,10 @@ struct retro_core_options_v2 options_pl = {
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_PT_BR "Habilita o overclock da CPU emulada. Pode reduzir a lentidão, mas pode causar falhas."
 #define FBA2012CPS1_HISCORES_LABEL_PT_BR "Recordes"
 #define FBA2012CPS1_HISCORES_INFO_0_PT_BR "Salva os recordes com as melhores pontuações nos jogos que suportam esta função. É necessário ter o arquivo \"hiscore.dat\" na pasta system/fbalpha2012/."
-#define FBA2012CPS1_ASPECT_LABEL_PT_BR "Proporção de aspecto fornecida pelo núcleo"
+#define FBA2012CPS1_ASPECT_LABEL_PT_BR "Proporção de tela fornecida pelo núcleo"
 #define FBA2012CPS1_ASPECT_INFO_0_PT_BR "Seleciona a proporção da tela preferida do conteúdo. Isso se aplicará somente quando a proporção do RetroArch estiver configurada como 'Fornecida pelo núcleo' nas configurações de vídeo."
-#define OPTION_VAL_DAR_PT_BR NULL
-#define OPTION_VAL_PAR_PT_BR NULL
+#define OPTION_VAL_DAR_PT_BR "DAR (Relação de aspecto da tela)"
+#define OPTION_VAL_PAR_PT_BR "PAR (Relação de aspecto do pixel)"
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_PT_BR "Girar os jogos com com alinhamento vertical (requer reinício)"
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_PT_BR "Gira automaticamente a imagem ao executar jogos com um alinhamento vertical. Quando esta opção for desativada, a entrada do direcional digital irá girar para combinar com as direções exibidas na tela."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_PT_BR "Filtro de áudio"
@@ -5336,7 +5336,7 @@ struct retro_core_options_v2 options_pl = {
 #define OPTION_VAL_AUTO_PT_BR "Automática"
 #define OPTION_VAL_MANUAL_PT_BR NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_PT_BR "Limite de pulo de quadro (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_PT_BR "Quando o 'Frameskip' for definido como 'Manual', especifica o limite de ocupação do buffer de áudio (em porcentagem) abaixo do qual os quadros serão pulados. Valores maiores reduzem o risco de engasgos pois farão que os quadros sejam descartados com mais frequência."
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_PT_BR "Quando 'Pulo de quadro' é definido como 'Manual', especifica o limite de ocupação do buffer de áudio (porcentagem) abaixo do qual os quadros serão ignorados. Valores mais altos reduzem o risco de engasgos pois farão que os quadros sejam descartados com mais frequência."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_PT_BR "Entrada de diagnóstico"
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_PT_BR "Alterne LIGAR para retomar o conteúdo para abrir o menu de serviços."
 
@@ -5934,10 +5934,10 @@ struct retro_core_options_v2 options_ro = {
 #define FBA2012CPS1_ASPECT_INFO_0_RU "Выбор предпочтительного соотношения сторон. Учитывается только при установке соотношения сторон RetroArch на 'Core Provided' в настройках видео."
 #define OPTION_VAL_DAR_RU NULL
 #define OPTION_VAL_PAR_RU NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_RU "Поворачивать игры с вертикальной ориентацией (перезапуск)"
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_RU "Поворот игр в верт. ориентации (перезапуск)"
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_RU "Автоматически поворачивать экран при запуске вертикально ориентированных игр. При отключении, нажатия D-Pad будут развёрнуты для соответствия направлениям на экране."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_RU "Аудиофильтр"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_RU "Включает фильтр нижних частот для смягчения звучания некоторых аркадных игр."
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_RU "Включает фильтр нижних частот для смягчения звука некоторых аркадных игр."
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_RU "Уровень аудиофильтра (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_RU "Настройка частоты среза для низкочастотного фильтра. Большие значения усиливают эффект от фильтра за счёт влияния на более широкий спектр высоких частот."
 #define FBA2012CPS1_FRAMESKIP_LABEL_RU "Пропуск кадров"
