@@ -246,7 +246,7 @@ struct retro_core_options_v2 options_ar = {
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_AST NULL
 #define FBA2012CPS1_HISCORES_LABEL_AST "Puntuaciones altes"
 #define FBA2012CPS1_HISCORES_INFO_0_AST "Activa'l guardáu de les puntuaciones altes de los xuegos compatibles. El ficheru «hiscore.dat» ha tar na carpeta «system/fbalpha2012/»."
-#define FBA2012CPS1_ASPECT_LABEL_AST NULL
+#define FBA2012CPS1_ASPECT_LABEL_AST "Proporción d'aspeutu fornida pol nucleu"
 #define FBA2012CPS1_ASPECT_INFO_0_AST NULL
 #define OPTION_VAL_DAR_AST NULL
 #define OPTION_VAL_PAR_AST NULL
@@ -652,7 +652,7 @@ struct retro_core_options_v2 options_ca = {
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_CHS "启用模拟CPU的超频功能。此功能可以提升运行速度，但可能会导致屏幕闪烁。"
 #define FBA2012CPS1_HISCORES_LABEL_CHS NULL
 #define FBA2012CPS1_HISCORES_INFO_0_CHS NULL
-#define FBA2012CPS1_ASPECT_LABEL_CHS NULL
+#define FBA2012CPS1_ASPECT_LABEL_CHS "核心提供的宽高比"
 #define FBA2012CPS1_ASPECT_INFO_0_CHS NULL
 #define OPTION_VAL_DAR_CHS NULL
 #define OPTION_VAL_PAR_CHS NULL
@@ -662,11 +662,11 @@ struct retro_core_options_v2 options_ca = {
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CHS NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_CHS NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CHS NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_CHS NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_CHS NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_CHS "跳帧"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_CHS "跳过帧以避免运行下的音频缓冲区(崩溃)。提高性能以牺牲视觉性能。 “自动”跳板帧在前端建议时。“手动”使用了“Frameskip 阈值(%)”设置。"
 #define OPTION_VAL_AUTO_CHS "自动"
 #define OPTION_VAL_MANUAL_CHS "手动"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CHS NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CHS "跳帧阈值(%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CHS "当“跳帧”功能设置成“手动”，请在下方指定跳帧占音频缓存的比例（百分比）。更高的值可以降低因频繁丢帧而导致的爆音风险。"
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_CHS NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_CHS "切换到开启状态并恢复内容，以打开服务菜单."
@@ -1664,11 +1664,11 @@ struct retro_core_options_v2 options_da = {
 /* RETRO_LANGUAGE_DE */
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_DE "CPU-Geschwindigkeit (%)"
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_DE "Aktiviert das Übertakten der emulierten CPU. Kann Slowdown verringern, aber Glitches verursachen."
-#define FBA2012CPS1_HISCORES_LABEL_DE NULL
-#define FBA2012CPS1_HISCORES_INFO_0_DE NULL
-#define FBA2012CPS1_ASPECT_LABEL_DE NULL
-#define FBA2012CPS1_ASPECT_INFO_0_DE NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_DE "Ermöglicht das Übertakten der emulierten CPU. Kann Slowdown verringern, aber Glitches verursachen."
+#define FBA2012CPS1_HISCORES_LABEL_DE "Highscores"
+#define FBA2012CPS1_HISCORES_INFO_0_DE "Ermöglicht das Speichern von Highscores in unterstützten Spielen. Erfordert, dass die Datei \"hiscore.dat\" im Ordner system/fbalpha2012/ angelegt wird."
+#define FBA2012CPS1_ASPECT_LABEL_DE "Core-Bereitgestelltes Seitenverhältnis"
+#define FBA2012CPS1_ASPECT_INFO_0_DE "Wählt das bevorzugte Seitenverhältnis des Inhalts. Dies gilt nur, wenn das Seitenverhältnis von RetroArch in den Videoeinstellungen auf \"Core provided\" eingestellt ist."
 #define OPTION_VAL_DAR_DE NULL
 #define OPTION_VAL_PAR_DE NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_DE NULL
@@ -1678,10 +1678,10 @@ struct retro_core_options_v2 options_da = {
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_DE NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_DE NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_DE NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_DE NULL
+#define FBA2012CPS1_FRAMESKIP_INFO_0_DE "Überspringen Sie Frames um zu vermeiden, dass Audio-Puffer unterlaufen (Knistern). Verbessert die Leistung auf Kosten der visuellen Glätte. 'Auto' überspringt Frames wenn vom Frontend empfohlen wird. 'Manuell' verwendet die Einstellung 'Frameskip Grenzwert (%)'."
 #define OPTION_VAL_AUTO_DE "Automatisch"
 #define OPTION_VAL_MANUAL_DE "Manuell"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_DE NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_DE "Frameskip Grenzwert (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_DE "Gibt den Audiopuffer-Belegungsschwellenwert (Prozent) an, unter dem Frames übersprungen werden, wenn 'Frameskip' auf 'Manual' eingestellt ist. Höhere Werte verringern das Risiko von Knistern, da Frames häufiger weggelassen werden."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_DE NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_DE NULL
@@ -2278,8 +2278,8 @@ struct retro_core_options_v2 options_eo = {
 #define FBA2012CPS1_HISCORES_INFO_0_ES "Guarda las tablas con las mejores puntuaciones en los juegos compatibles con esta función. Es necesario tener el archivo «hiscore.dat» en la carpeta system/fbalpha2012/."
 #define FBA2012CPS1_ASPECT_LABEL_ES "Relación de aspecto del núcleo"
 #define FBA2012CPS1_ASPECT_INFO_0_ES "Selecciona la relación de aspecto preferida para los contenidos. Este ajuste solo se aplicará cuando la relación de aspecto de RetroArch esté configurada como «Asignada por el núcleo»."
-#define OPTION_VAL_DAR_ES NULL
-#define OPTION_VAL_PAR_ES NULL
+#define OPTION_VAL_DAR_ES "DAR (relación de aspecto de imagen)"
+#define OPTION_VAL_PAR_ES "PAR (relación de aspecto de píxeles)"
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_ES "Rotar los juegos con una alineación vertical (es necesario reiniciar)"
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_ES "Rota automáticamente la imagen al ejecutar juegos con una alineación vertical. Al desactivar esta opción, la entrada de la cruceta se rotará para que coincida con las direcciones que aparezcan en pantalla."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_ES "Filtro de audio"
@@ -2678,7 +2678,7 @@ struct retro_core_options_v2 options_fa = {
 
 /* RETRO_LANGUAGE_FI */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_FI NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_FI "Suorittimen nopeus (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_FI "Mahdollistaa emuloidun suorittimen ylikellotuksen. Voi vähentää hidastumista, mutta saattaa aiheuttaa virheitä."
 #define FBA2012CPS1_HISCORES_LABEL_FI NULL
 #define FBA2012CPS1_HISCORES_INFO_0_FI NULL
@@ -2896,7 +2896,7 @@ struct retro_core_options_v2 options_fi = {
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_FR "Niveau du filtre audio (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_FR "Spécifie la fréquence de coupure du filtre passe-bas audio. Une valeur plus élevée accroît la 'force' perçue du filtre, car une gamme plus large du spectre des hautes fréquences est atténuée."
 #define FBA2012CPS1_FRAMESKIP_LABEL_FR "Saut d'images"
-#define FBA2012CPS1_FRAMESKIP_INFO_0_FR "Sauter des images pour éviter que le tampon audio ne soit sous-exécuté (crépitements). Améliore les performances au détriment de la fluidité visuelle. 'Auto' saute des images lorsque le frontend le conseille. 'Manuel' utilise le paramètre 'Seuil de saut d'images (%)'."
+#define FBA2012CPS1_FRAMESKIP_INFO_0_FR "Sauter des images pour éviter que le tampon audio ne soit sous-exécuté (crépitements). Améliore les performances au détriment de la fluidité visuelle. 'Auto' saute des images lorsque l'interface le conseille. 'Manuel' utilise le paramètre 'Seuil de saut d'images (%)'."
 #define OPTION_VAL_AUTO_FR NULL
 #define OPTION_VAL_MANUAL_FR "Manuel"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_FR "Seuil de saut d'images (%)"
@@ -5132,7 +5132,7 @@ struct retro_core_options_v2 options_oc = {
 #define FBA2012CPS1_FRAMESKIP_INFO_0_PL NULL
 #define OPTION_VAL_AUTO_PL NULL
 #define OPTION_VAL_MANUAL_PL "Ręczny"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_PL NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_PL "Próg pominięcia ramki (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_PL "Gdy 'Frameskip' jest ustawiony na 'Manual', określa próg zajęcia bufora audio (procent) poniżej którego ramki zostaną pominięte. Wyższe wartości zmniejszają ryzyko trzasków poprzez częstsze opuszczanie ramek."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_PL NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_PL "Włącz, a następnie wznów zawartość aby otworzyć menu usługi."
@@ -7361,7 +7361,7 @@ struct retro_core_options_v2 options_uk = {
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_VN NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_VN NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_VN NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_VN NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_VN "Bỏ qua khung hình"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_VN NULL
 #define OPTION_VAL_AUTO_VN "Tự động"
 #define OPTION_VAL_MANUAL_VN "Thủ công"
