@@ -2273,7 +2273,7 @@ struct retro_core_options_v2 options_eo = {
 /* RETRO_LANGUAGE_ES */
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_ES "Velocidad de la CPU (%)"
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_ES "Overclockea la CPU emulada. Puede reducir las ralentizaciones, pero podría provocar fallos gráficos."
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_ES "Aumenta la velocidad de la CPU emulada. Puede reducir las ralentizaciones, pero podría provocar fallos gráficos."
 #define FBA2012CPS1_HISCORES_LABEL_ES "Tablas de puntuaciones"
 #define FBA2012CPS1_HISCORES_INFO_0_ES "Guarda las tablas con las mejores puntuaciones en los juegos compatibles con esta función. Es necesario tener el archivo «hiscore.dat» en la carpeta system/fbalpha2012/."
 #define FBA2012CPS1_ASPECT_LABEL_ES "Relación de aspecto del núcleo"
@@ -2691,7 +2691,7 @@ struct retro_core_options_v2 options_fa = {
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_FI "Äänisuodatin"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_FI NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_FI "Äänen suodatustaso (%)"
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_FI NULL
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_FI "Määritä alipäästösuodattimen katkaisu taajuus. Korkeampi arvo nostaa suodattimen \"vahvuutta\", koska suurempi osuus korkeamman taajuuden spektristä on vaimennettu."
 #define FBA2012CPS1_FRAMESKIP_LABEL_FI "Kuvanohitus"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_FI "Ohita kuvia välttääksesi äänipuskurin ali ajon (säröily). Parantaa suorituskykyä visuaalisen tasaisuuden kustannuksella. \"Automaatti\" ohittaa kehykset käyttöliittymän asetusten mukaan. \"Manuaalinen\" käyttää \"Kuvienohituksen arvo (%)\" -asetusta."
 #define OPTION_VAL_AUTO_FI "Automaattinen"
@@ -4099,25 +4099,25 @@ struct retro_core_options_v2 options_it = {
 
 /* RETRO_LANGUAGE_JA */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_JA NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_JA "CPU速度 (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_JA "エミュレートされたCPUのオーバークロックを有効にします. 速度低下を減らせますが, 不具合を引き起こす可能性があります."
-#define FBA2012CPS1_HISCORES_LABEL_JA NULL
-#define FBA2012CPS1_HISCORES_INFO_0_JA NULL
+#define FBA2012CPS1_HISCORES_LABEL_JA "ハイスコア"
+#define FBA2012CPS1_HISCORES_INFO_0_JA "対応ゲームでハイスコアの保存を有効にします。「hiscore.dat」 ファイルを「system/fbalpha2012/・ フォルダに配置する必要があります。"
 #define FBA2012CPS1_ASPECT_LABEL_JA "コア提供アスペクト比"
-#define FBA2012CPS1_ASPECT_INFO_0_JA NULL
+#define FBA2012CPS1_ASPECT_INFO_0_JA "推奨コンテンツのアスペクト比を選択します。これは、ビデオ設定でRetroArchのアスペクト比が「コアが指定されている」に設定されている場合にのみ適用されます。"
 #define OPTION_VAL_DAR_JA NULL
 #define OPTION_VAL_PAR_JA NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_JA NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_JA NULL
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_JA "画面を垂直に整列させたゲームを実行するときに自動的に回転させます。無効にすると、画面上の方向に合わせてD-Pad入力が回転します。"
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_JA "オーディオフィルタ"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_JA NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_JA NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_JA NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_JA NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_JA NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_JA "ローパスオーディオフィルターを有効にして、いくつかのアーケードゲームの「硬い音」を柔らかくします。"
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_JA "オーディオフィルターレベル (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_JA "ローパスオーディオフィルターのカットオフ周波数を指定します。 値を大きくすると、高周波数スペクトルの広い範囲が減衰するため、フィルタの知覚された「強さ」が増加します。"
+#define FBA2012CPS1_FRAMESKIP_LABEL_JA "フレームスキップ"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_JA "フレームをスキップしてオーディオバッファアンダーラン (音割れ) を回避します。視覚的な滑らかさを犠牲にしてパフォーマンスを向上させます。 「自動」は、フロントエンドにアドバイスされたときにフレームをスキップします。「マニュアル」は、「フレームスキップ閾値 (%)」設定を使用します。"
 #define OPTION_VAL_AUTO_JA "自動"
 #define OPTION_VAL_MANUAL_JA "手動"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_JA NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_JA "フレームスキップ閾値 (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_JA "'フレームスキップ' が '手動' に設定されている場合, フレームがスキップされるオーディオバッファ占有しきい値 (%) を指定します. 値を大きくすると, フレームを頻繁に落とすことでクラッキングが発生するリスクが低下します."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_JA NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_JA NULL
@@ -5945,9 +5945,9 @@ struct retro_core_options_v2 options_ro = {
 #define OPTION_VAL_AUTO_RU "Авто"
 #define OPTION_VAL_MANUAL_RU "Вручную"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_RU "Граница пропуска кадров (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_RU "Устанавливает порог заполнения аудиобуфера (в процентах), ниже которого будет включаться пропуск кадров, если для параметра 'Пропуск кадров' выбран режим 'Вручную'. Большие значения снижают вероятность появления треска за счёт более частого пропуска кадров."
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_RU "Устанавливает порог заполнения аудиобуфера (в процентах), ниже которого будет включаться пропуск кадров при установке опции 'Пропуск кадров' в режим 'Вручную'. Большие значения снижают вероятность появления треска за счёт более частого пропуска кадров."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_RU "Сервисное меню"
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_RU "Включите настройку и возобновите игру для входа в сервисное меню."
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_RU "Включите настройку и продолжите игру для перехода в сервисное меню."
 
 struct retro_core_option_v2_category option_cats_ru[] = {
    { NULL, NULL, NULL },
@@ -7158,7 +7158,7 @@ struct retro_core_options_v2 options_tr = {
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_UK NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_UK NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_UK NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_UK NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_UK "Пропуск кадру"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_UK "Пропускати кадри, щоб уникнути спустошення буферу (тріскіт). Покращує швидкодію, погіршуючи плавність зображення. 'Авто' пропускає кадри, керуючись командами зовнішньої оболонки. 'Ручний' використовує налаштування 'Межа пропуску кадрів (%)'."
 #define OPTION_VAL_AUTO_UK "Авто"
 #define OPTION_VAL_MANUAL_UK "Ручний"
