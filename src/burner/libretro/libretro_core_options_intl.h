@@ -2291,7 +2291,7 @@ struct retro_core_options_v2 options_eo = {
 #define OPTION_VAL_AUTO_ES "Selección automática"
 #define OPTION_VAL_MANUAL_ES NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_ES "Umbral de omisión de fotogramas (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_ES "Cuando la omisión de fotogramas esté configurada como Manual, este ajuste especifica el umbral de ocupación del búfer de audio (en porcentaje) por el que se omitirán fotogramas si el valor es inferior. Un valor más elevado reduce el riesgo de chasquidos omitiendo fotogramas con una mayor frecuencia."
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_ES "Cuando la omisión de fotogramas esté configurada como Manual, este ajuste especifica el umbral de ocupación del búfer de audio (en porcentaje) por debajo del cual se omitirán fotogramas si el valor. Un valor más elevado reduce el riesgo de chasquidos omitiendo fotogramas con una mayor frecuencia."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_ES "Entrada de diagnóstico"
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_ES "Activa esta opción y reanuda el contenido para abrir el menú de servicio."
 
@@ -6748,7 +6748,7 @@ struct retro_core_options_v2 options_sr = {
 #define OPTION_VAL_PAR_SV NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_SV NULL
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_SV NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_SV NULL
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_SV "Ljudfilter"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_SV NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_SV NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_SV NULL
