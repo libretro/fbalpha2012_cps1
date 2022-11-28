@@ -461,7 +461,7 @@ struct retro_core_options_v2 options_ast = {
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CA NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_CA NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_CA NULL
-#define OPTION_VAL_AUTO_CA NULL
+#define OPTION_VAL_AUTO_CA "Automàtic"
 #define OPTION_VAL_MANUAL_CA NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CA NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CA NULL
@@ -858,19 +858,19 @@ struct retro_core_options_v2 options_chs = {
 #define FBA2012CPS1_ASPECT_LABEL_CHT NULL
 #define FBA2012CPS1_ASPECT_INFO_0_CHT NULL
 #define OPTION_VAL_DAR_CHT NULL
-#define OPTION_VAL_PAR_CHT NULL
+#define OPTION_VAL_PAR_CHT "標準"
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_CHT NULL
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_CHT NULL
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_CHT "音訊過濾器"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CHT NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_CHT NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CHT NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_CHT NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_CHT NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_CHT "跳幀"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_CHT "設定跳幀以避免音頻緩衝區不足(產生破音)。以視覺平畫度為代價提高效能。<自動> 由前端系統控制跳幀。<手動> 使用「跳幀閾值 (%)」設定。"
 #define OPTION_VAL_AUTO_CHT "自動"
-#define OPTION_VAL_MANUAL_CHT NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CHT NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CHT NULL
+#define OPTION_VAL_MANUAL_CHT "手動"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CHT "跳幀上限 (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CHT "設定「跳幀」為 <手動> 時音頻緩衝區使用上限(%)，低於上限的影格將被跳過。設定過高會導致頻繁丟失影格，過低則是出現破音。"
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_CHT NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_CHT NULL
 
@@ -1054,28 +1054,28 @@ struct retro_core_options_v2 options_cht = {
 
 /* RETRO_LANGUAGE_CS */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_CS NULL
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_CS NULL
-#define FBA2012CPS1_HISCORES_LABEL_CS NULL
-#define FBA2012CPS1_HISCORES_INFO_0_CS NULL
-#define FBA2012CPS1_ASPECT_LABEL_CS NULL
-#define FBA2012CPS1_ASPECT_INFO_0_CS NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_CS "Rychlost CPU (%)"
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_CS "Umožňuje přetaktování emulovaného procesoru. Může snížit zpomalení, ale může způsobit závady."
+#define FBA2012CPS1_HISCORES_LABEL_CS "Nejvyšší skóre"
+#define FBA2012CPS1_HISCORES_INFO_0_CS "Umožňuje ukládání vysokých skóre v podporovaných hrách. Vyžaduje umístění souboru 'hiscore.dat' do složky system/fbalpha2012/."
+#define FBA2012CPS1_ASPECT_LABEL_CS "Poměr Stran Poskytnuté-Jádro"
+#define FBA2012CPS1_ASPECT_INFO_0_CS "Vybere preferovaný poměr stran obsahu. To se použije pouze v případě, že je poměr stran aplikace RetroArch v nastavení videa nastaven na hodnotu 'Poskytnuté Jádro'."
 #define OPTION_VAL_DAR_CS NULL
 #define OPTION_VAL_PAR_CS NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_CS NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_CS NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_CS NULL
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CS NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_CS NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CS NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_CS "Otáčení Vertikálně Zarovnaných Her (Restart)"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_CS "Automatické otáčení displeje při spuštění vertikálně zarovnaných her. Pokud je tato funkce vypnutá, bude se vstup z D-Padu otáčet tak, aby odpovídal směrům na obrazovce."
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_CS "Audio Filtr"
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CS "Umožňuje použít nízkoprůchodový zvukový filtr pro zmírnění 'drsného' zvuku některých arkádových her."
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_CS "Úroveň Zvukového Filtru (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CS "Určuje mezní frekvenci dolní propusti zvukového filtru. Vyšší hodnota zvyšuje vnímanou 'sílu' filtru, protože je potlačen širší rozsah vysokofrekvenčního spektra."
 #define FBA2012CPS1_FRAMESKIP_LABEL_CS NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_CS NULL
+#define FBA2012CPS1_FRAMESKIP_INFO_0_CS "Přeskočení snímků, aby se zabránilo nedostatečnému využití vyrovnávací paměti zvuku (praskání). Zlepšuje výkon na úkor vizuální plynulosti. Funkce 'Auto' přeskakuje snímky, pokud to doporučí frontend. 'Ruční' využívá nastavení 'Práh přeskakování snímků (%)'."
 #define OPTION_VAL_AUTO_CS NULL
-#define OPTION_VAL_MANUAL_CS NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CS NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CS NULL
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_CS NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_CS NULL
+#define OPTION_VAL_MANUAL_CS "Ruční"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CS "Hraniční Hodnota Frameskip (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CS "Pokud je položka 'Frameskip' nastavena na hodnotu 'Ruční', určuje práh obsazení vyrovnávací paměti zvuku (v procentech), pod kterým budou snímky přeskočeny. Vyšší hodnoty snižují riziko praskání tím, že způsobují častější vynechávání snímků."
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_CS "Diagnostický Vstup"
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_CS "Přepnutím na ON a následným obnovením obsahu otevřete nabídku služeb."
 
 struct retro_core_option_v2_category option_cats_cs[] = {
    { NULL, NULL, NULL },
@@ -1668,23 +1668,23 @@ struct retro_core_options_v2 options_da = {
 #define FBA2012CPS1_HISCORES_LABEL_DE "Highscores"
 #define FBA2012CPS1_HISCORES_INFO_0_DE "Ermöglicht das Speichern von Highscores in unterstützten Spielen. Erfordert, dass die Datei \"hiscore.dat\" im Ordner system/fbalpha2012/ angelegt wird."
 #define FBA2012CPS1_ASPECT_LABEL_DE "Core-bestimmtes Seitenverhältnis"
-#define FBA2012CPS1_ASPECT_INFO_0_DE "Wählt das bevorzugte Seitenverhältnis des Inhalts. Dies wird nur angewendet, wenn das Seitenverhältnis von RetroArch in den Videoeinstellungen auf \"Core-bestimmtes Seitenverhältnis\" eingestellt ist."
+#define FBA2012CPS1_ASPECT_INFO_0_DE "Wählt das bevorzugte Seitenverhältnis des Inhalts. Dies wird nur angewendet, wenn das Seitenverhältnis von RetroArch in den Videoeinstellungen auf „Core-bestimmtes Seitenverhältnis“ eingestellt ist."
 #define OPTION_VAL_DAR_DE NULL
 #define OPTION_VAL_PAR_DE NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_DE NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_DE NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_DE "Vertikal ausgerichtete Spiele drehen (Neustart erforderlich)"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_DE "Die Anzeige automatisch drehen, wenn vertikal ausgerichtete Spiele ausgeführt werden. Wenn deaktiviert, wird die D-Pad-Eingabe gedreht, damit sie der Richtung auf dem Bildschirm entspricht."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_DE "Audiofilter"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_DE NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_DE NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_DE NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_DE "Aktiviert einen Tiefpass-Audiofilter, um den „grellen“ Klang einiger Arcade-Spiele zu mildern."
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_DE "Audiofilterstufe (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_DE "Legt die Höchstfrequenz des Tiefpass-Audiofilters fest. Ein höherer Wert erhöht die wahrgenommene „Stärke“ des Filters, da ein größerer Bereich des Hochfrequenzspektrums abgeschwächt wird."
 #define FBA2012CPS1_FRAMESKIP_LABEL_DE NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_DE "Überspringen Sie Frames um zu vermeiden, dass Audio-Puffer unterlaufen (Knistern). Verbessert die Leistung auf Kosten der visuellen Glätte. 'Auto' überspringt Frames wenn vom Frontend empfohlen wird. 'Manuell' verwendet die Einstellung 'Frameskip Grenzwert (%)'."
 #define OPTION_VAL_AUTO_DE "Automatisch"
 #define OPTION_VAL_MANUAL_DE "Manuell"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_DE "Frameskip Grenzwert (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_DE "Gibt den Audiopuffer-Belegungsschwellenwert (Prozent) an, unter dem Frames übersprungen werden, wenn 'Frameskip' auf 'Manual' eingestellt ist. Höhere Werte verringern das Risiko von Knistern, da Frames häufiger weggelassen werden."
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_DE NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_DE NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_DE "Frameskip-Grenzwert (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_DE "Gibt den Audiopuffer-Belegungsschwellenwert (Prozent) an, unter dem Frames übersprungen werden, wenn „Frameskip“ auf „Manuell“ eingestellt ist. Höhere Werte verringern das Risiko von Knistern, da Frames häufiger weggelassen werden."
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_DE "Diagnostische Eingabe"
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_DE "Auf EIN schalten und den Inhalt fortsetzen, um das Servicemenü zu öffnen."
 
 struct retro_core_option_v2_category option_cats_de[] = {
    { NULL, NULL, NULL },
@@ -2065,6 +2065,209 @@ struct retro_core_option_v2_definition option_defs_el[] = {
 struct retro_core_options_v2 options_el = {
    option_cats_el,
    option_defs_el
+};
+
+/* RETRO_LANGUAGE_EN */
+
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_EN NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_EN "Enables over-clocking of the emulated CPU. Can reduce slowdown, but may cause glitches."
+#define FBA2012CPS1_HISCORES_LABEL_EN NULL
+#define FBA2012CPS1_HISCORES_INFO_0_EN NULL
+#define FBA2012CPS1_ASPECT_LABEL_EN NULL
+#define FBA2012CPS1_ASPECT_INFO_0_EN NULL
+#define OPTION_VAL_DAR_EN NULL
+#define OPTION_VAL_PAR_EN NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_EN NULL
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_EN NULL
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_EN NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_EN NULL
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_EN NULL
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_EN NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_EN "Frame-skip"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_EN "Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the front-end. 'Manual' utilizes the 'Frame-skip Threshold (%)' setting."
+#define OPTION_VAL_AUTO_EN NULL
+#define OPTION_VAL_MANUAL_EN NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_EN "Frame-skip Threshold (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_EN "When 'Frame-skip' is set to 'Manual', this specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently."
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_EN NULL
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_EN NULL
+
+struct retro_core_option_v2_category option_cats_en[] = {
+   { NULL, NULL, NULL },
+};
+struct retro_core_option_v2_definition option_defs_en[] = {
+   {
+      "fba2012cps1_cpu_speed_adjust",
+      FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_EN,
+      NULL,
+      FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "100", NULL },
+         { "110", NULL },
+         { "120", NULL },
+         { "130", NULL },
+         { "140", NULL },
+         { "150", NULL },
+         { "160", NULL },
+         { "170", NULL },
+         { "180", NULL },
+         { "190", NULL },
+         { "200", NULL },
+         { NULL, NULL },
+      },
+      "100"
+   },
+   {
+      "fba2012cps1_hiscores",
+      FBA2012CPS1_HISCORES_LABEL_EN,
+      NULL,
+      FBA2012CPS1_HISCORES_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_aspect",
+      FBA2012CPS1_ASPECT_LABEL_EN,
+      NULL,
+      FBA2012CPS1_ASPECT_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "DAR", OPTION_VAL_DAR_EN },
+         { "PAR", OPTION_VAL_PAR_EN },
+         { NULL, NULL },
+      },
+      "DAR"
+   },
+   {
+      "fba2012cps1_auto_rotate",
+      FBA2012CPS1_AUTO_ROTATE_LABEL_EN,
+      NULL,
+      FBA2012CPS1_AUTO_ROTATE_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "enabled"
+   },
+   {
+      "fba2012cps1_lowpass_filter",
+      FBA2012CPS1_LOWPASS_FILTER_LABEL_EN,
+      NULL,
+      FBA2012CPS1_LOWPASS_FILTER_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "enabled",  NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_lowpass_range",
+      FBA2012CPS1_LOWPASS_RANGE_LABEL_EN,
+      NULL,
+      FBA2012CPS1_LOWPASS_RANGE_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "5",  NULL },
+         { "10", NULL },
+         { "15", NULL },
+         { "20", NULL },
+         { "25", NULL },
+         { "30", NULL },
+         { "35", NULL },
+         { "40", NULL },
+         { "45", NULL },
+         { "50", NULL },
+         { "55", NULL },
+         { "60", NULL },
+         { "65", NULL },
+         { "70", NULL },
+         { "75", NULL },
+         { "80", NULL },
+         { "85", NULL },
+         { "90", NULL },
+         { "95", NULL },
+         { NULL, NULL },
+      },
+      "60"
+   },
+   {
+      "fba2012cps1_frameskip",
+      FBA2012CPS1_FRAMESKIP_LABEL_EN,
+      NULL,
+      FBA2012CPS1_FRAMESKIP_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "auto",     OPTION_VAL_AUTO_EN },
+         { "manual",   OPTION_VAL_MANUAL_EN },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_frameskip_threshold",
+      FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_EN,
+      NULL,
+      FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "15", NULL },
+         { "18", NULL },
+         { "21", NULL },
+         { "24", NULL },
+         { "27", NULL },
+         { "30", NULL },
+         { "33", NULL },
+         { "36", NULL },
+         { "39", NULL },
+         { "42", NULL },
+         { "45", NULL },
+         { "48", NULL },
+         { "51", NULL },
+         { "54", NULL },
+         { "57", NULL },
+         { "60", NULL },
+         { NULL, NULL },
+      },
+      "33"
+   },
+   {
+      "fba2012cps1_diagnostics",
+      FBA2012CPS1_DIAGNOSTICS_LABEL_EN,
+      NULL,
+      FBA2012CPS1_DIAGNOSTICS_INFO_0_EN,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "enabled",  NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   { NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
+};
+struct retro_core_options_v2 options_en = {
+   option_cats_en,
+   option_defs_en
 };
 
 /* RETRO_LANGUAGE_EO */
@@ -2475,26 +2678,26 @@ struct retro_core_options_v2 options_es = {
 
 /* RETRO_LANGUAGE_FA */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_FA NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_FA "سرعت پردازنده (٪)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_FA "اورکلاک CPU شبیه سازی شده را فعال می کند. می تواند کاهش سرعت را کاهش دهد، اما ممکن است باعث اشکال شود."
-#define FBA2012CPS1_HISCORES_LABEL_FA NULL
-#define FBA2012CPS1_HISCORES_INFO_0_FA NULL
-#define FBA2012CPS1_ASPECT_LABEL_FA NULL
+#define FBA2012CPS1_HISCORES_LABEL_FA "بالاترین امتیازها"
+#define FBA2012CPS1_HISCORES_INFO_0_FA "امکان نگهداری بالاترین امتیازها را در بازی‌های پشتیبانی‌شده فعال می‌کند. لازم است سند «hiscore.dat» در مسیر system/fbalpha2012/ قرار بگیرد."
+#define FBA2012CPS1_ASPECT_LABEL_FA "نسبت تصویر فراهم‌شده توسط هسته"
 #define FBA2012CPS1_ASPECT_INFO_0_FA NULL
 #define OPTION_VAL_DAR_FA NULL
 #define OPTION_VAL_PAR_FA NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_FA NULL
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_FA NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_FA NULL
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_FA NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_FA NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_FA NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_FA NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_FA NULL
-#define OPTION_VAL_AUTO_FA NULL
-#define OPTION_VAL_MANUAL_FA NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_FA NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_FA NULL
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_FA "پالایهٔ صدا"
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_FA "به‌منظور نرم کردن صدای «زبر» بعضی از بازی‌های آرکید، یک پالایهٔ پایین‌گذر روی صدا فعال می‌کند."
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_FA "سطح پالایهٔ صدا (٪)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_FA "بسامد قطع پالایهٔ پایین‌گذر را مشخص می‌کند. افزایش مقدار باعث افزایش «قدرت» پالایه می‌شود چرا که دامنهٔ وسیع‌تری از بسامدهای بالای روی طیف تضعیف می‌شود."
+#define FBA2012CPS1_FRAMESKIP_LABEL_FA "پرش فریم"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_FA "برای جلوگیری از اجرا شدن بافر صوتی (ترق زدن) از فریم‌ها پرش کنید. عملکرد را در ازای صاف‌بودن تصویر بهبود می‌بخشد. حالت «خودکار»هنگام توصیهٔ پیشانه از روی فریم‌ها می‌پرد. حالت «دستی» تنظیم «آستانهٔ پرش فریم (٪)» را فعال می‌کند."
+#define OPTION_VAL_AUTO_FA "خودکار"
+#define OPTION_VAL_MANUAL_FA "دستی"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_FA "آستانهٔ پرش فریم (٪)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_FA "زمانی که «پرش فریم» روی «دستی» تنظیم شده باشد، آستانهٔ (درصد) اشغال بافر صوتی را برای پرش از روی فریم‌ها تنظیم می‌کند. مقادیر بالاتر احتمال ترق خوردن صدا را با رها کردن فریم‌های بیشتر، کاهش می‌دهد."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_FA NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_FA NULL
 
@@ -2680,7 +2883,7 @@ struct retro_core_options_v2 options_fa = {
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_FI "Suorittimen nopeus (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_FI "Mahdollistaa emuloidun suorittimen ylikellotuksen. Voi vähentää hidastumista, mutta saattaa aiheuttaa virheitä."
-#define FBA2012CPS1_HISCORES_LABEL_FI NULL
+#define FBA2012CPS1_HISCORES_LABEL_FI "Parhaat tulokset"
 #define FBA2012CPS1_HISCORES_INFO_0_FI NULL
 #define FBA2012CPS1_ASPECT_LABEL_FI "Ytimen määrittämä kuvasuhde"
 #define FBA2012CPS1_ASPECT_INFO_0_FI NULL
@@ -3488,28 +3691,231 @@ struct retro_core_options_v2 options_he = {
    option_defs_he
 };
 
+/* RETRO_LANGUAGE_HR */
+
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_HR NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_HR NULL
+#define FBA2012CPS1_HISCORES_LABEL_HR NULL
+#define FBA2012CPS1_HISCORES_INFO_0_HR NULL
+#define FBA2012CPS1_ASPECT_LABEL_HR NULL
+#define FBA2012CPS1_ASPECT_INFO_0_HR NULL
+#define OPTION_VAL_DAR_HR NULL
+#define OPTION_VAL_PAR_HR NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_HR NULL
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_HR NULL
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_HR NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_HR NULL
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_HR NULL
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_HR NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_HR NULL
+#define FBA2012CPS1_FRAMESKIP_INFO_0_HR NULL
+#define OPTION_VAL_AUTO_HR NULL
+#define OPTION_VAL_MANUAL_HR NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_HR NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_HR NULL
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_HR NULL
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_HR NULL
+
+struct retro_core_option_v2_category option_cats_hr[] = {
+   { NULL, NULL, NULL },
+};
+struct retro_core_option_v2_definition option_defs_hr[] = {
+   {
+      "fba2012cps1_cpu_speed_adjust",
+      FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_HR,
+      NULL,
+      FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "100", NULL },
+         { "110", NULL },
+         { "120", NULL },
+         { "130", NULL },
+         { "140", NULL },
+         { "150", NULL },
+         { "160", NULL },
+         { "170", NULL },
+         { "180", NULL },
+         { "190", NULL },
+         { "200", NULL },
+         { NULL, NULL },
+      },
+      "100"
+   },
+   {
+      "fba2012cps1_hiscores",
+      FBA2012CPS1_HISCORES_LABEL_HR,
+      NULL,
+      FBA2012CPS1_HISCORES_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_aspect",
+      FBA2012CPS1_ASPECT_LABEL_HR,
+      NULL,
+      FBA2012CPS1_ASPECT_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "DAR", OPTION_VAL_DAR_HR },
+         { "PAR", OPTION_VAL_PAR_HR },
+         { NULL, NULL },
+      },
+      "DAR"
+   },
+   {
+      "fba2012cps1_auto_rotate",
+      FBA2012CPS1_AUTO_ROTATE_LABEL_HR,
+      NULL,
+      FBA2012CPS1_AUTO_ROTATE_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "enabled"
+   },
+   {
+      "fba2012cps1_lowpass_filter",
+      FBA2012CPS1_LOWPASS_FILTER_LABEL_HR,
+      NULL,
+      FBA2012CPS1_LOWPASS_FILTER_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "enabled",  NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_lowpass_range",
+      FBA2012CPS1_LOWPASS_RANGE_LABEL_HR,
+      NULL,
+      FBA2012CPS1_LOWPASS_RANGE_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "5",  NULL },
+         { "10", NULL },
+         { "15", NULL },
+         { "20", NULL },
+         { "25", NULL },
+         { "30", NULL },
+         { "35", NULL },
+         { "40", NULL },
+         { "45", NULL },
+         { "50", NULL },
+         { "55", NULL },
+         { "60", NULL },
+         { "65", NULL },
+         { "70", NULL },
+         { "75", NULL },
+         { "80", NULL },
+         { "85", NULL },
+         { "90", NULL },
+         { "95", NULL },
+         { NULL, NULL },
+      },
+      "60"
+   },
+   {
+      "fba2012cps1_frameskip",
+      FBA2012CPS1_FRAMESKIP_LABEL_HR,
+      NULL,
+      FBA2012CPS1_FRAMESKIP_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "auto",     OPTION_VAL_AUTO_HR },
+         { "manual",   OPTION_VAL_MANUAL_HR },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_frameskip_threshold",
+      FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_HR,
+      NULL,
+      FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "15", NULL },
+         { "18", NULL },
+         { "21", NULL },
+         { "24", NULL },
+         { "27", NULL },
+         { "30", NULL },
+         { "33", NULL },
+         { "36", NULL },
+         { "39", NULL },
+         { "42", NULL },
+         { "45", NULL },
+         { "48", NULL },
+         { "51", NULL },
+         { "54", NULL },
+         { "57", NULL },
+         { "60", NULL },
+         { NULL, NULL },
+      },
+      "33"
+   },
+   {
+      "fba2012cps1_diagnostics",
+      FBA2012CPS1_DIAGNOSTICS_LABEL_HR,
+      NULL,
+      FBA2012CPS1_DIAGNOSTICS_INFO_0_HR,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "enabled",  NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   { NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
+};
+struct retro_core_options_v2 options_hr = {
+   option_cats_hr,
+   option_defs_hr
+};
+
 /* RETRO_LANGUAGE_HU */
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_HU NULL
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_HU NULL
 #define FBA2012CPS1_HISCORES_LABEL_HU NULL
 #define FBA2012CPS1_HISCORES_INFO_0_HU NULL
-#define FBA2012CPS1_ASPECT_LABEL_HU NULL
+#define FBA2012CPS1_ASPECT_LABEL_HU "Mag által meghatározott képarány"
 #define FBA2012CPS1_ASPECT_INFO_0_HU NULL
 #define OPTION_VAL_DAR_HU NULL
 #define OPTION_VAL_PAR_HU NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_HU NULL
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_HU NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_HU NULL
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_HU "Hangszűrő"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_HU NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_HU NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_HU NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_HU NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_HU NULL
-#define OPTION_VAL_AUTO_HU NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_HU "Képkocka kihagyás"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_HU "A hangbuffer kiürülése (recsegés) elkerülésére képkockák eldobása. Javít a teljesítményen a vizuális folyamatosság kárára. Az \"Automatikus\" beállítás akkor dob képkockát, ha a frontend azt javasolja. A \"Kézi\" a \"Képkocka kihagyás határértéke (%)\" beállítást használja."
+#define OPTION_VAL_AUTO_HU "Automatikus"
 #define OPTION_VAL_MANUAL_HU "Kézi"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_HU NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_HU NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_HU "Képkocka kihagyás határértéke (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_HU "Ha a \"Képkocka kihagyás\" \"Kézi\" értékre van állítva, ez határozza meg a hangpuffer telítettségi határát (százalékban), amely alatt képkockákat dob el. Nagyobb érték csökkenti a recsegés kockázatát azáltal, hogy gyakrabban dob el képkockát."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_HU NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_HU NULL
 
@@ -3709,10 +4115,10 @@ struct retro_core_options_v2 options_hu = {
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_ID NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_ID NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_ID NULL
-#define OPTION_VAL_AUTO_ID NULL
+#define OPTION_VAL_AUTO_ID "Otomatis"
 #define OPTION_VAL_MANUAL_ID NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_ID NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_ID "Saat 'Frameskip' di setel ke 'Manual', tentukan ambang batas hunian buffer audio (persentase) di bawah frame mana yang akan dilewati. Nilai yang lebih tinggi mengurangi risiko keretakan dengan menyebabkan bingkai frame lebih sering dijatuhkan."
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_ID "Saat 'Lewati Bingkai' diatur ke 'Manual', tentukan (persentase) ambang batas hunian penyangga audio di bawah untuk bingkai mana yang dilewati. Nilai yang lebih tinggi mengurangi risiko keretakan dengan cara membuat laju bingkai sering anjlok."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_ID NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_ID "Setel Aktifkan lalu lanjutkan konten untuk membuka menu layanan."
 
@@ -5739,7 +6145,7 @@ struct retro_core_options_v2 options_pt_br = {
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_PT_PT NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_PT_PT NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_PT_PT NULL
-#define OPTION_VAL_AUTO_PT_PT NULL
+#define OPTION_VAL_AUTO_PT_PT "Automático"
 #define OPTION_VAL_MANUAL_PT_PT NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_PT_PT NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_PT_PT NULL
@@ -5922,209 +6328,6 @@ struct retro_core_option_v2_definition option_defs_pt_pt[] = {
 struct retro_core_options_v2 options_pt_pt = {
    option_cats_pt_pt,
    option_defs_pt_pt
-};
-
-/* RETRO_LANGUAGE_RO */
-
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_RO NULL
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_RO NULL
-#define FBA2012CPS1_HISCORES_LABEL_RO NULL
-#define FBA2012CPS1_HISCORES_INFO_0_RO NULL
-#define FBA2012CPS1_ASPECT_LABEL_RO NULL
-#define FBA2012CPS1_ASPECT_INFO_0_RO NULL
-#define OPTION_VAL_DAR_RO NULL
-#define OPTION_VAL_PAR_RO NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_RO NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_RO NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_RO NULL
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_RO NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_RO NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_RO NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_RO NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_RO NULL
-#define OPTION_VAL_AUTO_RO NULL
-#define OPTION_VAL_MANUAL_RO NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_RO NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_RO NULL
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_RO NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_RO NULL
-
-struct retro_core_option_v2_category option_cats_ro[] = {
-   { NULL, NULL, NULL },
-};
-struct retro_core_option_v2_definition option_defs_ro[] = {
-   {
-      "fba2012cps1_cpu_speed_adjust",
-      FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_RO,
-      NULL,
-      FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "100", NULL },
-         { "110", NULL },
-         { "120", NULL },
-         { "130", NULL },
-         { "140", NULL },
-         { "150", NULL },
-         { "160", NULL },
-         { "170", NULL },
-         { "180", NULL },
-         { "190", NULL },
-         { "200", NULL },
-         { NULL, NULL },
-      },
-      "100"
-   },
-   {
-      "fba2012cps1_hiscores",
-      FBA2012CPS1_HISCORES_LABEL_RO,
-      NULL,
-      FBA2012CPS1_HISCORES_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_aspect",
-      FBA2012CPS1_ASPECT_LABEL_RO,
-      NULL,
-      FBA2012CPS1_ASPECT_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "DAR", OPTION_VAL_DAR_RO },
-         { "PAR", OPTION_VAL_PAR_RO },
-         { NULL, NULL },
-      },
-      "DAR"
-   },
-   {
-      "fba2012cps1_auto_rotate",
-      FBA2012CPS1_AUTO_ROTATE_LABEL_RO,
-      NULL,
-      FBA2012CPS1_AUTO_ROTATE_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "enabled"
-   },
-   {
-      "fba2012cps1_lowpass_filter",
-      FBA2012CPS1_LOWPASS_FILTER_LABEL_RO,
-      NULL,
-      FBA2012CPS1_LOWPASS_FILTER_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_lowpass_range",
-      FBA2012CPS1_LOWPASS_RANGE_LABEL_RO,
-      NULL,
-      FBA2012CPS1_LOWPASS_RANGE_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "5",  NULL },
-         { "10", NULL },
-         { "15", NULL },
-         { "20", NULL },
-         { "25", NULL },
-         { "30", NULL },
-         { "35", NULL },
-         { "40", NULL },
-         { "45", NULL },
-         { "50", NULL },
-         { "55", NULL },
-         { "60", NULL },
-         { "65", NULL },
-         { "70", NULL },
-         { "75", NULL },
-         { "80", NULL },
-         { "85", NULL },
-         { "90", NULL },
-         { "95", NULL },
-         { NULL, NULL },
-      },
-      "60"
-   },
-   {
-      "fba2012cps1_frameskip",
-      FBA2012CPS1_FRAMESKIP_LABEL_RO,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "auto",     OPTION_VAL_AUTO_RO },
-         { "manual",   OPTION_VAL_MANUAL_RO },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_frameskip_threshold",
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_RO,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "15", NULL },
-         { "18", NULL },
-         { "21", NULL },
-         { "24", NULL },
-         { "27", NULL },
-         { "30", NULL },
-         { "33", NULL },
-         { "36", NULL },
-         { "39", NULL },
-         { "42", NULL },
-         { "45", NULL },
-         { "48", NULL },
-         { "51", NULL },
-         { "54", NULL },
-         { "57", NULL },
-         { "60", NULL },
-         { NULL, NULL },
-      },
-      "33"
-   },
-   {
-      "fba2012cps1_diagnostics",
-      FBA2012CPS1_DIAGNOSTICS_LABEL_RO,
-      NULL,
-      FBA2012CPS1_DIAGNOSTICS_INFO_0_RO,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   { NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
-};
-struct retro_core_options_v2 options_ro = {
-   option_cats_ro,
-   option_defs_ro
 };
 
 /* RETRO_LANGUAGE_RU */
@@ -7165,7 +7368,7 @@ struct retro_core_options_v2 options_sv = {
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_TR "Kare Atlama Eşiği (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_TR "'Kare atlama', 'El ile' ayarlandığında, altındaki karelerin atlanacağı ses arabelleği doluluk eşiğini (yüzde) belirtir. Daha yüksek değerler, karelerin daha sık çökmesine neden olarak bozulma riskini azaltır."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_TR "Teşhis Girişi"
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_TR "Servis menüsünü açmak için AÇIK duruma getirin ve içeriği devam ettirin."
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_TR "Servis menüsünü AÇIK duruma getirin ve içeriği devam ettirin."
 
 struct retro_core_option_v2_category option_cats_tr[] = {
    { NULL, NULL, NULL },
@@ -7349,25 +7552,25 @@ struct retro_core_options_v2 options_tr = {
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_UK "Швидкість ЦП (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_UK "Вмикає розгін емульованого процесора. Дозволяє усунути сповільнення, але може спричинити збої."
-#define FBA2012CPS1_HISCORES_LABEL_UK NULL
+#define FBA2012CPS1_HISCORES_LABEL_UK "Високі бали"
 #define FBA2012CPS1_HISCORES_INFO_0_UK "Вмикає збереження рекордів в іграх, які це підтримують. Потрібна наявність файлу ''hiscore.dat' у каталозі 'system/fbalpha2012/'"
 #define FBA2012CPS1_ASPECT_LABEL_UK "Співвідношення сторін з ядра"
-#define FBA2012CPS1_ASPECT_INFO_0_UK NULL
+#define FBA2012CPS1_ASPECT_INFO_0_UK "Вибирає привілейоване співвідношення сторін контенту. Застосовується тільки тоді, коли встановлено 'Співвідношення сторін' в параметрах відео RetroArch."
 #define OPTION_VAL_DAR_UK NULL
 #define OPTION_VAL_PAR_UK NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_UK NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_UK NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_UK "Повернути вертикально орієнтовані ігри (потрібен перезапуск)"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_UK "Автоматично повертати екран при запущених вертикальних іграх. Якщо вимкнено, керування повертатиметься відповідно до вказівок на екрані."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_UK "Аудіофільтр"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_UK NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_UK NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_UK NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_UK "Вмикає аудіофільтр низьких частот, щоб пом’якшити 'різкий' звук деяких аркадних ігор."
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_UK "Рівень аудіофільтру (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_UK "Визначає частоту зрізу звукового фільтра низьких частот. Більше значення збільшує сприйману 'силу' фільтра, оскільки ширший діапазон високочастотного спектру послаблюється."
 #define FBA2012CPS1_FRAMESKIP_LABEL_UK "Пропуск кадру"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_UK "Пропускати кадри, щоб уникнути спустошення буферу (тріскіт). Покращує швидкодію, погіршуючи плавність зображення. 'Авто' пропускає кадри, керуючись командами зовнішньої оболонки. 'Ручний' використовує налаштування 'Межа пропуску кадрів (%)'."
 #define OPTION_VAL_AUTO_UK "Авто"
 #define OPTION_VAL_MANUAL_UK "Ручний"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_UK "Межа пропуску кадрів (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_UK "Якщо 'Пропус кадрів' встановлено у 'Вручну', зазначає граничне значення оточення аудіо-буферу (відсоток), нижчі за які кадри будуть пропущені. Більш високі значення зменшують ризик зломування, викликаючи зменшення кадрів частіше."
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_UK NULL
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_UK "Діагностика вводу"
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_UK "Увімкніть, а потім відновіть вміст, щоб відкрити сервісне меню."
 
 struct retro_core_option_v2_category option_cats_uk[] = {
@@ -7566,8 +7769,8 @@ struct retro_core_options_v2 options_uk = {
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_VAL NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_VAL NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_VAL NULL
-#define OPTION_VAL_AUTO_VAL NULL
-#define OPTION_VAL_MANUAL_VAL NULL
+#define OPTION_VAL_AUTO_VAL "Selecció automàtica"
+#define OPTION_VAL_MANUAL_VAL "Selecció manual"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_VAL NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_VAL NULL
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_VAL NULL
@@ -7768,11 +7971,11 @@ struct retro_core_options_v2 options_val = {
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_VN NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_VN NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_VN "Bỏ qua khung hình"
-#define FBA2012CPS1_FRAMESKIP_INFO_0_VN NULL
+#define FBA2012CPS1_FRAMESKIP_INFO_0_VN "Bỏ qua khung hình để tránh bộ đệm âm thanh chạy dưới mức (tiếng kêu lách tách). Cải thiện hiệu suất với độ mượt mà của hình ảnh. 'Tự động' bỏ qua khung khi giao diện người dùng thông báo. 'Thủ công' sử dụng cài đặt 'Ngưỡng khung hình (%)'."
 #define OPTION_VAL_AUTO_VN "Tự động"
 #define OPTION_VAL_MANUAL_VN "Thủ công"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_VN NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_VN NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_VN "Ngưỡng bỏ qua khung hình (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_VN "Khi 'Frameskip' được đặt thành 'Thủ công', chỉ định ngưỡng chiếm dụng bộ đệm âm thanh (tỷ lệ phần trăm) dưới khung hình nào sẽ bị bỏ qua. Giá trị cao hơn làm giảm nguy cơ giật lag do làm rơi khung thường xuyên hơn."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_VN NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_VN NULL
 
