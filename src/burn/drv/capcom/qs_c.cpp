@@ -44,61 +44,57 @@ static INT32 QsndOutputDir[2];
 
 static void MapBank(struct QChan* pc)
 {
-	UINT32 nBank;
-
-	nBank = (pc->nBank & 0x7F) << 16;	// Banks are 0x10000 samples long
-
-	// Confirm whole bank is in range:
-	// If bank is out of range use bank 0 instead
-	if ((nBank + 0x10000) > nCpsQSamLen) {
-		nBank = 0;
-	}
-	pc->PlayBank = (INT8*)CpsQSam + nBank;
+   UINT32 nBank = (pc->nBank & 0x7F) << 16;	// Banks are 0x10000 samples long
+                                             // Confirm whole bank is in range:
+                                             // If bank is out of range use bank 0 instead
+   if ((nBank + 0x10000) > nCpsQSamLen)
+      nBank = 0;
+   pc->PlayBank = (INT8*)CpsQSam + nBank;
 }
 
 static void UpdateEndBuffer(struct QChan* pc)
 {
-	if (pc->bKey) {
-		// prepare a buffer to correctly interpolate the last 4 samples
-		if (nInterpolation >= 3) {
-			for (INT32 i = 0; i < 4; i++) {
-				pc->nEndBuffer[i] = pc->PlayBank[(pc->nEnd >> 12) - 4 + i];
-			}
+	if (pc->bKey)
+   {
+      // prepare a buffer to correctly interpolate the last 4 samples
+      if (nInterpolation >= 3) {
+         for (INT32 i = 0; i < 4; i++)
+            pc->nEndBuffer[i] = pc->PlayBank[(pc->nEnd >> 12) - 4 + i];
 
-			if (pc->nLoop) {
-				for (INT32 i = 0, j = 0; i < 4; i++, j++) {
-					if (j >= (pc->nLoop >> 12)) {
-						j = 0;
-					}
-					pc->nEndBuffer[i + 4] = pc->PlayBank[((pc->nEnd - pc->nLoop) >> 12) + j];
-				}
-			} else {
-				for (INT32 i = 0; i < 4; i++) {
-					pc->nEndBuffer[i + 4] = pc->nEndBuffer[3];
-				}
-			}
-		}
-	}
+         if (pc->nLoop)
+         {
+            for (INT32 i = 0, j = 0; i < 4; i++, j++)
+            {
+               if (j >= (pc->nLoop >> 12))
+                  j = 0;
+               pc->nEndBuffer[i + 4] = pc->PlayBank[((pc->nEnd - pc->nLoop) >> 12) + j];
+            }
+         }
+         else
+         {
+            for (INT32 i = 0; i < 4; i++)
+               pc->nEndBuffer[i + 4] = pc->nEndBuffer[3];
+         }
+      }
+   }
 }
 
 static void CalcAdvance(struct QChan* pc)
 {
-	if (nQscRate) {
+	if (nQscRate)
 		pc->nAdvance = (INT64)pc->nPitch * nQscClock / nQscClockDivider / nQscRate;
-	}
 }
 
-void QscReset()
+void QscReset(void)
 {
 	memset(QChan, 0, sizeof(QChan));
 
 	// Point all to bank 0
-	for (INT32 i = 0; i < 16; i++) {
+	for (INT32 i = 0; i < 16; i++)
 		QChan[i].PlayBank = (INT8*)CpsQSam;
-	}
 }
 
-void QscExit()
+void QscExit(void)
 {
 	nQscRate = 0;
 
@@ -110,9 +106,8 @@ INT32 QscInit(INT32 nRate)
 {
 	nQscRate = nRate;
 
-	for (INT32 i = 0; i < 33; i++) {
+	for (INT32 i = 0; i < 33; i++)
 		PanningVolumes[i] = (INT32)((256.0 / sqrt(32.0)) * sqrt((double)i));
-	}
 	
 	QsndGain[BURN_SND_QSND_OUTPUT_1] = 1.00;
 	QsndGain[BURN_SND_QSND_OUTPUT_2] = 1.00;
@@ -145,14 +140,9 @@ INT32 QscScan(INT32 nAction)
 	return 0;
 }
 
-void QscNewFrame()
+void QscNewFrame(void)
 {
 	nPos = 0;
-}
-
-static inline void QscSyncQsnd()
-{
-	if (pBurnSoundOut) QscUpdate(ZetTotalCycles() * nBurnSoundLen / nCpsZ80Cycles);
 }
 
 void QscWrite(INT32 a, INT32 d)
@@ -164,15 +154,15 @@ void QscWrite(INT32 a, INT32 d)
 	if (a >= 0x90)
 		return;
 
-	QscSyncQsnd();
+	if (pBurnSoundOut)
+      QscUpdate(ZetTotalCycles() * nBurnSoundLen / nCpsZ80Cycles);
 
-	if (a >= 0x80) {									// Set panning for channel
+	if (a >= 0x80) // Set panning for channel
+   {
 		INT32 nPan;
-
 		nChanNum = a & 15;
-
-		pc = QChan + nChanNum;		// Find channel
-		nPan = (d - 0x10) & 0x3F;	// nPan = 0x00 to 0x20 now
+		pc       = QChan + nChanNum;		// Find channel
+		nPan     = (d - 0x10) & 0x3F;	// nPan = 0x00 to 0x20 now
 		if (nPan > 0x20)
 			nPan = 0x20;
 
@@ -189,67 +179,49 @@ void QscWrite(INT32 a, INT32 d)
 	// Pointer to channel info
 	pc = QChan + nChanNum;
 
-	switch (r) {
-		case 0: {										// Set bank
-			// Strange but true
-			pc = QChan + ((nChanNum + 1) & 15);
-			pc->nBank = d;
-			MapBank(pc);
-			UpdateEndBuffer(pc);
-			break;
-		}
-		case 1: {										// Set sample start offset
-			pc->nStart = d << 12;
-			break;
-		}
-		case 2: {
-			pc->nPitch = d;
-			CalcAdvance(pc);
+   switch (r)
+   {
+      case 0: // Set bank
+              pc = QChan + ((nChanNum + 1) & 15);
+              pc->nBank = d;
+              MapBank(pc);
+              UpdateEndBuffer(pc);
+              break;
+      case 1: // Set sample start offset
+              pc->nStart = d << 12;
+              break;
+      case 2:
+              pc->nPitch = d;
+              CalcAdvance(pc);
 
-			if (d == 0) {								// Key off; stop playing
-				pc->bKey = 0;
-			}
+              if (d == 0) // Key off; stop playing
+                 pc->bKey = 0;
+              break;
+      case 4: // Set sample loop offset
+              pc->nLoop = d << 12;
+              UpdateEndBuffer(pc);
+              break;
+      case 5:										// Set sample end offset
+              pc->nEnd = d << 12;
+              UpdateEndBuffer(pc);
+              break;
+      case 6: 									// Set volume
+              pc->nMasterVolume = d;
 
-			break;
-		}
-#if 0
-		case 3: {
-			break;
-		}
-#endif
-		case 4: {										// Set sample loop offset
-			pc->nLoop = d << 12;
-			UpdateEndBuffer(pc);
-			break;
-		}
-		case 5: {										// Set sample end offset
-			pc->nEnd = d << 12;
-			UpdateEndBuffer(pc);
-			break;
-		}
-		case 6: {										// Set volume
-			pc->nMasterVolume = d;
+              if (d == 0)
+                 pc->bKey = 0;
+              else
+              {
+                 if (pc->bKey == 0) {					// Key on; play sample
+                    pc->nPlayStart = pc->nStart;
 
-			if (d == 0) {
-				pc->bKey = 0;
-			} else {
-				if (pc->bKey == 0) {					// Key on; play sample
-					pc->nPlayStart = pc->nStart;
-
-					pc->nPos = 0;
-					pc->bKey = 3;
-					UpdateEndBuffer(pc);
-				}
-			}
-			break;
-		}
-#if 0
-		case 7: {
-			break;
-		}
-#endif
-
-	}
+                    pc->nPos = 0;
+                    pc->bKey = 3;
+                    UpdateEndBuffer(pc);
+                 }
+              }
+              break;
+   }
 }
 
 INT32 QscUpdate(INT32 nEnd)

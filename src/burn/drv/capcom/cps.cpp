@@ -1230,27 +1230,28 @@ static UINT32 nGfxMaxSize;
 
 static INT32 CpsGetROMs(bool bLoad)
 {
+	INT32 i = 0;
 	struct BurnRomInfo ri;
 
 	UINT8* CpsCodeLoad = CpsCode;
-	UINT8* CpsRomLoad = CpsRom;
-	UINT8* CpsGfxLoad = CpsGfx;
+	UINT8* CpsRomLoad  = CpsRom;
+	UINT8* CpsGfxLoad  = CpsGfx;
 	UINT8* CpsZRomLoad = CpsZRom;
 	UINT8* CpsQSamLoad = (UINT8*)CpsQSam;
 
 	INT32 nGfxNum = 0;
 
-	if (bLoad) {
-		if (!CpsCodeLoad || !CpsRomLoad || !CpsGfxLoad || !CpsZRomLoad || !CpsQSamLoad) {
+	if (bLoad)
+   {
+		if (!CpsCodeLoad || !CpsRomLoad || !CpsGfxLoad || !CpsZRomLoad || !CpsQSamLoad)
 			return 1;
-		}
-	} else {
+	}
+   else
+   {
 		nCpsCodeLen = nCpsRomLen = nCpsGfxLen = nCpsZRomLen = nCpsQSamLen = 0;
-
 		nGfxMaxSize = 0;
 	}
 
-	INT32 i = 0;
 	{
 		if (nGfxMaxSize != ~0U)
 			nCpsGfxLen = nGfxNum * nGfxMaxSize;
@@ -1317,15 +1318,6 @@ INT32 CpsInit(void)
    else
 		nCpsGfxScroll[1] = nCpsGfxScroll[2] = nCpsGfxScroll[3] = 0;
 
-#if 0
-	if (nCpsZRomLen>=5) {
-		/* 77->cfff and rst 00 in case driver doesn't load */
-		CpsZRom[0] = 0x3E; CpsZRom[1] = 0x77;
-		CpsZRom[2] = 0x32; CpsZRom[3] = 0xFF; CpsZRom[4] = 0xCF;
-		CpsZRom[5] = 0xc7;
-	}
-#endif
-
 	SepTableCalc();									  /* Precalc the separate table */
 
 	CpsReset = 0; Cpi01A = Cpi01C = Cpi01E = 0;		  /* blank other inputs */
@@ -1336,11 +1328,10 @@ INT32 CpsInit(void)
 	return 0;
 }
 
-INT32 CpsExit()
+INT32 CpsExit(void)
 {
-	if (!(Cps & 1)) {
+	if (!(Cps & 1))
 		CpsRunExit();
-	}
 
 	CpsLayEn[1] = CpsLayEn[2] = CpsLayEn[3] = CpsLayEn[4] = CpsLayEn[5] = 0;
 	nCpsLcReg = 0;

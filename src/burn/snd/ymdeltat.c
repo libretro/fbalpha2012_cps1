@@ -88,16 +88,6 @@ const INT32 ym_deltat_decode_tableB2[16] = {
   57,  57,  57,  57, 77, 102, 128, 153
 };
 
-#if 0
-void YM_DELTAT_BRDY_callback(YM_DELTAT *DELTAT)
-{
-	/* set BRDY bit in status register */
-	if(DELTAT->status_set_handler)
-		if(DELTAT->status_change_BRDY_bit)
-			(DELTAT->status_set_handler)(DELTAT->status_change_which_chip, DELTAT->status_change_BRDY_bit);
-}
-#endif
-
 UINT8 YM_DELTAT_ADPCM_Read(YM_DELTAT *DELTAT)
 {
 	UINT8 v = 0;

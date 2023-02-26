@@ -1818,11 +1818,6 @@ static void OPNSetPres(FM_OPN *OPN , int pres , int TimerPres, int SSGpres)
 	/* frequency base */
 	OPN->ST.freqbase = (OPN->ST.rate) ? ((double)OPN->ST.clock / OPN->ST.rate) / pres : 0;
 
-#if 0
-	OPN->ST.rate = (double)OPN->ST.clock / pres;
-	OPN->ST.freqbase = 1.0;
-#endif
-
 	OPN->eg_timer_add  = (1<<EG_SH)  *  OPN->ST.freqbase;
 	OPN->eg_timer_overflow = ( 3 ) * (1<<EG_SH);
 

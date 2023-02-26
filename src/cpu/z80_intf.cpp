@@ -211,54 +211,6 @@ INT32 ZetInit(INT32 nCPU)
 	return 0;
 }
 
-#if 0
-INT32 ZetInit(INT32 nCount)
-{
-	nOpenedCPU = -1;
-	
-	ZetCPUContext = (struct ZetExt *) malloc(nCount * sizeof(ZetExt));
-	if (ZetCPUContext == NULL) return 1;
-	memset(ZetCPUContext, 0, nCount * sizeof(ZetExt));
-	
-	Z80Init();
-	
-	for (INT32 i = 0; i < nCount; i++) {
-		ZetCPUContext[i].ZetIn = ZetDummyInHandler;
-		ZetCPUContext[i].ZetOut = ZetDummyOutHandler;
-		ZetCPUContext[i].ZetRead = ZetDummyReadHandler;
-		ZetCPUContext[i].ZetWrite = ZetDummyWriteHandler;
-		ZetCPUContext[i].BusReq = 0;
-		// TODO: Z80Init() will set IX IY F regs with default value, so get them ...
-		Z80GetContext(&ZetCPUContext[i].reg);
-		
-		nZetCyclesDone[i] = 0;
-		nZ80ICount[i] = 0;
-		
-		for (INT32 j = 0; j < (0x0100 * 4); j++) {
-			ZetCPUContext[i].pZetMemMap[j] = NULL;
-		}
-	}
-	
-	nZetCyclesTotal = 0;
-	
-	Z80SetIOReadHandler(ZetReadIO);
-	Z80SetIOWriteHandler(ZetWriteIO);
-	Z80SetProgramReadHandler(ZetReadProg);
-	Z80SetProgramWriteHandler(ZetWriteProg);
-	Z80SetCPUOpReadHandler(ZetReadOp);
-	Z80SetCPUOpArgReadHandler(ZetReadOpArg);
-	
-	nCPUCount = nCount % MAX_Z80;
-
-	nHasZet = nCount;
-
-	for (INT32 i = 0; i < nCount; i++)
-		CpuCheatRegister(0x0004, i);
-
-	return 0;
-}
-#endif
-
 UINT8 ZetReadByte(UINT16 address)
 {
 	if (nOpenedCPU < 0) return 0;

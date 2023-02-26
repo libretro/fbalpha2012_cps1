@@ -555,12 +555,6 @@ static void init_chip_tables(YM2151 *chip)
    {
       /* 3.4375 Hz is note A; C# is 4 semitones higher */
       Hz = 1000;
-#if 0
-      /* Hz is close, but not perfect */
-      //Hz = scaler * 3.4375 * pow (2, (i + 4 * 64 ) / 768.0 );
-      /* calculate phase increment */
-      phaseinc = (Hz*SIN_LEN) / (double)chip->sampfreq;
-#endif
 
       phaseinc = phaseinc_rom[i];	/* real chip phase increment */
       phaseinc *= scaler;			/* adjust */
@@ -883,264 +877,260 @@ void YM2151WriteReg(int n, int r, int v)
 	r &= 0xff;
 	v &= 0xff;
 
-#if 0
-	/* There is no info on what YM2151 really does when busy flag is set */
-	if ( chip->status & 0x80 ) return;
-	timer_set ( 64.0 / (double)chip->clock, n, timer_callback_chip_busy);
-	chip->status |= 0x80;	/* set busy flag for 64 chip clock cycles */
-#endif
+	switch(r & 0xe0)
+   {
+      case 0x00:
+         switch(r)
+         {
+            case 0x01:	/* LFO reset(bit 1), Test Register (other bits) */
+               chip->test = v;
+               if (v&2) chip->lfo_phase = 0;
+               break;
 
-	switch(r & 0xe0){
-	case 0x00:
-		switch(r){
-		case 0x01:	/* LFO reset(bit 1), Test Register (other bits) */
-			chip->test = v;
-			if (v&2) chip->lfo_phase = 0;
-			break;
+            case 0x08:
+               PSG = &YMPSG[n]; /* PSG is used in KEY_ON macro */
+               envelope_KONKOFF(&chip->oper[ (v&7)*4 ], v );
+               break;
 
-		case 0x08:
-			PSG = &YMPSG[n]; /* PSG is used in KEY_ON macro */
-			envelope_KONKOFF(&chip->oper[ (v&7)*4 ], v );
-			break;
+            case 0x0f:	/* noise mode enable, noise period */
+               chip->noise = v;
+               chip->noise_f = chip->noise_tab[ v & 0x1f ];
+               break;
 
-		case 0x0f:	/* noise mode enable, noise period */
-			chip->noise = v;
-			chip->noise_f = chip->noise_tab[ v & 0x1f ];
-			break;
+            case 0x10:	/* timer A hi */
+               chip->timer_A_index = (chip->timer_A_index & 0x003) | (v<<2);
+               break;
 
-		case 0x10:	/* timer A hi */
-			chip->timer_A_index = (chip->timer_A_index & 0x003) | (v<<2);
-			break;
+            case 0x11:	/* timer A low */
+               chip->timer_A_index = (chip->timer_A_index & 0x3fc) | (v & 3);
+               break;
 
-		case 0x11:	/* timer A low */
-			chip->timer_A_index = (chip->timer_A_index & 0x3fc) | (v & 3);
-			break;
+            case 0x12:	/* timer B */
+               chip->timer_B_index = v;
+               break;
 
-		case 0x12:	/* timer B */
-			chip->timer_B_index = v;
-			break;
+            case 0x14:	/* CSM, irq flag reset, irq enable, timer start/stop */
 
-		case 0x14:	/* CSM, irq flag reset, irq enable, timer start/stop */
+               chip->irq_enable = v;	/* bit 3-timer B, bit 2-timer A, bit 7 - CSM */
 
-			chip->irq_enable = v;	/* bit 3-timer B, bit 2-timer A, bit 7 - CSM */
+               if (v&0x20)	/* reset timer B irq flag */
+               {
+                  int oldstate = chip->status & 3;
+                  chip->status &= 0xfd;
+                  if ((oldstate==2) && (chip->irqhandler)) (*chip->irqhandler)(0);
+               }
 
-			if (v&0x20)	/* reset timer B irq flag */
-			{
-				int oldstate = chip->status & 3;
-				chip->status &= 0xfd;
-				if ((oldstate==2) && (chip->irqhandler)) (*chip->irqhandler)(0);
-			}
+               if (v&0x10)	/* reset timer A irq flag */
+               {
+                  int oldstate = chip->status & 3;
+                  chip->status &= 0xfe;
+                  if ((oldstate==1) && (chip->irqhandler)) (*chip->irqhandler)(0);
 
-			if (v&0x10)	/* reset timer A irq flag */
-			{
-				int oldstate = chip->status & 3;
-				chip->status &= 0xfe;
-				if ((oldstate==1) && (chip->irqhandler)) (*chip->irqhandler)(0);
+               }
 
-			}
+               if (v&0x02){	/* load and start timer B */
+                  if (!chip->tim_B)
+                  {
+                     chip->tim_B = 1;
+                     chip->tim_B_val = chip->tim_B_tab[ chip->timer_B_index ];
+                  }
+               }else{		/* stop timer B */
+                  chip->tim_B = 0;
+               }
 
-			if (v&0x02){	/* load and start timer B */
-					if (!chip->tim_B)
-					{
-						chip->tim_B = 1;
-						chip->tim_B_val = chip->tim_B_tab[ chip->timer_B_index ];
-					}
-			}else{		/* stop timer B */
-					chip->tim_B = 0;
-			}
+               if (v&0x01){	/* load and start timer A */
+                  if (!chip->tim_A)
+                  {
+                     chip->tim_A = 1;
+                     chip->tim_A_val = chip->tim_A_tab[ chip->timer_A_index ];
+                  }
+               }else{		/* stop timer A */
+                  chip->tim_A = 0;
+               }
+               break;
 
-			if (v&0x01){	/* load and start timer A */
-					if (!chip->tim_A)
-					{
-						chip->tim_A = 1;
-						chip->tim_A_val = chip->tim_A_tab[ chip->timer_A_index ];
-					}
-			}else{		/* stop timer A */
-					chip->tim_A = 0;
-			}
-			break;
+            case 0x18:	/* LFO frequency */
+               {
+                  chip->lfo_overflow    = ( 1 << ((15-(v>>4))+3) ) * (1<<LFO_SH);
+                  chip->lfo_counter_add = 0x10 + (v & 0x0f);
+               }
+               break;
 
-		case 0x18:	/* LFO frequency */
-			{
-				chip->lfo_overflow    = ( 1 << ((15-(v>>4))+3) ) * (1<<LFO_SH);
-				chip->lfo_counter_add = 0x10 + (v & 0x0f);
-			}
-			break;
+            case 0x19:	/* PMD (bit 7==1) or AMD (bit 7==0) */
+               if (v&0x80)
+                  chip->pmd = v & 0x7f;
+               else
+                  chip->amd = v & 0x7f;
+               break;
 
-		case 0x19:	/* PMD (bit 7==1) or AMD (bit 7==0) */
-			if (v&0x80)
-				chip->pmd = v & 0x7f;
-			else
-				chip->amd = v & 0x7f;
-			break;
+            case 0x1b:	/* CT2, CT1, LFO waveform */
+               chip->ct = v >> 6;
+               chip->lfo_wsel = v & 3;
+               if (chip->porthandler) (*chip->porthandler)(0 , chip->ct );
+               break;
 
-		case 0x1b:	/* CT2, CT1, LFO waveform */
-			chip->ct = v >> 6;
-			chip->lfo_wsel = v & 3;
-			if (chip->porthandler) (*chip->porthandler)(0 , chip->ct );
-			break;
+            default:
+               break;
+         }
+         break;
 
-		default:
-			break;
-		}
-		break;
+      case 0x20:
+         op = &chip->oper[ (r&7) * 4 ];
+         switch(r & 0x18)
+         {
+            case 0x00:	/* RL enable, Feedback, Connection */
+               op->fb_shift = ((v>>3)&7) ? ((v>>3)&7)+6:0;
+               chip->pan[ (r&7)*2    ] = (v & 0x40) ? ~0 : 0;
+               chip->pan[ (r&7)*2 +1 ] = (v & 0x80) ? ~0 : 0;
+               chip->connect[r&7] = v&7;
+               set_connect(op, r&7, v&7);
+               break;
 
-	case 0x20:
-		op = &chip->oper[ (r&7) * 4 ];
-		switch(r & 0x18){
-		case 0x00:	/* RL enable, Feedback, Connection */
-			op->fb_shift = ((v>>3)&7) ? ((v>>3)&7)+6:0;
-			chip->pan[ (r&7)*2    ] = (v & 0x40) ? ~0 : 0;
-			chip->pan[ (r&7)*2 +1 ] = (v & 0x80) ? ~0 : 0;
-			chip->connect[r&7] = v&7;
-			set_connect(op, r&7, v&7);
-			break;
+            case 0x08:	/* Key Code */
+               v &= 0x7f;
+               if (v != op->kc)
+               {
+                  UINT32 kc, kc_channel;
 
-		case 0x08:	/* Key Code */
-			v &= 0x7f;
-			if (v != op->kc)
-			{
-				UINT32 kc, kc_channel;
+                  kc_channel = (v - (v>>2))*64;
+                  kc_channel += 768;
+                  kc_channel |= (op->kc_i & 63);
 
-				kc_channel = (v - (v>>2))*64;
-				kc_channel += 768;
-				kc_channel |= (op->kc_i & 63);
+                  (op+0)->kc = v;
+                  (op+0)->kc_i = kc_channel;
+                  (op+1)->kc = v;
+                  (op+1)->kc_i = kc_channel;
+                  (op+2)->kc = v;
+                  (op+2)->kc_i = kc_channel;
+                  (op+3)->kc = v;
+                  (op+3)->kc_i = kc_channel;
 
-				(op+0)->kc = v;
-				(op+0)->kc_i = kc_channel;
-				(op+1)->kc = v;
-				(op+1)->kc_i = kc_channel;
-				(op+2)->kc = v;
-				(op+2)->kc_i = kc_channel;
-				(op+3)->kc = v;
-				(op+3)->kc_i = kc_channel;
+                  kc = v>>2;
 
-				kc = v>>2;
+                  (op+0)->dt1 = chip->dt1_freq[ (op+0)->dt1_i + kc ];
+                  (op+0)->freq = ( (chip->freq[ kc_channel + (op+0)->dt2 ] + (op+0)->dt1) * (op+0)->mul ) >> 1;
 
-				(op+0)->dt1 = chip->dt1_freq[ (op+0)->dt1_i + kc ];
-				(op+0)->freq = ( (chip->freq[ kc_channel + (op+0)->dt2 ] + (op+0)->dt1) * (op+0)->mul ) >> 1;
+                  (op+1)->dt1 = chip->dt1_freq[ (op+1)->dt1_i + kc ];
+                  (op+1)->freq = ( (chip->freq[ kc_channel + (op+1)->dt2 ] + (op+1)->dt1) * (op+1)->mul ) >> 1;
 
-				(op+1)->dt1 = chip->dt1_freq[ (op+1)->dt1_i + kc ];
-				(op+1)->freq = ( (chip->freq[ kc_channel + (op+1)->dt2 ] + (op+1)->dt1) * (op+1)->mul ) >> 1;
+                  (op+2)->dt1 = chip->dt1_freq[ (op+2)->dt1_i + kc ];
+                  (op+2)->freq = ( (chip->freq[ kc_channel + (op+2)->dt2 ] + (op+2)->dt1) * (op+2)->mul ) >> 1;
 
-				(op+2)->dt1 = chip->dt1_freq[ (op+2)->dt1_i + kc ];
-				(op+2)->freq = ( (chip->freq[ kc_channel + (op+2)->dt2 ] + (op+2)->dt1) * (op+2)->mul ) >> 1;
+                  (op+3)->dt1 = chip->dt1_freq[ (op+3)->dt1_i + kc ];
+                  (op+3)->freq = ( (chip->freq[ kc_channel + (op+3)->dt2 ] + (op+3)->dt1) * (op+3)->mul ) >> 1;
 
-				(op+3)->dt1 = chip->dt1_freq[ (op+3)->dt1_i + kc ];
-				(op+3)->freq = ( (chip->freq[ kc_channel + (op+3)->dt2 ] + (op+3)->dt1) * (op+3)->mul ) >> 1;
+                  refresh_EG( op );
+               }
+               break;
 
-				refresh_EG( op );
-			}
-			break;
+            case 0x10:	/* Key Fraction */
+               v >>= 2;
+               if (v !=  (op->kc_i & 63))
+               {
+                  UINT32 kc_channel;
 
-		case 0x10:	/* Key Fraction */
-			v >>= 2;
-			if (v !=  (op->kc_i & 63))
-			{
-				UINT32 kc_channel;
+                  kc_channel = v;
+                  kc_channel |= (op->kc_i & ~63);
 
-				kc_channel = v;
-				kc_channel |= (op->kc_i & ~63);
+                  (op+0)->kc_i = kc_channel;
+                  (op+1)->kc_i = kc_channel;
+                  (op+2)->kc_i = kc_channel;
+                  (op+3)->kc_i = kc_channel;
 
-				(op+0)->kc_i = kc_channel;
-				(op+1)->kc_i = kc_channel;
-				(op+2)->kc_i = kc_channel;
-				(op+3)->kc_i = kc_channel;
+                  (op+0)->freq = ( (chip->freq[ kc_channel + (op+0)->dt2 ] + (op+0)->dt1) * (op+0)->mul ) >> 1;
+                  (op+1)->freq = ( (chip->freq[ kc_channel + (op+1)->dt2 ] + (op+1)->dt1) * (op+1)->mul ) >> 1;
+                  (op+2)->freq = ( (chip->freq[ kc_channel + (op+2)->dt2 ] + (op+2)->dt1) * (op+2)->mul ) >> 1;
+                  (op+3)->freq = ( (chip->freq[ kc_channel + (op+3)->dt2 ] + (op+3)->dt1) * (op+3)->mul ) >> 1;
+               }
+               break;
 
-				(op+0)->freq = ( (chip->freq[ kc_channel + (op+0)->dt2 ] + (op+0)->dt1) * (op+0)->mul ) >> 1;
-				(op+1)->freq = ( (chip->freq[ kc_channel + (op+1)->dt2 ] + (op+1)->dt1) * (op+1)->mul ) >> 1;
-				(op+2)->freq = ( (chip->freq[ kc_channel + (op+2)->dt2 ] + (op+2)->dt1) * (op+2)->mul ) >> 1;
-				(op+3)->freq = ( (chip->freq[ kc_channel + (op+3)->dt2 ] + (op+3)->dt1) * (op+3)->mul ) >> 1;
-			}
-			break;
+            case 0x18:	/* PMS, AMS */
+               op->pms = (v>>4) & 7;
+               op->ams = (v & 3);
+               break;
+         }
+         break;
 
-		case 0x18:	/* PMS, AMS */
-			op->pms = (v>>4) & 7;
-			op->ams = (v & 3);
-			break;
-		}
-		break;
+      case 0x40:		/* DT1, MUL */
+         {
+            UINT32 olddt1_i = op->dt1_i;
+            UINT32 oldmul = op->mul;
 
-	case 0x40:		/* DT1, MUL */
-		{
-			UINT32 olddt1_i = op->dt1_i;
-			UINT32 oldmul = op->mul;
+            op->dt1_i = (v&0x70)<<1;
+            op->mul   = (v&0x0f) ? (v&0x0f)<<1: 1;
 
-			op->dt1_i = (v&0x70)<<1;
-			op->mul   = (v&0x0f) ? (v&0x0f)<<1: 1;
+            if (olddt1_i != op->dt1_i)
+               op->dt1 = chip->dt1_freq[ op->dt1_i + (op->kc>>2) ];
 
-			if (olddt1_i != op->dt1_i)
-				op->dt1 = chip->dt1_freq[ op->dt1_i + (op->kc>>2) ];
+            if ( (olddt1_i != op->dt1_i) || (oldmul != op->mul) )
+               op->freq = ( (chip->freq[ op->kc_i + op->dt2 ] + op->dt1) * op->mul ) >> 1;
+         }
+         break;
 
-			if ( (olddt1_i != op->dt1_i) || (oldmul != op->mul) )
-				op->freq = ( (chip->freq[ op->kc_i + op->dt2 ] + op->dt1) * op->mul ) >> 1;
-		}
-		break;
+      case 0x60:		/* TL */
+         op->tl = (v&0x7f)<<(ENV_BITS-7); /* 7bit TL */
+         break;
 
-	case 0x60:		/* TL */
-		op->tl = (v&0x7f)<<(ENV_BITS-7); /* 7bit TL */
-		break;
+      case 0x80:		/* KS, AR */
+         {
+            UINT32 oldks = op->ks;
+            UINT32 oldar = op->ar;
 
-	case 0x80:		/* KS, AR */
-		{
-			UINT32 oldks = op->ks;
-			UINT32 oldar = op->ar;
+            op->ks = 5-(v>>6);
+            op->ar = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
 
-			op->ks = 5-(v>>6);
-			op->ar = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
+            if ( (op->ar != oldar) || (op->ks != oldks) )
+            {
+               if ((op->ar + (op->kc>>op->ks)) < 32+62)
+               {
+                  op->eg_sh_ar  = eg_rate_shift [op->ar  + (op->kc>>op->ks) ];
+                  op->eg_sel_ar = eg_rate_select[op->ar  + (op->kc>>op->ks) ];
+               }
+               else
+               {
+                  op->eg_sh_ar  = 0;
+                  op->eg_sel_ar = 17*RATE_STEPS;
+               }
+            }
 
-			if ( (op->ar != oldar) || (op->ks != oldks) )
-			{
-				if ((op->ar + (op->kc>>op->ks)) < 32+62)
-				{
-					op->eg_sh_ar  = eg_rate_shift [op->ar  + (op->kc>>op->ks) ];
-					op->eg_sel_ar = eg_rate_select[op->ar  + (op->kc>>op->ks) ];
-				}
-				else
-				{
-					op->eg_sh_ar  = 0;
-					op->eg_sel_ar = 17*RATE_STEPS;
-				}
-			}
+            if (op->ks != oldks)
+            {
+               op->eg_sh_d1r = eg_rate_shift [op->d1r + (op->kc>>op->ks) ];
+               op->eg_sel_d1r= eg_rate_select[op->d1r + (op->kc>>op->ks) ];
+               op->eg_sh_d2r = eg_rate_shift [op->d2r + (op->kc>>op->ks) ];
+               op->eg_sel_d2r= eg_rate_select[op->d2r + (op->kc>>op->ks) ];
+               op->eg_sh_rr  = eg_rate_shift [op->rr  + (op->kc>>op->ks) ];
+               op->eg_sel_rr = eg_rate_select[op->rr  + (op->kc>>op->ks) ];
+            }
+         }
+         break;
 
-			if (op->ks != oldks)
-			{
-				op->eg_sh_d1r = eg_rate_shift [op->d1r + (op->kc>>op->ks) ];
-				op->eg_sel_d1r= eg_rate_select[op->d1r + (op->kc>>op->ks) ];
-				op->eg_sh_d2r = eg_rate_shift [op->d2r + (op->kc>>op->ks) ];
-				op->eg_sel_d2r= eg_rate_select[op->d2r + (op->kc>>op->ks) ];
-				op->eg_sh_rr  = eg_rate_shift [op->rr  + (op->kc>>op->ks) ];
-				op->eg_sel_rr = eg_rate_select[op->rr  + (op->kc>>op->ks) ];
-			}
-		}
-		break;
+      case 0xa0:		/* LFO AM enable, D1R */
+         op->AMmask = (v&0x80) ? ~0 : 0;
+         op->d1r    = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
+         op->eg_sh_d1r = eg_rate_shift [op->d1r + (op->kc>>op->ks) ];
+         op->eg_sel_d1r= eg_rate_select[op->d1r + (op->kc>>op->ks) ];
+         break;
 
-	case 0xa0:		/* LFO AM enable, D1R */
-		op->AMmask = (v&0x80) ? ~0 : 0;
-		op->d1r    = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
-		op->eg_sh_d1r = eg_rate_shift [op->d1r + (op->kc>>op->ks) ];
-		op->eg_sel_d1r= eg_rate_select[op->d1r + (op->kc>>op->ks) ];
-		break;
+      case 0xc0:		/* DT2, D2R */
+         {
+            UINT32 olddt2 = op->dt2;
+            op->dt2 = dt2_tab[ v>>6 ];
+            if (op->dt2 != olddt2)
+               op->freq = ( (chip->freq[ op->kc_i + op->dt2 ] + op->dt1) * op->mul ) >> 1;
+         }
+         op->d2r = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
+         op->eg_sh_d2r = eg_rate_shift [op->d2r + (op->kc>>op->ks) ];
+         op->eg_sel_d2r= eg_rate_select[op->d2r + (op->kc>>op->ks) ];
+         break;
 
-	case 0xc0:		/* DT2, D2R */
-		{
-			UINT32 olddt2 = op->dt2;
-			op->dt2 = dt2_tab[ v>>6 ];
-			if (op->dt2 != olddt2)
-				op->freq = ( (chip->freq[ op->kc_i + op->dt2 ] + op->dt1) * op->mul ) >> 1;
-		}
-		op->d2r = (v&0x1f) ? 32 + ((v&0x1f)<<1) : 0;
-		op->eg_sh_d2r = eg_rate_shift [op->d2r + (op->kc>>op->ks) ];
-		op->eg_sel_d2r= eg_rate_select[op->d2r + (op->kc>>op->ks) ];
-		break;
-
-	case 0xe0:		/* D1L, RR */
-		op->d1l = d1l_tab[ v>>4 ];
-		op->rr  = 34 + ((v&0x0f)<<2);
-		op->eg_sh_rr  = eg_rate_shift [op->rr  + (op->kc>>op->ks) ];
-		op->eg_sel_rr = eg_rate_select[op->rr  + (op->kc>>op->ks) ];
-		break;
-	}
+      case 0xe0:		/* D1L, RR */
+         op->d1l = d1l_tab[ v>>4 ];
+         op->rr  = 34 + ((v&0x0f)<<2);
+         op->eg_sh_rr  = eg_rate_shift [op->rr  + (op->kc>>op->ks) ];
+         op->eg_sel_rr = eg_rate_select[op->rr  + (op->kc>>op->ks) ];
+         break;
+   }
 }
 
 int YM2151ReadStatus( int n )
@@ -1881,55 +1871,6 @@ INLINE void advance(void)
 	}
 }
 
-#if 0
-INLINE signed int acc_calc(signed int value)
-{
-	if (value>=0)
-	{
-		if (value < 0x0200)
-			return (value & ~0);
-		if (value < 0x0400)
-			return (value & ~1);
-		if (value < 0x0800)
-			return (value & ~3);
-		if (value < 0x1000)
-			return (value & ~7);
-		if (value < 0x2000)
-			return (value & ~15);
-		if (value < 0x4000)
-			return (value & ~31);
-		return (value & ~63);
-	}
-	/*else value < 0*/
-	if (value > -0x0200)
-		return (~abs(value) & ~0);
-	if (value > -0x0400)
-		return (~abs(value) & ~1);
-	if (value > -0x0800)
-		return (~abs(value) & ~3);
-	if (value > -0x1000)
-		return (~abs(value) & ~7);
-	if (value > -0x2000)
-		return (~abs(value) & ~15);
-	if (value > -0x4000)
-		return (~abs(value) & ~31);
-	return (~abs(value) & ~63);
-}
-#endif
-
-/* first macro saves left and right channels to mono file */
-/* second macro saves left and right channels to stereo file */
-	  #define SAVE_SINGLE_CHANNEL(j)
-
-/* first macro saves left and right channels to mono file */
-/* second macro saves left and right channels to stereo file */
-#if 1	/*MONO*/
-	  #define SAVE_ALL_CHANNELS
-#else	/*STEREO*/
-	  #define SAVE_ALL_CHANNELS
-#endif
-
-
 /*	Generate samples for one of the YM2151's
 *
 *	'num' is the number of virtual YM2151
@@ -1940,12 +1881,9 @@ void YM2151UpdateOne(int num, INT16 **buffers, int length)
 {
 	int i;
 	signed int outl,outr;
-	SAMP *bufL, *bufR;
-
-	bufL = buffers[0];
-	bufR = buffers[1];
-
-	PSG = &YMPSG[num];
+   SAMP *bufL = buffers[0];
+	SAMP *bufR = buffers[1];
+	PSG        = &YMPSG[num];
 
 	if (PSG->tim_B)
 	{
@@ -1976,21 +1914,13 @@ void YM2151UpdateOne(int num, INT16 **buffers, int length)
 		chanout[7] = 0;
 
 		chan_calc(0);
-		SAVE_SINGLE_CHANNEL(0)
 		chan_calc(1);
-		SAVE_SINGLE_CHANNEL(1)
 		chan_calc(2);
-		SAVE_SINGLE_CHANNEL(2)
 		chan_calc(3);
-		SAVE_SINGLE_CHANNEL(3)
 		chan_calc(4);
-		SAVE_SINGLE_CHANNEL(4)
 		chan_calc(5);
-		SAVE_SINGLE_CHANNEL(5)
 		chan_calc(6);
-		SAVE_SINGLE_CHANNEL(6)
 		chan7_calc();
-		SAVE_SINGLE_CHANNEL(7)
 
 		outl = chanout[0] & PSG->pan[0];
 		outr = chanout[0] & PSG->pan[1];
@@ -2017,8 +1947,6 @@ void YM2151UpdateOne(int num, INT16 **buffers, int length)
 			else if (outr < MINOUT) outr = MINOUT;
 		((SAMP*)bufL)[i] = (SAMP)outl;
 		((SAMP*)bufR)[i] = (SAMP)outr;
-
-		SAVE_ALL_CHANNELS
 
 		/* calculate timer A */
 		if (PSG->tim_A)
