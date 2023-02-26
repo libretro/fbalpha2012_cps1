@@ -1,11 +1,12 @@
 #include "cps.h"
-#include "bitswap.h"
 
 /* CPS (palette) */
 
 UINT32* CpsPal = NULL;					/* Hicolor version of palette */
 INT32 nCpsPalCtrlReg;
 INT32 bCpsUpdatePalEveryFrame = 0;	/* Some of the hacks need this as they don't write to CpsReg 0x0a */
+
+#define BIT(x,n) 		(((x)>>(n))&1)
 
 INT32 CpsPalInit()
 {

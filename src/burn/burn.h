@@ -25,29 +25,6 @@
 #include <time.h>
 
 extern TCHAR szAppHiscorePath[MAX_PATH];
-extern TCHAR szAppSamplesPath[MAX_PATH];
-
-/* Give access to the CPUID function for various compilers */
-#if defined (__GNUC__)
- #define CPUID(f,ra,rb,rc,rd) __asm__ __volatile__ ("cpuid"											\
- 													: "=a" (ra), "=b" (rb), "=c" (rc), "=d" (rd)	\
- 													: "a"  (f)										\
- 												   );
-#elif defined (_MSC_VER)
- #define CPUID(f,ra,rb,rc,rd) __asm { __asm mov		eax, f		\
-									  __asm cpuid				\
-									  __asm mov		ra, eax		\
-									  __asm mov		rb, ebx		\
-									  __asm mov		rc, ecx		\
-									  __asm mov		rd, edx }
-#else
- #define CPUID(f,ra,rb,rc,rd)
-#endif
-
-#ifndef BUILD_X86_ASM
- #undef CPUID
- #define CPUID(f,ra,rb,rc,rd)
-#endif
 
 #ifdef _UNICODE
  #define SEPERATOR_1 " \u2022 "
@@ -55,12 +32,6 @@ extern TCHAR szAppSamplesPath[MAX_PATH];
 #else
  #define SEPERATOR_1 " ~ "
  #define SEPERATOR_2 " ~ "
-#endif
-
-#ifdef _UNICODE
- #define WRITE_UNICODE_BOM(file) { UINT16 BOM[] = { 0xFEFF }; fwrite(BOM, 2, 1, file); }
-#else
- #define WRITE_UNICODE_BOM(file)
 #endif
 
 typedef unsigned char						UINT8;
@@ -222,8 +193,6 @@ INT32 BurnDrvGetPaletteEntries();
 INT32 BurnSetProgressRange(double dProgressRange);
 INT32 BurnUpdateProgress(double dProgressStep, const TCHAR* pszText, bool bAbs);
 
-void BurnLocalisationSetName(char *szName, TCHAR *szLongName);
-
 /* ---------------------------------------------------------------------------
  * Retrieve driver information
  */
@@ -266,11 +235,6 @@ INT32 BurnDrvGetFamilyFlags();
 INT32 BurnDrvGetSampleInfo(struct BurnSampleInfo *pri, UINT32 i);
 INT32 BurnDrvGetSampleName(char** pszName, UINT32 i, INT32 nAka);
 
-void Reinitialise();
-
-extern bool bDoIpsPatch;
-void IpsApplyPatches(UINT8* base, char* rom_name);
-
 /* ---------------------------------------------------------------------------
  * Flags used with the Burndriver structure
 
@@ -297,199 +261,12 @@ void IpsApplyPatches(UINT8* base, char* rom_name);
 
 #define HARDWARE_PREFIX_CARTRIDGE						(0x80000000)
 
-#define HARDWARE_PREFIX_MISC_PRE90S						(0x00000000)
 #define HARDWARE_PREFIX_CAPCOM							(0x01000000)
-#define HARDWARE_PREFIX_SEGA							(0x02000000)
-#define HARDWARE_PREFIX_KONAMI							(0x03000000)
-#define HARDWARE_PREFIX_TOAPLAN							(0x04000000)
-#define HARDWARE_PREFIX_SNK								(0x05000000)
-#define HARDWARE_PREFIX_CAVE							(0x06000000)
-#define HARDWARE_PREFIX_CPS2							(0x07000000)
-#define HARDWARE_PREFIX_IGS_PGM							(0x08000000)
-#define HARDWARE_PREFIX_CPS3							(0x09000000)
-#define HARDWARE_PREFIX_MISC_POST90S					(0x0a000000)
-#define HARDWARE_PREFIX_TAITO							(0x0b000000)
-#define HARDWARE_PREFIX_SEGA_MEGADRIVE					(0x0c000000)
-#define HARDWARE_PREFIX_PSIKYO							(0x0d000000)
-#define HARDWARE_PREFIX_KANEKO							(0x0e000000)
-#define HARDWARE_PREFIX_PACMAN							(0x0f000000)
-#define HARDWARE_PREFIX_GALAXIAN						(0x10000000)
-#define HARDWARE_PREFIX_IREM							(0x11000000)
-#define HARDWARE_PREFIX_NINTENDO_SNES					(0x12000000)
-#define HARDWARE_PREFIX_DATAEAST						(0x13000000)
-#define HARDWARE_PREFIX_CAPCOM_MISC						(0x14000000)
-#define HARDWARE_PREFIX_SETA							(0x15000000)
-#define HARDWARE_PREFIX_TECHNOS							(0x16000000)
-#define HARDWARE_PREFIX_PCENGINE						(0x17000000)
-
-#define HARDWARE_MISC_PRE90S							(HARDWARE_PREFIX_MISC_PRE90S)
-#define HARDWARE_MISC_POST90S							(HARDWARE_PREFIX_MISC_POST90S)
 
 #define HARDWARE_CAPCOM_CPS1							(HARDWARE_PREFIX_CAPCOM | 0x00010000)
 #define HARDWARE_CAPCOM_CPS1_QSOUND 					(HARDWARE_PREFIX_CAPCOM | 0x00020000)
 #define HARDWARE_CAPCOM_CPS1_GENERIC 					(HARDWARE_PREFIX_CAPCOM | 0x00030000)
 #define HARDWARE_CAPCOM_CPSCHANGER						(HARDWARE_PREFIX_CAPCOM | 0x00040000)
-#define HARDWARE_CAPCOM_CPS2							(HARDWARE_PREFIX_CPS2 | 0x00010000)
-#define HARDWARE_CAPCOM_CPS2_SIMM						(0x0002)
-
-#define HARDWARE_SEGA_SYSTEMX							(HARDWARE_PREFIX_SEGA | 0x00010000)
-#define HARDWARE_SEGA_SYSTEMY							(HARDWARE_PREFIX_SEGA | 0x00020000)
-#define HARDWARE_SEGA_SYSTEM16A							(HARDWARE_PREFIX_SEGA | 0x00030000)
-#define HARDWARE_SEGA_SYSTEM16B 						(HARDWARE_PREFIX_SEGA | 0x00040000)
-#define HARDWARE_SEGA_SYSTEM16M							(HARDWARE_PREFIX_SEGA | 0x00050000)
-#define HARDWARE_SEGA_SYSTEM18							(HARDWARE_PREFIX_SEGA | 0x00060000)
-#define HARDWARE_SEGA_HANGON							(HARDWARE_PREFIX_SEGA | 0x00070000)
-#define HARDWARE_SEGA_OUTRUN							(HARDWARE_PREFIX_SEGA | 0x00080000)
-#define HARDWARE_SEGA_SYSTEM1							(HARDWARE_PREFIX_SEGA | 0x00090000)
-#define HARDWARE_SEGA_MISC								(HARDWARE_PREFIX_SEGA | 0x000a0000)
-
-#define HARDWARE_SEGA_FD1089A_ENC						(0x0001)
-#define HARDWARE_SEGA_FD1089B_ENC						(0x0002)
-#define HARDWARE_SEGA_5358								(0x0004)
-#define HARDWARE_SEGA_MC8123_ENC						(0x0008)
-#define HARDWARE_SEGA_BAYROUTE_MEMMAP					(0x0010)
-#define HARDWARE_SEGA_ALT_MEMMAP						(0x0020)
-#define HARDWARE_SEGA_FD1094_ENC						(0x0040)
-#define HARDWARE_SEGA_SPRITE_LOAD32						(0x0080)
-#define HARDWARE_SEGA_YM2203							(0x0100)
-#define HARDWARE_SEGA_INVERT_TILES						(0x0200)
-#define HARDWARE_SEGA_5521								(0x0400)
-#define HARDWARE_SEGA_5797								(0x0800)
-#define HARDWARE_SEGA_YM2413							(0x1000)
-#define HARDWARE_SEGA_FD1094_ENC_CPU2					(0x2000)
-#define HARDWARE_SEGA_ISGSM								(0x4000)
-#define HARDWARE_SEGA_5704_PS2							(0x8000)
-
-#define HARDWARE_KONAMI_68K_Z80							(HARDWARE_PREFIX_KONAMI | 0x00010000)
-#define HARDWARE_KONAMI_68K_ONLY						(HARDWARE_PREFIX_KONAMI | 0x00020000)
-
-#define HARDWARE_TOAPLAN_RAIZING						(HARDWARE_PREFIX_TOAPLAN | 0x00010000)
-#define HARDWARE_TOAPLAN_68K_Zx80						(HARDWARE_PREFIX_TOAPLAN | 0x00020000)
-#define HARDWARE_TOAPLAN_68K_ONLY						(HARDWARE_PREFIX_TOAPLAN | 0x00030000)
-#define HARDWARE_TOAPLAN_MISC							(HARDWARE_PREFIX_TOAPLAN | 0x00040000)
-
-#define HARDWARE_SNK_NEOGEO								(HARDWARE_PREFIX_SNK | 0x00010000)
-#define HARDWARE_SNK_SWAPP								(0x0001)	/* Swap code roms */
-#define HARDWARE_SNK_SWAPV								(0x0002)	/* Swap sound roms */
-#define HARDWARE_SNK_SWAPC								(0x0004)	/* Swap sprite roms */
-#define HARDWARE_SNK_CMC42								(0x0008)	/* CMC42 encryption chip */
-#define HARDWARE_SNK_CMC50								(0x0010)	/* CMC50 encryption chip */
-#define HARDWARE_SNK_ALTERNATE_TEXT						(0x0020)	/* KOF2000 text layer banks */
-#define HARDWARE_SNK_SMA_PROTECTION						(0x0040)	/* SMA protection */
-#define HARDWARE_SNK_KOF2K3								(0x0080)	/* KOF2K3 hardware */
-#define HARDWARE_SNK_ENCRYPTED_M1						(0x0100)	/* M1 encryption */
-#define HARDWARE_SNK_P32								(0x0200)	/* SWAP32 P ROMs */
-#define HARDWARE_SNK_SPRITE32							(0x0400)
-
-#define HARDWARE_SNK_CONTROLMASK						(0xF000)
-#define HARDWARE_SNK_JOYSTICK							(0x0000)	/* Uses joysticks */
-#define HARDWARE_SNK_PADDLE								(0x1000)	/* Uses joysticks or paddles */
-#define HARDWARE_SNK_TRACKBALL							(0x2000)	/* Uses a trackball */
-#define HARDWARE_SNK_4_JOYSTICKS						(0x3000)	/* Uses 4 joysticks */
-#define HARDWARE_SNK_MAHJONG							(0x4000)	/* Uses a special mahjong controller */
-#define HARDWARE_SNK_GAMBLING							(0x5000)	/* Uses gambling controls */
-
-#define HARDWARE_SNK_MVS								(HARDWARE_PREFIX_SNK | 0x00020000)
-#define HARDWARE_SNK_NEOCD								(HARDWARE_PREFIX_SNK | 0x00030000)
-#define HARDWARE_SNK_DEDICATED_PCB						(HARDWARE_PREFIX_SNK | 0x00040000)
-
-#define HARDWARE_CAVE_68K_ONLY							(HARDWARE_PREFIX_CAVE)
-#define HARDWARE_CAVE_68K_Z80							(HARDWARE_PREFIX_CAVE | 0x0001)
-#define HARDWARE_CAVE_M6295								(0x0002)
-#define HARDWARE_CAVE_YM2151							(0x0004)
-
-#define HARDWARE_IGS_PGM								(HARDWARE_PREFIX_IGS_PGM)
-#define HARDWARE_IGS_USE_ARM_CPU						(0x0001)
-
-#define HARDWARE_CAPCOM_CPS3							(HARDWARE_PREFIX_CPS3)
-#define HARDWARE_CAPCOM_CPS3_NO_CD   					(0x0001)
-
-#define HARDWARE_TAITO_TAITOZ							(HARDWARE_PREFIX_TAITO | 0x00010000)
-#define HARDWARE_TAITO_TAITOF2							(HARDWARE_PREFIX_TAITO | 0x00020000)
-#define HARDWARE_TAITO_MISC								(HARDWARE_PREFIX_TAITO | 0x00030000)
-#define HARDWARE_TAITO_TAITOX							(HARDWARE_PREFIX_TAITO | 0x00040000)
-#define HARDWARE_TAITO_TAITOB							(HARDWARE_PREFIX_TAITO | 0x00050000)
-
-#define HARDWARE_IREM_M62								(HARDWARE_PREFIX_IREM | 0x00010000)
-#define HARDWARE_IREM_M63								(HARDWARE_PREFIX_IREM | 0x00020000)
-#define HARDWARE_IREM_M72								(HARDWARE_PREFIX_IREM | 0x00030000)
-#define HARDWARE_IREM_M90								(HARDWARE_PREFIX_IREM | 0x00040000)
-#define HARDWARE_IREM_M92								(HARDWARE_PREFIX_IREM | 0x00050000)
-#define HARDWARE_IREM_MISC								(HARDWARE_PREFIX_IREM | 0x00060000)
-
-#define HARDWARE_SEGA_MEGADRIVE							(HARDWARE_PREFIX_SEGA_MEGADRIVE)
-
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SEGA_EEPROM			(1)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SEGA_SRAM			(2)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SEGA_FRAM			(3)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_CM_JCART			(4)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_CM_JCART_SEPROM		(5)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_CODE_MASTERS		(6)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SSF2				(7)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_GAME_KANDUME		(8)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_BEGGAR				(9)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_NBA_JAM				(10)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_NBA_JAM_TE			(11)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_NFL_QB_96			(12)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_C_SLAM				(13)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_EA_NHLPA			(14)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_LIONK3				(15)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SDK99				(16)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SKINGKONG			(17)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_REDCL_EN			(18)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_RADICA				(19)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_KOF98				(20)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_KOF99				(21)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SOULBLAD			(22)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_MJLOVER				(23)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SQUIRRELK			(24)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SMOUSE				(25)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SMB					(26)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SMB2				(27)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_KAIJU				(28)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_CHINFIGHT3			(29)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_LIONK2				(30)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_BUGSLIFE			(31)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_ELFWOR				(32)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_ROCKMANX3			(33)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_SBUBBOB				(34)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_REALTEC				(35)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_MC_SUP19IN1			(36)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_MC_SUP15IN1			(37)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_12IN1				(38)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_TOPFIGHTER			(39)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_POKEMON				(40)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_POKEMON2			(41)
-#define HARDWARE_SEGA_MEGADRIVE_PCB_MULAN				(42)
-
-#define HARDWARE_SEGA_MEGADRIVE_SRAM_00400				(0x0100)
-#define HARDWARE_SEGA_MEGADRIVE_SRAM_00800				(0x0200)
-#define HARDWARE_SEGA_MEGADRIVE_SRAM_01000				(0x0400)
-#define HARDWARE_SEGA_MEGADRIVE_SRAM_04000				(0x0800)
-#define HARDWARE_SEGA_MEGADRIVE_SRAM_10000				(0x1000)
-#define HARDWARE_SEGA_MEGADRIVE_FRAM_00400				(0x2000)
-
-#define HARDWARE_PSIKYO									(HARDWARE_PREFIX_PSIKYO)
-
-#define HARDWARE_KANEKO16								(HARDWARE_PREFIX_KANEKO | 0x10000)
-#define HARDWARE_KANEKO_MISC							(HARDWARE_PREFIX_KANEKO | 0x20000)
-
-#define HARDWARE_PACMAN									(HARDWARE_PREFIX_PACMAN)
-
-#define HARDWARE_GALAXIAN								(HARDWARE_PREFIX_GALAXIAN)
-
-#define HARDWARE_NINTENDO_SNES							(HARDWARE_PREFIX_NINTENDO_SNES)
-
-#define HARWARE_CAPCOM_MISC								(HARDWARE_PREFIX_CAPCOM_MISC)
-
-#define HARDWARE_SETA1									(HARDWARE_PREFIX_SETA | 0x10000)
-#define HARDWARE_SETA2									(HARDWARE_PREFIX_SETA | 0x10000)
-
-#define HARDWARE_TECHNOS								(HARDWARE_PREFIX_TECHNOS)
-
-#define HARDWARE_PCENGINE_PCENGINE						(HARDWARE_PREFIX_PCENGINE | 0x00010000)
-#define HARDWARE_PCENGINE_TG16							(HARDWARE_PREFIX_PCENGINE | 0x00020000)
-#define HARDWARE_PCENGINE_SGX							(HARDWARE_PREFIX_PCENGINE | 0x00030000)
 
 /* flags for the genre member */
 #define GBF_HORSHOOT									(1 << 0)
@@ -514,17 +291,9 @@ void IpsApplyPatches(UINT8* base, char* rom_name);
 #define GBF_SHOOT										(1 << 19)
 
 /* flags for the family member */
-#define FBF_MSLUG										(1 << 0)
 #define FBF_SF											(1 << 1)
-#define FBF_KOF											(1 << 2)
-#define FBF_DSTLK										(1 << 3)
-#define FBF_FATFURY										(1 << 4)
-#define FBF_SAMSHO										(1 << 5)
 #define FBF_19XX										(1 << 6)
-#define FBF_SONICWI										(1 << 7)
-#define FBF_PWRINST										(1 << 8)
 
 #ifdef __cplusplus
  } /* End of extern "C" */
 #endif
-

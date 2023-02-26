@@ -387,18 +387,6 @@ extern "C" char* BurnDrvGetTextA(UINT32 i)
 	}
 }
 
-#if defined (_UNICODE)
-void BurnLocalisationSetName(char *szName, TCHAR *szLongName)
-{
-	for (UINT32 i = 0; i < nBurnDrvCount; i++) {
-		nBurnDrvActive = i;
-		if (!strcmp(szName, pDriver[i]->szShortName)) {
-			pDriver[i]->szFullNameW = szLongName;
-		}
-	}
-}
-#endif
-
 /* Get the zip names for the driver */
 extern "C" INT32 BurnDrvGetZipName(char** pszName, UINT32 i)
 {
