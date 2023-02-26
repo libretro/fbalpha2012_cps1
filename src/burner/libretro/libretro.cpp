@@ -1389,16 +1389,6 @@ static void low_pass_filter_stereo(int16_t *buf, int length)
    low_pass_right_prev = low_pass_right;
 }
 
-// FBA stubs
-unsigned ArcadeJoystick;
-
-int bDrvOkay;
-int bRunPause;
-bool bAlwaysProcessKeyboardInput;
-
-TCHAR szAppHiscorePath[MAX_PATH];
-TCHAR szAppBurnVer[16];
-
 static int nDIPOffset;
 
 static void InpDIPSWGetOffset (void)

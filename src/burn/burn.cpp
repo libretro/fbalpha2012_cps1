@@ -5,11 +5,8 @@
 #include "burn_sound.h"
 #include "driverlist.h"
 
-INT32 nBurnVer = BURN_VERSION;		/* Version number of the library */
-
 UINT32 nBurnDrvCount = 0;		/* Count of game drivers */
 UINT32 nBurnDrvActive = ~0U;	/* Which game driver is selected */
-UINT32 nBurnDrvSelect[8] = { ~0U, ~0U, ~0U, ~0U, ~0U, ~0U, ~0U, ~0U }; /* Which games are selected (i.e. loaded but not necessarily active) */
 									
 #if defined BUILD_A68K
 bool bBurnUseASMCPUEmulation = true;
@@ -72,44 +69,44 @@ INT32 BurnGetZipName(char** pszName, UINT32 i)
 	if (i == 0)
 		pszGameName = pDriver[nBurnDrvActive]->szShortName;
 	else
-   {
-      INT32 nOldBurnDrvSelect = nBurnDrvActive;
-      UINT32 j = pDriver[nBurnDrvActive]->szBoardROM ? 1 : 0;
+	{
+		INT32 nOldBurnDrvSelect = nBurnDrvActive;
+		UINT32 j = pDriver[nBurnDrvActive]->szBoardROM ? 1 : 0;
 
-      /* Try BIOS/board ROMs first */
-      if (i == 1 && j == 1) /* There is a BIOS/board ROM */
-         pszGameName = pDriver[nBurnDrvActive]->szBoardROM;
+		/* Try BIOS/board ROMs first */
+		if (i == 1 && j == 1) /* There is a BIOS/board ROM */
+			pszGameName = pDriver[nBurnDrvActive]->szBoardROM;
 
-      if (pszGameName == NULL)
-      {
-         /* Go through the list to seek out the parent */
-         while (j < i)
-         {
-            char* pszParent = pDriver[nBurnDrvActive]->szParent;
-            pszGameName = NULL;
+		if (pszGameName == NULL)
+		{
+			/* Go through the list to seek out the parent */
+			while (j < i)
+			{
+				char* pszParent = pDriver[nBurnDrvActive]->szParent;
+				pszGameName = NULL;
 
-            if (pszParent == NULL) /* No parent */
-               break;
+				if (pszParent == NULL) /* No parent */
+					break;
 
-            for (nBurnDrvActive = 0; nBurnDrvActive < nBurnDrvCount; nBurnDrvActive++) {
-               if (strcmp(pszParent,
-                        pDriver[nBurnDrvActive]->szShortName) == 0)
-               {
-                  /* Found parent */
-                  pszGameName = pDriver[nBurnDrvActive]->szShortName;
-                  break;
-               }
-            }
+				for (nBurnDrvActive = 0; nBurnDrvActive < nBurnDrvCount; nBurnDrvActive++) {
+					if (strcmp(pszParent,
+								pDriver[nBurnDrvActive]->szShortName) == 0)
+					{
+						/* Found parent */
+						pszGameName = pDriver[nBurnDrvActive]->szShortName;
+						break;
+					}
+				}
 
-            j++;
-         }
-      }
+				j++;
+			}
+		}
 
-      nBurnDrvActive = nOldBurnDrvSelect;
-   }
+		nBurnDrvActive = nOldBurnDrvSelect;
+	}
 
 	if (pszGameName == NULL)
-   {
+	{
 		*pszName = NULL;
 		return 1;
 	}
@@ -214,11 +211,8 @@ extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 		}
 
 #if defined (_UNICODE)
-
-		if (pszStringW && pszStringW[0]) {
+		if (pszStringW && pszStringW[0])
 			return pszStringW;
-		}
-
 #else
 
 		switch (i & 0xFF) {
@@ -251,11 +245,10 @@ extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 				break;
 		}
 
-		if (pszStringW && pszStringA && pszStringW[0]) {
-			if (wcstombs(pszStringA, pszStringW, 256) != -1U) {
+		if (pszStringW && pszStringA && pszStringW[0])
+		{
+			if (wcstombs(pszStringA, pszStringW, 256) != -1U)
 				return pszStringA;
-			}
-
 		}
 
 		pszStringA = NULL;
@@ -264,9 +257,8 @@ extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 
 	}
 
-	if (i & DRV_UNICODEONLY) {
+	if (i & DRV_UNICODEONLY)
 		return NULL;
-	}
 
 	switch (i & 0xFF) {
 		case DRV_NAME:
@@ -342,18 +334,15 @@ extern "C" TCHAR* BurnDrvGetText(UINT32 i)
 			break;
 	}
 
-	if (pszStringW && pszStringA && pszStringA[0]) {
-		if (mbstowcs(pszStringW, pszStringA, 256) != -1U) {
+	if (pszStringW && pszStringA && pszStringA[0])
+	{
+		if (mbstowcs(pszStringW, pszStringA, 256) != -1U)
 			return pszStringW;
-		}
 	}
 
 #else
-
-	if (pszStringA && pszStringA[0]) {
+	if (pszStringA && pszStringA[0])
 		return pszStringA;
-	}
-
 #endif
 
 	return NULL;
@@ -383,8 +372,9 @@ extern "C" char* BurnDrvGetTextA(UINT32 i)
 		case DRV_SAMPLENAME:
 			return pDriver[nBurnDrvActive]->szSampleName;
 		default:
-			return NULL;
+			break;
 	}
+	return NULL;
 }
 
 /* Get the zip names for the driver */
@@ -441,14 +431,6 @@ extern "C" INT32 BurnDrvGetVisibleSize(INT32* pnWidth, INT32* pnHeight)
 	return 0;
 }
 
-extern "C" INT32 BurnDrvGetVisibleOffs(INT32* pnLeft, INT32* pnTop)
-{
-	*pnLeft = 0;
-	*pnTop = 0;
-
-	return 0;
-}
-
 extern "C" INT32 BurnDrvGetFullSize(INT32* pnWidth, INT32* pnHeight)
 {
 	if (pDriver[nBurnDrvActive]->Flags & BDF_ORIENTATION_VERTICAL) {
@@ -460,36 +442,6 @@ extern "C" INT32 BurnDrvGetFullSize(INT32* pnWidth, INT32* pnHeight)
 	}
 
 	return 0;
-}
-
-/* Get screen aspect ratio */
-extern "C" INT32 BurnDrvGetAspect(INT32* pnXAspect, INT32* pnYAspect)
-{
-	*pnXAspect = pDriver[nBurnDrvActive]->nXAspect;
-	*pnYAspect = pDriver[nBurnDrvActive]->nYAspect;
-
-	return 0;
-}
-
-extern "C" INT32 BurnDrvSetVisibleSize(INT32 pnWidth, INT32 pnHeight)
-{
-	if (pDriver[nBurnDrvActive]->Flags & BDF_ORIENTATION_VERTICAL) {
-		pDriver[nBurnDrvActive]->nHeight = pnWidth;
-		pDriver[nBurnDrvActive]->nWidth = pnHeight;
-	} else {
-		pDriver[nBurnDrvActive]->nWidth = pnWidth;
-		pDriver[nBurnDrvActive]->nHeight = pnHeight;
-	}
-	
-	return 0;
-}
-
-extern "C" INT32 BurnDrvSetAspect(INT32 pnXAspect,INT32 pnYAspect)
-{
-	pDriver[nBurnDrvActive]->nXAspect = pnXAspect;
-	pDriver[nBurnDrvActive]->nYAspect = pnYAspect;
-
-	return 0;	
 }
 
 /* Get the hardware code */
@@ -504,28 +456,10 @@ extern "C" INT32 BurnDrvGetFlags(void)
 	return pDriver[nBurnDrvActive]->Flags;
 }
 
-/* Return BDF_WORKING flag */
-extern "C" bool BurnDrvIsWorking(void)
-{
-	return pDriver[nBurnDrvActive]->Flags & BDF_GAME_WORKING;
-}
-
-/* Return max. number of players */
-extern "C" INT32 BurnDrvGetMaxPlayers(void)
-{
-	return pDriver[nBurnDrvActive]->Players;
-}
-
 /* Return genre flags */
 extern "C" INT32 BurnDrvGetGenreFlags(void)
 {
 	return pDriver[nBurnDrvActive]->Genre;
-}
-
-/* Return family flags */
-extern "C" INT32 BurnDrvGetFamilyFlags(void)
-{
-	return pDriver[nBurnDrvActive]->Family;
 }
 
 /* Init game emulation (loading any needed roms) */
@@ -535,34 +469,6 @@ extern "C" INT32 BurnDrvInit(void)
 
 	if (nBurnDrvActive >= nBurnDrvCount)
 		return 1;
-
-#if defined (FBA_DEBUG)
-	{
-		TCHAR szText[1024] = _T("");
-		TCHAR* pszPosition = szText;
-		TCHAR* pszName = BurnDrvGetText(DRV_FULLNAME);
-		INT32 nName = 1;
-
-		while ((pszName = BurnDrvGetText(DRV_NEXTNAME | DRV_FULLNAME)) != NULL) {
-			nName++;
-		}
-
-		/* Print the title */
-
-		// Then print the alternative titles
-
-		if (nName > 1) {
-			pszName = BurnDrvGetText(DRV_FULLNAME);
-			nName = 1;
-			while ((pszName = BurnDrvGetText(DRV_NEXTNAME | DRV_FULLNAME)) != NULL) {
-				if (pszPosition + _tcslen(pszName) - 1022 > szText) {
-					break;
-				}
-				nName++;
-			}
-		}
-	}
-#endif
 
 	BurnSetRefreshRate(60.0);
 
@@ -593,40 +499,8 @@ extern "C" INT32 BurnDrvExit()
 	INT32 nRet = pDriver[nBurnDrvActive]->Exit();			/* Forward to drivers function */
 	
 	BurnExitMemoryManager();
-#if defined FBA_DEBUG
-	DebugTrackerExit();
-#endif
 
 	return nRet;
-}
-
-INT32 (__cdecl* BurnExtCartridgeSetupCallback)(BurnCartrigeCommand nCommand) = NULL;
-
-INT32 BurnDrvCartridgeSetup(BurnCartrigeCommand nCommand)
-{
-	if (nBurnDrvActive >= nBurnDrvCount || BurnExtCartridgeSetupCallback == NULL) {
-		return 1;
-	}
-
-	if (nCommand == CART_EXIT) {
-		return pDriver[nBurnDrvActive]->Exit();
-	}
-
-	if (nCommand != CART_INIT_END && nCommand != CART_INIT_START) {
-		return 1;
-	}
-
-	BurnExtCartridgeSetupCallback(CART_INIT_END);
-
-	if (BurnExtCartridgeSetupCallback(CART_INIT_START)) {
-		return 1;
-	}
-
-	if (nCommand == CART_INIT_START) {
-		return pDriver[nBurnDrvActive]->Init();
-	}
-
-	return 0;
 }
 
 /* Do one frame of game emulation */
@@ -634,15 +508,6 @@ extern "C" INT32 BurnDrvFrame(void)
 {
 	HiscoreApply();
 	return pDriver[nBurnDrvActive]->Frame();		/* Forward to drivers function */
-}
-
-/* Force redraw of the screen */
-extern "C" INT32 BurnDrvRedraw(void)
-{
-	if (pDriver[nBurnDrvActive]->Redraw)
-		return pDriver[nBurnDrvActive]->Redraw();	/* Forward to drivers function */
-
-	return 1;										/* No funtion provide, so simply return */
 }
 
 /* Refresh Palette */
@@ -657,11 +522,6 @@ extern "C" INT32 BurnRecalcPal()
 	}
 
 	return 0;
-}
-
-extern "C" INT32 BurnDrvGetPaletteEntries()
-{
-	return pDriver[nBurnDrvActive]->nPaletteEntries;
 }
 
 INT32 (__cdecl *BurnExtProgressRangeCallback)(double fProgressRange) = NULL;

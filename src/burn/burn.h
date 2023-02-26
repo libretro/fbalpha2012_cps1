@@ -24,16 +24,6 @@
 
 #include <time.h>
 
-extern TCHAR szAppHiscorePath[MAX_PATH];
-
-#ifdef _UNICODE
- #define SEPERATOR_1 " \u2022 "
- #define SEPERATOR_2 " \u25E6 "
-#else
- #define SEPERATOR_1 " ~ "
- #define SEPERATOR_2 " ~ "
-#endif
-
 typedef unsigned char						UINT8;
 typedef signed char 						INT8;
 typedef unsigned short						UINT16;
@@ -52,10 +42,6 @@ __extension__ typedef long long				INT64;
 #include "cheat.h"
 #include "hiscore.h"
 
-extern INT32 nBurnVer;						/* Version number of the library */
-
-enum BurnCartrigeCommand { CART_INIT_START, CART_INIT_END, CART_EXIT };
-
 /* ---------------------------------------------------------------------------
  * Callbacks
  */
@@ -66,9 +52,6 @@ extern INT32 (__cdecl *BurnExtLoadRom)(UINT8* Dest, INT32* pnWrote, INT32 i);
 /* Application-defined progress indicator functions */
 extern INT32 (__cdecl *BurnExtProgressRangeCallback)(double dProgressRange);
 extern INT32 (__cdecl *BurnExtProgressUpdateCallback)(double dProgress, const TCHAR* pszText, bool bAbs);
-
-/* Application-defined catridge initialisation function */
-extern INT32 (__cdecl *BurnExtCartridgeSetupCallback)(BurnCartrigeCommand nCommand);
 
 /* Application-defined colour conversion function */
 extern UINT32 (__cdecl *BurnHighCol) (INT32 r, INT32 g, INT32 b, INT32 i);
@@ -151,7 +134,6 @@ extern INT32 nBurnCPUSpeedAdjust;
 
 extern UINT32 nBurnDrvCount;			/* Count of game drivers */
 extern UINT32 nBurnDrvActive;			/* Which game driver is selected */
-extern UINT32 nBurnDrvSelect[8];		/* Which games are selected (i.e. loaded but not necessarily active) */
 
 extern INT32 nMaxPlayers;
 
@@ -172,23 +154,14 @@ extern INT32 nFMInterpolation;				/* Desired interpolation level for FM sound */
 
 extern UINT32 *pBurnDrvPalette;
 
-#define PRINT_NORMAL	(0)
-#define PRINT_UI		(1)
-#define PRINT_IMPORTANT (2)
-#define PRINT_ERROR		(3)
-
 INT32 BurnLibInit();
 INT32 BurnLibExit();
 
 INT32 BurnDrvInit();
 INT32 BurnDrvExit();
 
-INT32 BurnDrvCartridgeSetup(BurnCartrigeCommand nCommand);
-
 INT32 BurnDrvFrame();
-INT32 BurnDrvRedraw();
 INT32 BurnRecalcPal();
-INT32 BurnDrvGetPaletteEntries();
 
 INT32 BurnSetProgressRange(double dProgressRange);
 INT32 BurnUpdateProgress(double dProgressStep, const TCHAR* pszText, bool bAbs);
@@ -221,17 +194,10 @@ INT32 BurnDrvGetRomName(char** pszName, UINT32 i, INT32 nAka);
 INT32 BurnDrvGetInputInfo(struct BurnInputInfo* pii, UINT32 i);
 INT32 BurnDrvGetDIPInfo(struct BurnDIPInfo* pdi, UINT32 i);
 INT32 BurnDrvGetVisibleSize(INT32* pnWidth, INT32* pnHeight);
-INT32 BurnDrvGetVisibleOffs(INT32* pnLeft, INT32* pnTop);
 INT32 BurnDrvGetFullSize(INT32* pnWidth, INT32* pnHeight);
-INT32 BurnDrvGetAspect(INT32* pnXAspect, INT32* pnYAspect);
 INT32 BurnDrvGetHardwareCode();
 INT32 BurnDrvGetFlags();
-bool BurnDrvIsWorking();
-INT32 BurnDrvGetMaxPlayers();
-INT32 BurnDrvSetVisibleSize(INT32 pnWidth, INT32 pnHeight);
-INT32 BurnDrvSetAspect(INT32 pnXAspect, INT32 pnYAspect);
 INT32 BurnDrvGetGenreFlags();
-INT32 BurnDrvGetFamilyFlags();
 INT32 BurnDrvGetSampleInfo(struct BurnSampleInfo *pri, UINT32 i);
 INT32 BurnDrvGetSampleName(char** pszName, UINT32 i, INT32 nAka);
 
@@ -240,28 +206,26 @@ INT32 BurnDrvGetSampleName(char** pszName, UINT32 i, INT32 nAka);
 
  * Flags for the flags member
  */
-#define BDF_GAME_WORKING								(1 << 0)
-#define BDF_ORIENTATION_FLIPPED							(1 << 1)
-#define BDF_ORIENTATION_VERTICAL						(1 << 2)
-#define BDF_BOARDROM									(1 << 3)
-#define BDF_CLONE										(1 << 4)
-#define BDF_BOOTLEG										(1 << 5)
-#define BDF_PROTOTYPE									(1 << 6)
-#define BDF_16BIT_ONLY									(1 << 7)
-#define BDF_HACK										(1 << 8)
-#define BDF_HOMEBREW									(1 << 9)
-#define BDF_DEMO										(1 << 10)
-#define BDF_HISCORE_SUPPORTED							(1 << 11)
+#define BDF_GAME_WORKING (1 << 0)
+#define BDF_ORIENTATION_FLIPPED (1 << 1)
+#define BDF_ORIENTATION_VERTICAL (1 << 2)
+#define BDF_BOARDROM (1 << 3)
+#define BDF_CLONE (1 << 4)
+#define BDF_BOOTLEG (1 << 5)
+#define BDF_PROTOTYPE (1 << 6)
+#define BDF_16BIT_ONLY (1 << 7)
+#define BDF_HACK (1 << 8)
+#define BDF_HOMEBREW (1 << 9)
+#define BDF_DEMO (1 << 10)
+#define BDF_HISCORE_SUPPORTED (1 << 11)
 
 /* Flags for the hardware member
  * Format: 0xDDEEFFFF, where EE: Manufacturer, DD: Hardware platform, FFFF: Flags (used by driver)
  */
 
-#define HARDWARE_PUBLIC_MASK							(0xFFFF0000)
-
-#define HARDWARE_PREFIX_CARTRIDGE						(0x80000000)
-
-#define HARDWARE_PREFIX_CAPCOM							(0x01000000)
+#define HARDWARE_PUBLIC_MASK (0xFFFF0000)
+#define HARDWARE_PREFIX_CARTRIDGE (0x80000000)
+#define HARDWARE_PREFIX_CAPCOM (0x01000000)
 
 #define HARDWARE_CAPCOM_CPS1							(HARDWARE_PREFIX_CAPCOM | 0x00010000)
 #define HARDWARE_CAPCOM_CPS1_QSOUND 					(HARDWARE_PREFIX_CAPCOM | 0x00020000)
@@ -269,26 +233,26 @@ INT32 BurnDrvGetSampleName(char** pszName, UINT32 i, INT32 nAka);
 #define HARDWARE_CAPCOM_CPSCHANGER						(HARDWARE_PREFIX_CAPCOM | 0x00040000)
 
 /* flags for the genre member */
-#define GBF_HORSHOOT									(1 << 0)
-#define GBF_VERSHOOT									(1 << 1)
-#define GBF_SCRFIGHT									(1 << 2)
-#define GBF_VSFIGHT										(1 << 3)
-#define GBF_BIOS										(1 << 4)
-#define GBF_BREAKOUT									(1 << 5)
-#define GBF_CASINO										(1 << 6)
-#define GBF_BALLPADDLE									(1 << 7)
-#define GBF_MAZE										(1 << 8)
-#define GBF_MINIGAMES									(1 << 9)
-#define GBF_PINBALL										(1 << 10)
-#define GBF_PLATFORM									(1 << 11)
-#define GBF_PUZZLE										(1 << 12)
-#define GBF_QUIZ										(1 << 13)
-#define GBF_SPORTSMISC									(1 << 14)
-#define GBF_SPORTSFOOTBALL								(1 << 15)
-#define GBF_MISC										(1 << 16)
-#define GBF_MAHJONG										(1 << 17)
-#define GBF_RACING										(1 << 18)
-#define GBF_SHOOT										(1 << 19)
+#define GBF_HORSHOOT (1 << 0)
+#define GBF_VERSHOOT (1 << 1)
+#define GBF_SCRFIGHT (1 << 2)
+#define GBF_VSFIGHT (1 << 3)
+#define GBF_BIOS (1 << 4)
+#define GBF_BREAKOUT (1 << 5)
+#define GBF_CASINO (1 << 6)
+#define GBF_BALLPADDLE (1 << 7)
+#define GBF_MAZE (1 << 8)
+#define GBF_MINIGAMES (1 << 9)
+#define GBF_PINBALL (1 << 10)
+#define GBF_PLATFORM (1 << 11)
+#define GBF_PUZZLE (1 << 12)
+#define GBF_QUIZ (1 << 13)
+#define GBF_SPORTSMISC (1 << 14)
+#define GBF_SPORTSFOOTBALL (1 << 15)
+#define GBF_MISC (1 << 16)
+#define GBF_MAHJONG (1 << 17)
+#define GBF_RACING (1 << 18)
+#define GBF_SHOOT (1 << 19)
 
 /* flags for the family member */
 #define FBF_SF											(1 << 1)
