@@ -851,7 +851,7 @@ struct retro_core_options_v2 options_chs = {
 
 /* RETRO_LANGUAGE_CHT */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_CHT NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_CHT "CPU速度 (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_CHT "啟用模擬CPU的超頻。可以減少延遲，但有機會引致閃爍。"
 #define FBA2012CPS1_HISCORES_LABEL_CHT NULL
 #define FBA2012CPS1_HISCORES_INFO_0_CHT NULL
@@ -861,16 +861,16 @@ struct retro_core_options_v2 options_chs = {
 #define OPTION_VAL_PAR_CHT "標準"
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_CHT NULL
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_CHT NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_CHT "音訊過濾器"
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_CHT "音訊濾波器"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CHT NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_CHT NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CHT NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_CHT "跳幀"
-#define FBA2012CPS1_FRAMESKIP_INFO_0_CHT "設定跳幀以避免音頻緩衝區不足(產生破音)。以視覺平畫度為代價提高效能。<自動> 由前端系統控制跳幀。<手動> 使用「跳幀閾值 (%)」設定。"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_CHT "設定跳幀用以避免音訊緩衝區不足(產生破音), 用影像流暢度為代價提高效能。\n設定<自動>由前端系統控制跳幀, 設定<手動>由「跳幀上限(%)」控制跳幀。"
 #define OPTION_VAL_AUTO_CHT "自動"
 #define OPTION_VAL_MANUAL_CHT "手動"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CHT "跳幀上限 (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CHT "設定「跳幀」為 <手動> 時音頻緩衝區使用上限(%)，低於上限的影格將被跳過。設定過高會導致頻繁丟失影格，過低則是出現破音。"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CHT "設定「跳幀」為<手動>時音頻緩衝區使用上限(%)。\n低於上限的影格將被跳過, 設定過高會導致頻繁丟失影格, 過低則是出現破音。"
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_CHT NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_CHT NULL
 
@@ -3896,28 +3896,28 @@ struct retro_core_options_v2 options_hr = {
 
 /* RETRO_LANGUAGE_HU */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_HU NULL
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_HU NULL
-#define FBA2012CPS1_HISCORES_LABEL_HU NULL
-#define FBA2012CPS1_HISCORES_INFO_0_HU NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_HU "CPU sebesség (%)"
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_HU "Az emulált CPU túlhajtásának engedélyezése. Csökkentheti a belassulást, de hibákat okozhat."
+#define FBA2012CPS1_HISCORES_LABEL_HU "Legjobb pontszámok"
+#define FBA2012CPS1_HISCORES_INFO_0_HU "A legjobb pontszámok mentésének engedélyezése a támogatott játékokban. A \"hiscore.dat\" fájlnak a system/fbalpha2012/ mappában kell lennie."
 #define FBA2012CPS1_ASPECT_LABEL_HU "Mag által meghatározott képarány"
-#define FBA2012CPS1_ASPECT_INFO_0_HU NULL
+#define FBA2012CPS1_ASPECT_INFO_0_HU "A tartalom kívánt képaránya. Csak akkor lép életbe, ha a RetroArch saját képarány beállítása \"Mag által meghatározott\" értékre van állítva a kép beállításainál."
 #define OPTION_VAL_DAR_HU NULL
 #define OPTION_VAL_PAR_HU NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_HU NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_HU NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_HU "Függőleges képállású játékok forgatása (újraindítás)"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_HU "A kijelző automatikus forgatása függőleges képállású játékoknál. Kikapcsolva a D-Pad bemenete a képernyőhöz viszonyított irányokba lesz elforgatva."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_HU "Hangszűrő"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_HU NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_HU NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_HU NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_HU "Aluláteresztő hangszűrő engedélyezése, néhány arcade játék \"nyers\" hangjának tompításához."
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_HU "Hangszűrő szintje (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_HU "Az aluláteresztő hangszűrő vágási frekvenciája. Nagyobb érték \"erősebb\" szűrésként hallatszik, mivel a magastartomány szélesebb sávja halkul el."
 #define FBA2012CPS1_FRAMESKIP_LABEL_HU "Képkocka kihagyás"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_HU "A hangbuffer kiürülése (recsegés) elkerülésére képkockák eldobása. Javít a teljesítményen a vizuális folyamatosság kárára. Az \"Automatikus\" beállítás akkor dob képkockát, ha a frontend azt javasolja. A \"Kézi\" a \"Képkocka kihagyás határértéke (%)\" beállítást használja."
 #define OPTION_VAL_AUTO_HU "Automatikus"
 #define OPTION_VAL_MANUAL_HU "Kézi"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_HU "Képkocka kihagyás határértéke (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_HU "Ha a \"Képkocka kihagyás\" \"Kézi\" értékre van állítva, ez határozza meg a hangpuffer telítettségi határát (százalékban), amely alatt képkockákat dob el. Nagyobb érték csökkenti a recsegés kockázatát azáltal, hogy gyakrabban dob el képkockát."
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_HU NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_HU NULL
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_HU "Diagnosztikai bemenet"
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_HU "A szervizmenü ezt bekapcsolva, majd a tartalmat továbbengedve nyitható meg."
 
 struct retro_core_option_v2_category option_cats_hu[] = {
    { NULL, NULL, NULL },
@@ -4513,7 +4513,7 @@ struct retro_core_options_v2 options_it = {
 #define FBA2012CPS1_ASPECT_INFO_0_JA "推奨コンテンツのアスペクト比を選択します。これは、ビデオ設定でRetroArchのアスペクト比が「コアが指定されている」に設定されている場合にのみ適用されます。"
 #define OPTION_VAL_DAR_JA NULL
 #define OPTION_VAL_PAR_JA NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_JA NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_JA "垂直方向に整列したゲームを回転させる (再起動が必要)"
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_JA "画面を垂直に整列させたゲームを実行するときに自動的に回転させます。無効にすると、画面上の方向に合わせてD-Pad入力が回転します。"
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_JA "オーディオフィルタ"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_JA "ローパスオーディオフィルターを有効にして、いくつかのアーケードゲームの「硬い音」を柔らかくします。"
@@ -4525,8 +4525,8 @@ struct retro_core_options_v2 options_it = {
 #define OPTION_VAL_MANUAL_JA "手動"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_JA "フレームスキップ閾値 (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_JA "'フレームスキップ' が '手動' に設定されている場合, フレームがスキップされるオーディオバッファ占有しきい値 (%) を指定します. 値を大きくすると, フレームを頻繁に落とすことでクラッキングが発生するリスクが低下します."
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_JA NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_JA NULL
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_JA "診断入力"
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_JA "トグルをオンにし、コンテンツを再開すると、サービスメニューが表示されます。"
 
 struct retro_core_option_v2_category option_cats_ja[] = {
    { NULL, NULL, NULL },
@@ -4907,209 +4907,6 @@ struct retro_core_option_v2_definition option_defs_ko[] = {
 struct retro_core_options_v2 options_ko = {
    option_cats_ko,
    option_defs_ko
-};
-
-/* RETRO_LANGUAGE_MT */
-
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_MT NULL
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_MT NULL
-#define FBA2012CPS1_HISCORES_LABEL_MT NULL
-#define FBA2012CPS1_HISCORES_INFO_0_MT NULL
-#define FBA2012CPS1_ASPECT_LABEL_MT NULL
-#define FBA2012CPS1_ASPECT_INFO_0_MT NULL
-#define OPTION_VAL_DAR_MT NULL
-#define OPTION_VAL_PAR_MT NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_MT NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_MT NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_MT NULL
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_MT NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_MT NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_MT NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_MT NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_MT NULL
-#define OPTION_VAL_AUTO_MT NULL
-#define OPTION_VAL_MANUAL_MT NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_MT NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_MT NULL
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_MT NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_MT NULL
-
-struct retro_core_option_v2_category option_cats_mt[] = {
-   { NULL, NULL, NULL },
-};
-struct retro_core_option_v2_definition option_defs_mt[] = {
-   {
-      "fba2012cps1_cpu_speed_adjust",
-      FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_MT,
-      NULL,
-      FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "100", NULL },
-         { "110", NULL },
-         { "120", NULL },
-         { "130", NULL },
-         { "140", NULL },
-         { "150", NULL },
-         { "160", NULL },
-         { "170", NULL },
-         { "180", NULL },
-         { "190", NULL },
-         { "200", NULL },
-         { NULL, NULL },
-      },
-      "100"
-   },
-   {
-      "fba2012cps1_hiscores",
-      FBA2012CPS1_HISCORES_LABEL_MT,
-      NULL,
-      FBA2012CPS1_HISCORES_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_aspect",
-      FBA2012CPS1_ASPECT_LABEL_MT,
-      NULL,
-      FBA2012CPS1_ASPECT_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "DAR", OPTION_VAL_DAR_MT },
-         { "PAR", OPTION_VAL_PAR_MT },
-         { NULL, NULL },
-      },
-      "DAR"
-   },
-   {
-      "fba2012cps1_auto_rotate",
-      FBA2012CPS1_AUTO_ROTATE_LABEL_MT,
-      NULL,
-      FBA2012CPS1_AUTO_ROTATE_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "enabled"
-   },
-   {
-      "fba2012cps1_lowpass_filter",
-      FBA2012CPS1_LOWPASS_FILTER_LABEL_MT,
-      NULL,
-      FBA2012CPS1_LOWPASS_FILTER_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_lowpass_range",
-      FBA2012CPS1_LOWPASS_RANGE_LABEL_MT,
-      NULL,
-      FBA2012CPS1_LOWPASS_RANGE_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "5",  NULL },
-         { "10", NULL },
-         { "15", NULL },
-         { "20", NULL },
-         { "25", NULL },
-         { "30", NULL },
-         { "35", NULL },
-         { "40", NULL },
-         { "45", NULL },
-         { "50", NULL },
-         { "55", NULL },
-         { "60", NULL },
-         { "65", NULL },
-         { "70", NULL },
-         { "75", NULL },
-         { "80", NULL },
-         { "85", NULL },
-         { "90", NULL },
-         { "95", NULL },
-         { NULL, NULL },
-      },
-      "60"
-   },
-   {
-      "fba2012cps1_frameskip",
-      FBA2012CPS1_FRAMESKIP_LABEL_MT,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "auto",     OPTION_VAL_AUTO_MT },
-         { "manual",   OPTION_VAL_MANUAL_MT },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_frameskip_threshold",
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_MT,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "15", NULL },
-         { "18", NULL },
-         { "21", NULL },
-         { "24", NULL },
-         { "27", NULL },
-         { "30", NULL },
-         { "33", NULL },
-         { "36", NULL },
-         { "39", NULL },
-         { "42", NULL },
-         { "45", NULL },
-         { "48", NULL },
-         { "51", NULL },
-         { "54", NULL },
-         { "57", NULL },
-         { "60", NULL },
-         { NULL, NULL },
-      },
-      "33"
-   },
-   {
-      "fba2012cps1_diagnostics",
-      FBA2012CPS1_DIAGNOSTICS_LABEL_MT,
-      NULL,
-      FBA2012CPS1_DIAGNOSTICS_INFO_0_MT,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   { NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
-};
-struct retro_core_options_v2 options_mt = {
-   option_cats_mt,
-   option_defs_mt
 };
 
 /* RETRO_LANGUAGE_NL */
@@ -5516,209 +5313,6 @@ struct retro_core_option_v2_definition option_defs_no[] = {
 struct retro_core_options_v2 options_no = {
    option_cats_no,
    option_defs_no
-};
-
-/* RETRO_LANGUAGE_OC */
-
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_OC NULL
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_OC NULL
-#define FBA2012CPS1_HISCORES_LABEL_OC NULL
-#define FBA2012CPS1_HISCORES_INFO_0_OC NULL
-#define FBA2012CPS1_ASPECT_LABEL_OC NULL
-#define FBA2012CPS1_ASPECT_INFO_0_OC NULL
-#define OPTION_VAL_DAR_OC NULL
-#define OPTION_VAL_PAR_OC NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_OC NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_OC NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_OC NULL
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_OC NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_OC NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_OC NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_OC NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_OC NULL
-#define OPTION_VAL_AUTO_OC NULL
-#define OPTION_VAL_MANUAL_OC NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_OC NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_OC NULL
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_OC NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_OC NULL
-
-struct retro_core_option_v2_category option_cats_oc[] = {
-   { NULL, NULL, NULL },
-};
-struct retro_core_option_v2_definition option_defs_oc[] = {
-   {
-      "fba2012cps1_cpu_speed_adjust",
-      FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_OC,
-      NULL,
-      FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "100", NULL },
-         { "110", NULL },
-         { "120", NULL },
-         { "130", NULL },
-         { "140", NULL },
-         { "150", NULL },
-         { "160", NULL },
-         { "170", NULL },
-         { "180", NULL },
-         { "190", NULL },
-         { "200", NULL },
-         { NULL, NULL },
-      },
-      "100"
-   },
-   {
-      "fba2012cps1_hiscores",
-      FBA2012CPS1_HISCORES_LABEL_OC,
-      NULL,
-      FBA2012CPS1_HISCORES_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_aspect",
-      FBA2012CPS1_ASPECT_LABEL_OC,
-      NULL,
-      FBA2012CPS1_ASPECT_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "DAR", OPTION_VAL_DAR_OC },
-         { "PAR", OPTION_VAL_PAR_OC },
-         { NULL, NULL },
-      },
-      "DAR"
-   },
-   {
-      "fba2012cps1_auto_rotate",
-      FBA2012CPS1_AUTO_ROTATE_LABEL_OC,
-      NULL,
-      FBA2012CPS1_AUTO_ROTATE_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "enabled"
-   },
-   {
-      "fba2012cps1_lowpass_filter",
-      FBA2012CPS1_LOWPASS_FILTER_LABEL_OC,
-      NULL,
-      FBA2012CPS1_LOWPASS_FILTER_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_lowpass_range",
-      FBA2012CPS1_LOWPASS_RANGE_LABEL_OC,
-      NULL,
-      FBA2012CPS1_LOWPASS_RANGE_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "5",  NULL },
-         { "10", NULL },
-         { "15", NULL },
-         { "20", NULL },
-         { "25", NULL },
-         { "30", NULL },
-         { "35", NULL },
-         { "40", NULL },
-         { "45", NULL },
-         { "50", NULL },
-         { "55", NULL },
-         { "60", NULL },
-         { "65", NULL },
-         { "70", NULL },
-         { "75", NULL },
-         { "80", NULL },
-         { "85", NULL },
-         { "90", NULL },
-         { "95", NULL },
-         { NULL, NULL },
-      },
-      "60"
-   },
-   {
-      "fba2012cps1_frameskip",
-      FBA2012CPS1_FRAMESKIP_LABEL_OC,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "auto",     OPTION_VAL_AUTO_OC },
-         { "manual",   OPTION_VAL_MANUAL_OC },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_frameskip_threshold",
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_OC,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "15", NULL },
-         { "18", NULL },
-         { "21", NULL },
-         { "24", NULL },
-         { "27", NULL },
-         { "30", NULL },
-         { "33", NULL },
-         { "36", NULL },
-         { "39", NULL },
-         { "42", NULL },
-         { "45", NULL },
-         { "48", NULL },
-         { "51", NULL },
-         { "54", NULL },
-         { "57", NULL },
-         { "60", NULL },
-         { NULL, NULL },
-      },
-      "33"
-   },
-   {
-      "fba2012cps1_diagnostics",
-      FBA2012CPS1_DIAGNOSTICS_LABEL_OC,
-      NULL,
-      FBA2012CPS1_DIAGNOSTICS_INFO_0_OC,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   { NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
-};
-struct retro_core_options_v2 options_oc = {
-   option_cats_oc,
-   option_defs_oc
 };
 
 /* RETRO_LANGUAGE_PL */
@@ -6533,216 +6127,13 @@ struct retro_core_options_v2 options_ru = {
    option_defs_ru
 };
 
-/* RETRO_LANGUAGE_SI */
-
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_SI NULL
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_SI NULL
-#define FBA2012CPS1_HISCORES_LABEL_SI NULL
-#define FBA2012CPS1_HISCORES_INFO_0_SI NULL
-#define FBA2012CPS1_ASPECT_LABEL_SI NULL
-#define FBA2012CPS1_ASPECT_INFO_0_SI NULL
-#define OPTION_VAL_DAR_SI NULL
-#define OPTION_VAL_PAR_SI NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_SI NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_SI NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_SI NULL
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_SI NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_SI NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_SI NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_SI NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_SI NULL
-#define OPTION_VAL_AUTO_SI NULL
-#define OPTION_VAL_MANUAL_SI NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_SI NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_SI NULL
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_SI NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_SI NULL
-
-struct retro_core_option_v2_category option_cats_si[] = {
-   { NULL, NULL, NULL },
-};
-struct retro_core_option_v2_definition option_defs_si[] = {
-   {
-      "fba2012cps1_cpu_speed_adjust",
-      FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_SI,
-      NULL,
-      FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "100", NULL },
-         { "110", NULL },
-         { "120", NULL },
-         { "130", NULL },
-         { "140", NULL },
-         { "150", NULL },
-         { "160", NULL },
-         { "170", NULL },
-         { "180", NULL },
-         { "190", NULL },
-         { "200", NULL },
-         { NULL, NULL },
-      },
-      "100"
-   },
-   {
-      "fba2012cps1_hiscores",
-      FBA2012CPS1_HISCORES_LABEL_SI,
-      NULL,
-      FBA2012CPS1_HISCORES_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_aspect",
-      FBA2012CPS1_ASPECT_LABEL_SI,
-      NULL,
-      FBA2012CPS1_ASPECT_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "DAR", OPTION_VAL_DAR_SI },
-         { "PAR", OPTION_VAL_PAR_SI },
-         { NULL, NULL },
-      },
-      "DAR"
-   },
-   {
-      "fba2012cps1_auto_rotate",
-      FBA2012CPS1_AUTO_ROTATE_LABEL_SI,
-      NULL,
-      FBA2012CPS1_AUTO_ROTATE_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "enabled",  NULL },
-         { "disabled", NULL },
-         { NULL, NULL },
-      },
-      "enabled"
-   },
-   {
-      "fba2012cps1_lowpass_filter",
-      FBA2012CPS1_LOWPASS_FILTER_LABEL_SI,
-      NULL,
-      FBA2012CPS1_LOWPASS_FILTER_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_lowpass_range",
-      FBA2012CPS1_LOWPASS_RANGE_LABEL_SI,
-      NULL,
-      FBA2012CPS1_LOWPASS_RANGE_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "5",  NULL },
-         { "10", NULL },
-         { "15", NULL },
-         { "20", NULL },
-         { "25", NULL },
-         { "30", NULL },
-         { "35", NULL },
-         { "40", NULL },
-         { "45", NULL },
-         { "50", NULL },
-         { "55", NULL },
-         { "60", NULL },
-         { "65", NULL },
-         { "70", NULL },
-         { "75", NULL },
-         { "80", NULL },
-         { "85", NULL },
-         { "90", NULL },
-         { "95", NULL },
-         { NULL, NULL },
-      },
-      "60"
-   },
-   {
-      "fba2012cps1_frameskip",
-      FBA2012CPS1_FRAMESKIP_LABEL_SI,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "auto",     OPTION_VAL_AUTO_SI },
-         { "manual",   OPTION_VAL_MANUAL_SI },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   {
-      "fba2012cps1_frameskip_threshold",
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_SI,
-      NULL,
-      FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "15", NULL },
-         { "18", NULL },
-         { "21", NULL },
-         { "24", NULL },
-         { "27", NULL },
-         { "30", NULL },
-         { "33", NULL },
-         { "36", NULL },
-         { "39", NULL },
-         { "42", NULL },
-         { "45", NULL },
-         { "48", NULL },
-         { "51", NULL },
-         { "54", NULL },
-         { "57", NULL },
-         { "60", NULL },
-         { NULL, NULL },
-      },
-      "33"
-   },
-   {
-      "fba2012cps1_diagnostics",
-      FBA2012CPS1_DIAGNOSTICS_LABEL_SI,
-      NULL,
-      FBA2012CPS1_DIAGNOSTICS_INFO_0_SI,
-      NULL,
-      NULL,
-      {
-         { "disabled", NULL },
-         { "enabled",  NULL },
-         { NULL, NULL },
-      },
-      "disabled"
-   },
-   { NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
-};
-struct retro_core_options_v2 options_si = {
-   option_cats_si,
-   option_defs_si
-};
-
 /* RETRO_LANGUAGE_SK */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_SK NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_SK "Rýchlosť CPU (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_SK "Umožniť pretaktovanie emulovaného CPU. Môže znížiť spomalenia, ale môže spôsobiť vady."
 #define FBA2012CPS1_HISCORES_LABEL_SK NULL
 #define FBA2012CPS1_HISCORES_INFO_0_SK NULL
-#define FBA2012CPS1_ASPECT_LABEL_SK NULL
+#define FBA2012CPS1_ASPECT_LABEL_SK "Jadrom poskytnutý pomer strán"
 #define FBA2012CPS1_ASPECT_INFO_0_SK NULL
 #define OPTION_VAL_DAR_SK NULL
 #define OPTION_VAL_PAR_SK NULL
@@ -6752,11 +6143,11 @@ struct retro_core_options_v2 options_si = {
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_SK NULL
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_SK NULL
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_SK NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_SK NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_SK "Preskočenie snímky"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_SK NULL
 #define OPTION_VAL_AUTO_SK NULL
-#define OPTION_VAL_MANUAL_SK NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_SK NULL
+#define OPTION_VAL_MANUAL_SK "Ručne"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_SK "Prah preskočenia snímky (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_SK "Ak je 'Preskočenie snímkov' nastavené na 'Ručne', určuje obsadenosť zvukového zásobníka (v percentách) pod ktorou budú snímky preskočené. Vyššie hodnoty znižujú riziko praskania za cenu zahodenia snímkov častejšie."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_SK NULL
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_SK "Na otvorenie servisnej ponuky zvoliť 'ZAP', potom dať pokračovať obsah."
