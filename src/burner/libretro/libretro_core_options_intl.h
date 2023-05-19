@@ -5518,6 +5518,209 @@ struct retro_core_options_v2 options_no = {
    option_defs_no
 };
 
+/* RETRO_LANGUAGE_OR */
+
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_OR NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_OR NULL
+#define FBA2012CPS1_HISCORES_LABEL_OR NULL
+#define FBA2012CPS1_HISCORES_INFO_0_OR NULL
+#define FBA2012CPS1_ASPECT_LABEL_OR NULL
+#define FBA2012CPS1_ASPECT_INFO_0_OR NULL
+#define OPTION_VAL_DAR_OR NULL
+#define OPTION_VAL_PAR_OR NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_OR NULL
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_OR NULL
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_OR NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_OR NULL
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_OR NULL
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_OR NULL
+#define FBA2012CPS1_FRAMESKIP_LABEL_OR NULL
+#define FBA2012CPS1_FRAMESKIP_INFO_0_OR NULL
+#define OPTION_VAL_AUTO_OR NULL
+#define OPTION_VAL_MANUAL_OR NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_OR NULL
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_OR NULL
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_OR NULL
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_OR NULL
+
+struct retro_core_option_v2_category option_cats_or[] = {
+   { NULL, NULL, NULL },
+};
+struct retro_core_option_v2_definition option_defs_or[] = {
+   {
+      "fba2012cps1_cpu_speed_adjust",
+      FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_OR,
+      NULL,
+      FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "100", NULL },
+         { "110", NULL },
+         { "120", NULL },
+         { "130", NULL },
+         { "140", NULL },
+         { "150", NULL },
+         { "160", NULL },
+         { "170", NULL },
+         { "180", NULL },
+         { "190", NULL },
+         { "200", NULL },
+         { NULL, NULL },
+      },
+      "100"
+   },
+   {
+      "fba2012cps1_hiscores",
+      FBA2012CPS1_HISCORES_LABEL_OR,
+      NULL,
+      FBA2012CPS1_HISCORES_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_aspect",
+      FBA2012CPS1_ASPECT_LABEL_OR,
+      NULL,
+      FBA2012CPS1_ASPECT_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "DAR", OPTION_VAL_DAR_OR },
+         { "PAR", OPTION_VAL_PAR_OR },
+         { NULL, NULL },
+      },
+      "DAR"
+   },
+   {
+      "fba2012cps1_auto_rotate",
+      FBA2012CPS1_AUTO_ROTATE_LABEL_OR,
+      NULL,
+      FBA2012CPS1_AUTO_ROTATE_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "enabled",  NULL },
+         { "disabled", NULL },
+         { NULL, NULL },
+      },
+      "enabled"
+   },
+   {
+      "fba2012cps1_lowpass_filter",
+      FBA2012CPS1_LOWPASS_FILTER_LABEL_OR,
+      NULL,
+      FBA2012CPS1_LOWPASS_FILTER_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "enabled",  NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_lowpass_range",
+      FBA2012CPS1_LOWPASS_RANGE_LABEL_OR,
+      NULL,
+      FBA2012CPS1_LOWPASS_RANGE_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "5",  NULL },
+         { "10", NULL },
+         { "15", NULL },
+         { "20", NULL },
+         { "25", NULL },
+         { "30", NULL },
+         { "35", NULL },
+         { "40", NULL },
+         { "45", NULL },
+         { "50", NULL },
+         { "55", NULL },
+         { "60", NULL },
+         { "65", NULL },
+         { "70", NULL },
+         { "75", NULL },
+         { "80", NULL },
+         { "85", NULL },
+         { "90", NULL },
+         { "95", NULL },
+         { NULL, NULL },
+      },
+      "60"
+   },
+   {
+      "fba2012cps1_frameskip",
+      FBA2012CPS1_FRAMESKIP_LABEL_OR,
+      NULL,
+      FBA2012CPS1_FRAMESKIP_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "auto",     OPTION_VAL_AUTO_OR },
+         { "manual",   OPTION_VAL_MANUAL_OR },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   {
+      "fba2012cps1_frameskip_threshold",
+      FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_OR,
+      NULL,
+      FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "15", NULL },
+         { "18", NULL },
+         { "21", NULL },
+         { "24", NULL },
+         { "27", NULL },
+         { "30", NULL },
+         { "33", NULL },
+         { "36", NULL },
+         { "39", NULL },
+         { "42", NULL },
+         { "45", NULL },
+         { "48", NULL },
+         { "51", NULL },
+         { "54", NULL },
+         { "57", NULL },
+         { "60", NULL },
+         { NULL, NULL },
+      },
+      "33"
+   },
+   {
+      "fba2012cps1_diagnostics",
+      FBA2012CPS1_DIAGNOSTICS_LABEL_OR,
+      NULL,
+      FBA2012CPS1_DIAGNOSTICS_INFO_0_OR,
+      NULL,
+      NULL,
+      {
+         { "disabled", NULL },
+         { "enabled",  NULL },
+         { NULL, NULL },
+      },
+      "disabled"
+   },
+   { NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
+};
+struct retro_core_options_v2 options_or = {
+   option_cats_or,
+   option_defs_or
+};
+
 /* RETRO_LANGUAGE_PL */
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_PL "Prędkość procesora (%)"
@@ -7550,28 +7753,28 @@ struct retro_core_options_v2 options_val = {
 
 /* RETRO_LANGUAGE_VN */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_VN NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_VN "Tốc độ CPU (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_VN "Cho phép ép xung CPU mô phỏng. Có thể nhanh hơn nhưng dễ gây ra trục trặc."
-#define FBA2012CPS1_HISCORES_LABEL_VN NULL
-#define FBA2012CPS1_HISCORES_INFO_0_VN NULL
-#define FBA2012CPS1_ASPECT_LABEL_VN NULL
-#define FBA2012CPS1_ASPECT_INFO_0_VN NULL
+#define FBA2012CPS1_HISCORES_LABEL_VN "Điểm cao"
+#define FBA2012CPS1_HISCORES_INFO_0_VN "Cho phép lưu điểm cao trong những trò chơi hỗ trợ. Cần có tệp 'hiscore.dat' trong thư mục ./fbalpha2012/."
+#define FBA2012CPS1_ASPECT_LABEL_VN "Tỷ lệ khung hình do lõi cung cấp"
+#define FBA2012CPS1_ASPECT_INFO_0_VN "Chọn tỷ lệ khung hình ưa thích. Chỉ áp dụng khi tỷ lệ khung hình của RetroArch được đặt thành 'Lõi được cung cấp' trong cài đặt Video."
 #define OPTION_VAL_DAR_VN NULL
 #define OPTION_VAL_PAR_VN NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_VN NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_VN NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_VN "Xoay các trò chơi theo chiều dọc (Khởi động lại)"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_VN "Tự động xoay màn hình khi chạy các trò chơi theo chiều dọc. Khi tắt, D-Pad sẽ được xoay để khớp với hướng trên màn hình."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_VN "Âm thanh Filter Danh mục"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_VN NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_VN NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_VN NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_VN "Bật bộ lọc âm thanh thông thấp để làm dịu âm thanh 'khó nghe' của một số game thùng."
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_VN "Mức lọc âm (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_VN "Chỉ định tần số giới hạn của bộ lọc âm thanh thông thấp. Giá trị cao hơn làm tăng 'sức mạnh' cảm nhận được của bộ lọc, vì dải phổ tần số cao rộng hơn bị yếu đi."
 #define FBA2012CPS1_FRAMESKIP_LABEL_VN "Bỏ qua khung hình"
 #define FBA2012CPS1_FRAMESKIP_INFO_0_VN "Bỏ qua khung hình để tránh bộ đệm âm thanh chạy dưới mức (tiếng kêu lách tách). Cải thiện hiệu suất với độ mượt mà của hình ảnh. 'Tự động' bỏ qua khung khi giao diện người dùng thông báo. 'Thủ công' sử dụng cài đặt 'Ngưỡng khung hình (%)'."
 #define OPTION_VAL_AUTO_VN "Tự động"
 #define OPTION_VAL_MANUAL_VN "Thủ công"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_VN "Ngưỡng bỏ qua khung hình (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_VN "Khi 'Frameskip' được đặt thành 'Thủ công', chỉ định ngưỡng chiếm dụng bộ đệm âm thanh (tỷ lệ phần trăm) dưới khung hình nào sẽ bị bỏ qua. Giá trị cao hơn làm giảm nguy cơ giật lag do làm rơi khung thường xuyên hơn."
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_VN NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_VN NULL
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_VN "Chẩn đoán đầu vào"
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_VN "BẬT sau đó tiếp tục để mở menu dịch vụ."
 
 struct retro_core_option_v2_category option_cats_vn[] = {
    { NULL, NULL, NULL },
