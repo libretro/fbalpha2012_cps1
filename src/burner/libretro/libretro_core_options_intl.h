@@ -461,7 +461,7 @@ struct retro_core_options_v2 options_ast = {
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_BE NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_BE NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_BE NULL
-#define OPTION_VAL_AUTO_BE NULL
+#define OPTION_VAL_AUTO_BE "Аўта"
 #define OPTION_VAL_MANUAL_BE NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_BE NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_BE NULL
@@ -4323,7 +4323,7 @@ struct retro_core_options_v2 options_hu = {
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_ID NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_ID "Saat 'Lewati Bingkai' diatur ke 'Manual', tentukan (persentase) ambang batas hunian penyangga audio di bawah untuk bingkai mana yang dilewati. Nilai yang lebih tinggi mengurangi risiko keretakan dengan cara membuat laju bingkai sering anjlok."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_ID NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_ID "Setel Aktifkan lalu lanjutkan konten untuk membuka menu layanan."
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_ID "Cetik ke NYALA lalu lanjutkan konten untuk membuka menu layanan."
 
 struct retro_core_option_v2_category option_cats_id[] = {
    { NULL, NULL, NULL },
