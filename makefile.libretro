@@ -122,7 +122,7 @@ endif
    CFLAGS += $(MINVERSION)
 
 else ifeq ($(platform), tvos-arm64)
-   TARGET := $(TARGET_NAME)_libretro_ios.dylib
+   TARGET := $(TARGET_NAME)_libretro_tvos.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
    MINVERSION :=
