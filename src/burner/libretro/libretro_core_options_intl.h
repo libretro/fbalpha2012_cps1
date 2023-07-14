@@ -6537,7 +6537,7 @@ struct retro_core_options_v2 options_ru = {
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_SK "Rýchlosť CPU (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_SK "Umožniť pretaktovanie emulovaného CPU. Môže znížiť spomalenia, ale môže spôsobiť vady."
-#define FBA2012CPS1_HISCORES_LABEL_SK NULL
+#define FBA2012CPS1_HISCORES_LABEL_SK "Najvyššie skóre"
 #define FBA2012CPS1_HISCORES_INFO_0_SK NULL
 #define FBA2012CPS1_ASPECT_LABEL_SK "Jadrom poskytnutý pomer strán"
 #define FBA2012CPS1_ASPECT_INFO_0_SK NULL
