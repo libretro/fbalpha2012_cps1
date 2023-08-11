@@ -1881,7 +1881,7 @@ struct retro_core_options_v2 options_da = {
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_DE "Audiofilterstufe (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_DE "Legt die Höchstfrequenz des Tiefpass-Audiofilters fest. Ein höherer Wert erhöht die wahrgenommene „Stärke“ des Filters, da ein größerer Bereich des Hochfrequenzspektrums abgeschwächt wird."
 #define FBA2012CPS1_FRAMESKIP_LABEL_DE NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_DE "Überspringen Sie Frames um zu vermeiden, dass Audio-Puffer unterlaufen (Knistern). Verbessert die Leistung auf Kosten der visuellen Glätte. 'Auto' überspringt Frames wenn vom Frontend empfohlen wird. 'Manuell' verwendet die Einstellung 'Frameskip Grenzwert (%)'."
+#define FBA2012CPS1_FRAMESKIP_INFO_0_DE "Überspringt Frames, um zu vermeiden, dass Audio-Puffer unterlaufen (Knistern). Verbessert die Leistung auf Kosten der visuellen Glätte. 'Automatisch' überspringt Frames wenn vom Frontend empfohlen. 'Manuell' verwendet die Einstellung 'Frameskip Grenzwert (%)'."
 #define OPTION_VAL_AUTO_DE "Automatisch"
 #define OPTION_VAL_MANUAL_DE "Manuell"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_DE "Frameskip-Grenzwert (%)"
