@@ -6337,13 +6337,13 @@ struct retro_core_options_v2 options_pt_pt = {
 #define FBA2012CPS1_HISCORES_LABEL_RU "Рекорды"
 #define FBA2012CPS1_HISCORES_INFO_0_RU "Включает сохранение рекордов в играх. Требуется наличие файла 'hiscore.dat' в каталоге system/fbalpha2012/."
 #define FBA2012CPS1_ASPECT_LABEL_RU "Соотношение сторон ядра"
-#define FBA2012CPS1_ASPECT_INFO_0_RU "Выбор предпочтительного соотношения сторон. Учитывается только при установке соотношения сторон RetroArch на 'Core Provided' в настройках видео."
+#define FBA2012CPS1_ASPECT_INFO_0_RU "Выбор предпочтительного соотношения сторон. Учитывается, только если в настройках видео RetroArch lkz соотношения сторон задано значение 'По выбору ядра'."
 #define OPTION_VAL_DAR_RU NULL
 #define OPTION_VAL_PAR_RU NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_RU "Поворот игр в верт. ориентации (перезапуск)"
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_RU "Автоматически поворачивать экран при запуске вертикально ориентированных игр. При отключении, нажатия D-Pad будут развёрнуты для соответствия направлениям на экране."
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_RU "Поворачивать игры с верт. ориентацией (требуется перезапуск)"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_RU "Автоматически поворачивать экран при запуске вертикально ориентированных игр. Если откл., нажатия D-Pad будут развёрнуты для соответствия направлениям на экране."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_RU "Аудиофильтр"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_RU "Включает фильтр нижних частот для смягчения звука некоторых аркадных игр."
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_RU "Включает фильтрацию нижних частот для смягчения звучания некоторых аркадных игр."
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_RU "Уровень аудиофильтра (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_RU "Настройка частоты среза для низкочастотного фильтра. Большие значения усиливают эффект от фильтра за счёт влияния на более широкий спектр высоких частот."
 #define FBA2012CPS1_FRAMESKIP_LABEL_RU "Пропуск кадров"
@@ -6351,7 +6351,7 @@ struct retro_core_options_v2 options_pt_pt = {
 #define OPTION_VAL_AUTO_RU "Авто"
 #define OPTION_VAL_MANUAL_RU "Вручную"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_RU "Граница пропуска кадров (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_RU "Устанавливает порог заполнения аудиобуфера (в процентах), ниже которого будет включаться пропуск кадров при установке опции 'Пропуск кадров' в режим 'Вручную'. Большие значения снижают вероятность появления треска за счёт более частого пропуска кадров."
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_RU "Устанавливает порог заполнения аудиобуфера ниже которого будет включаться пропуск кадров, если для опции 'Пропуск кадров' выбрано значение 'Вручную'. Большие значения снижают вероятность появления треска за счёт более частого пропуска кадров."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_RU "Сервисное меню"
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_RU "Включите настройку и продолжите игру для перехода в сервисное меню."
 
