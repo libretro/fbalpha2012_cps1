@@ -1261,23 +1261,23 @@ struct retro_core_options_v2 options_cht = {
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_CS "Umožňuje přetaktování emulovaného procesoru. Může snížit zpomalení, ale může způsobit závady."
 #define FBA2012CPS1_HISCORES_LABEL_CS "Nejvyšší skóre"
 #define FBA2012CPS1_HISCORES_INFO_0_CS "Umožňuje ukládání vysokých skóre v podporovaných hrách. Vyžaduje umístění souboru 'hiscore.dat' do složky system/fbalpha2012/."
-#define FBA2012CPS1_ASPECT_LABEL_CS "Poměr Stran Poskytnuté-Jádro"
+#define FBA2012CPS1_ASPECT_LABEL_CS "Poměr stran poskytovaný jádrem"
 #define FBA2012CPS1_ASPECT_INFO_0_CS "Vybere preferovaný poměr stran obsahu. To se použije pouze v případě, že je poměr stran aplikace RetroArch v nastavení videa nastaven na hodnotu 'Poskytnuté Jádro'."
 #define OPTION_VAL_DAR_CS NULL
 #define OPTION_VAL_PAR_CS NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_CS "Otáčení Vertikálně Zarovnaných Her (Restart)"
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_CS "Otáčení vertikálně zarovnaných her (restart)"
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_CS "Automatické otáčení displeje při spuštění vertikálně zarovnaných her. Pokud je tato funkce vypnutá, bude se vstup z D-Padu otáčet tak, aby odpovídal směrům na obrazovce."
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_CS "Audio Filtr"
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_CS "Filtr zvuku"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CS "Umožňuje použít nízkoprůchodový zvukový filtr pro zmírnění 'drsného' zvuku některých arkádových her."
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_CS "Úroveň Zvukového Filtru (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_CS "Úroveň zvukového filtru (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CS "Určuje mezní frekvenci dolní propusti zvukového filtru. Vyšší hodnota zvyšuje vnímanou 'sílu' filtru, protože je potlačen širší rozsah vysokofrekvenčního spektra."
 #define FBA2012CPS1_FRAMESKIP_LABEL_CS NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_CS "Přeskočení snímků, aby se zabránilo nedostatečnému využití vyrovnávací paměti zvuku (praskání). Zlepšuje výkon na úkor vizuální plynulosti. Funkce 'Auto' přeskakuje snímky, pokud to doporučí frontend. 'Ruční' využívá nastavení 'Práh přeskakování snímků (%)'."
 #define OPTION_VAL_AUTO_CS NULL
 #define OPTION_VAL_MANUAL_CS "Ruční"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CS "Hraniční Hodnota Frameskip (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CS "Prahová hodnota Frameskip (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CS "Pokud je položka 'Frameskip' nastavena na hodnotu 'Ruční', určuje práh obsazení vyrovnávací paměti zvuku (v procentech), pod kterým budou snímky přeskočeny. Vyšší hodnoty snižují riziko praskání tím, že způsobují častější vynechávání snímků."
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_CS "Diagnostický Vstup"
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_CS "Diagnostický vstup"
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_CS "Přepnutím na ON a následným obnovením obsahu otevřete nabídku služeb."
 
 struct retro_core_option_v2_category option_cats_cs[] = {
@@ -6943,10 +6943,10 @@ struct retro_core_options_v2 options_sr = {
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_SV "CPU-hastighet (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_SV "Aktiverar överklockning av den emulerade CPU: n. Kan minska tröghet, men kan orsaka problem."
-#define FBA2012CPS1_HISCORES_LABEL_SV "Nytt rekord"
+#define FBA2012CPS1_HISCORES_LABEL_SV "Bästa resultat"
 #define FBA2012CPS1_HISCORES_INFO_0_SV "Aktiverar sparande av bästa resultat i stödda spel. Kräver att filen 'hiscore.dat' placeras i din system/fbalpha2012/-mapp."
 #define FBA2012CPS1_ASPECT_LABEL_SV "Kärnspecifikt bildformat"
-#define FBA2012CPS1_ASPECT_INFO_0_SV "Väljer föredraget bildformat för innehåll. Detta kommer endast att tillämpas när RetroArchs bildformat är inställt på \"Kärnspecifikt\" i Video-inställningarna."
+#define FBA2012CPS1_ASPECT_INFO_0_SV "Väljer föredraget bildformat för innehåll. Detta kommer endast att tillämpas när RetroArchs bildformat är inställt på 'Kärnspecifikt' i Video-inställningarna."
 #define OPTION_VAL_DAR_SV NULL
 #define OPTION_VAL_PAR_SV NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_SV "Rotera vertikalt inriktade spel (Omstart krävs)"
