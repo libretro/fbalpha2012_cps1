@@ -4708,7 +4708,7 @@ struct retro_core_options_v2 options_it = {
 
 /* RETRO_LANGUAGE_JA */
 
-#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_JA "CPU速度 (%)"
+#define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_JA "CPU 速度 (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_JA "エミュレートされたCPUのオーバークロックを有効にします. 速度低下を減らせますが, 不具合を引き起こす可能性があります."
 #define FBA2012CPS1_HISCORES_LABEL_JA "ハイスコア"
 #define FBA2012CPS1_HISCORES_INFO_0_JA "対応ゲームでハイスコアの保存を有効にします。「hiscore.dat」 ファイルを「system/fbalpha2012/・ フォルダに配置する必要があります。"
