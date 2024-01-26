@@ -4717,7 +4717,7 @@ struct retro_core_options_v2 options_it = {
 #define OPTION_VAL_DAR_JA NULL
 #define OPTION_VAL_PAR_JA NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_JA "垂直方向に整列したゲームを回転させる (再起動が必要)"
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_JA "画面を垂直に整列させたゲームを実行するときに自動的に回転させます。無効にすると、画面上の方向に合わせてD-Pad入力が回転します。"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_JA "縦向きのゲームを実行するときに画面を自動的に回転させます。無効にすると、画面上の方向に合わせて十字キー入力が回転します。"
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_JA "オーディオフィルター"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_JA "ローパスオーディオフィルターを有効にすることで、一部のアーケードゲームの「硬い音」を柔らかくします。"
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_JA "オーディオフィルターレベル (%)"
