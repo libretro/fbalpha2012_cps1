@@ -4711,25 +4711,25 @@ struct retro_core_options_v2 options_it = {
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_JA "CPU 速度 (%)"
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_JA "エミュレートされた CPU のオーバークロックを有効にします。実行速度の低下を減らすことができますが、不具合を引き起こす可能性があります。"
 #define FBA2012CPS1_HISCORES_LABEL_JA "ハイスコア"
-#define FBA2012CPS1_HISCORES_INFO_0_JA "対応ゲームでハイスコアの保存を有効にします。「hiscore.dat」 ファイルを「system/fbalpha2012/・ フォルダに配置する必要があります。"
+#define FBA2012CPS1_HISCORES_INFO_0_JA "対応ゲームでハイスコアの保存を有効にします。「hiscore.dat」 ファイルを「system/fbalpha2012/」 フォルダに配置する必要があります。"
 #define FBA2012CPS1_ASPECT_LABEL_JA "コア提供アスペクト比"
 #define FBA2012CPS1_ASPECT_INFO_0_JA "コンテンツの優先アスペクト比を選択します。ビデオ設定で RetroArch のアスペクト比が [コア提供] に設定されている場合にのみ適用されます。"
 #define OPTION_VAL_DAR_JA NULL
 #define OPTION_VAL_PAR_JA NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_JA "垂直方向に整列したゲームを回転させる (再起動が必要)"
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_JA "縦向きのゲームを回転させる (再起動が必要)"
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_JA "縦向きのゲームを実行するときに画面を自動的に回転させます。無効にすると、画面上の方向に合わせて十字キー入力が回転します。"
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_JA "オーディオフィルター"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_JA "ローパスオーディオフィルターを有効にすることで、一部のアーケードゲームの「硬い音」を柔らかくします。"
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_JA "オーディオフィルターレベル (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_JA "ローパスオーディオフィルターのカットオフ周波数を指定します。 値を大きくすると、高周波数スペクトルの広い範囲が減衰するため、フィルタの知覚された「強さ」が増加します。"
 #define FBA2012CPS1_FRAMESKIP_LABEL_JA "フレームスキップ"
-#define FBA2012CPS1_FRAMESKIP_INFO_0_JA "フレームをスキップしてオーディオバッファアンダーラン (音割れ) を回避します。視覚的な滑らかさを犠牲にしてパフォーマンスを向上させます。 「自動」は、フロントエンドにアドバイスされたときにフレームをスキップします。「マニュアル」は、「フレームスキップ閾値 (%)」設定を使用します。"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_JA "フレームをスキップしてオーディオバッファアンダーラン (音割れ) を回避します。視覚的な滑らかさを犠牲にしてパフォーマンスを向上させます。[自動] はフロントエンドによって指示された場合にフレームをスキップします。[手動] は [フレームスキップしきい値 (%)] 設定を使用します。"
 #define OPTION_VAL_AUTO_JA "自動"
 #define OPTION_VAL_MANUAL_JA "手動"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_JA "フレームスキップしきい値 (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_JA "'フレームスキップ' が '手動' に設定されている場合, フレームがスキップされるオーディオバッファ占有しきい値 (%) を指定します. 値を大きくすると, フレームを頻繁に落とすことでクラッキングが発生するリスクが低下します."
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_JA "[フレームスキップ] が [手動] に設定されている場合、フレームがスキップされるオーディオバッファ占有しきい値 (%) を指定します。値を高くするほど、より頻繁にフレームを落とすことで音割れが発生するリスクを軽減します。"
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_JA "診断入力"
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_JA "トグルをオンにし、コンテンツを再開すると、サービスメニューが表示されます。"
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_JA "オンに切り替えてからコンテンツを再開すると、サービスメニューが表示されます。"
 
 struct retro_core_option_v2_category option_cats_ja[] = {
    { NULL, NULL, NULL },
