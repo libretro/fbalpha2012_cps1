@@ -5930,7 +5930,7 @@ struct retro_core_options_v2 options_pl = {
 #define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_PT_BR "Habilita o overclock da CPU emulada. Pode reduzir a lentidão, mas pode causar falhas."
 #define FBA2012CPS1_HISCORES_LABEL_PT_BR "Recordes"
 #define FBA2012CPS1_HISCORES_INFO_0_PT_BR "Salva os recordes com as melhores pontuações nos jogos que suportam esta função. É necessário ter o arquivo \"hiscore.dat\" na pasta system/fbalpha2012/."
-#define FBA2012CPS1_ASPECT_LABEL_PT_BR "Proporção de tela fornecida pelo núcleo"
+#define FBA2012CPS1_ASPECT_LABEL_PT_BR "Proporção de tela do núcleo"
 #define FBA2012CPS1_ASPECT_INFO_0_PT_BR "Seleciona a proporção da tela preferida do conteúdo. Isso se aplicará somente quando a proporção do RetroArch estiver configurada como 'Fornecida pelo núcleo' nas configurações de vídeo."
 #define OPTION_VAL_DAR_PT_BR "DAR (Relação de aspecto da tela)"
 #define OPTION_VAL_PAR_PT_BR "PAR (Relação de aspecto do pixel)"
@@ -5941,11 +5941,11 @@ struct retro_core_options_v2 options_pl = {
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_PT_BR "Nível do filtro de áudio (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_PT_BR "Especifica o corte de frequência no filtro de áudio passa-baixo. Um alto valor aumentará a força percebida do filtro, pois mais do espectro de alta frequência será atenuado."
 #define FBA2012CPS1_FRAMESKIP_LABEL_PT_BR "Pulo de quadro"
-#define FBA2012CPS1_FRAMESKIP_INFO_0_PT_BR "Ignora quadros para evitar o esvaziamento do buffer do áudio (cortes no áudio). Melhora o desempenho ao custo da suavidade visual. A opção 'Automático' ignora os quadros quando for aconselhado pela interface. Já 'Manual' utiliza a configuração 'Limite do salto de quadros (%)'."
+#define FBA2012CPS1_FRAMESKIP_INFO_0_PT_BR "Ignora quadros para evitar o esvaziamento do buffer do áudio (corte no áudio). Melhora o desempenho ao custo da suavidade visual. A opção \"Automático\" ignora os quadros quando aconselhado pela interface. \"Manual\" usa a configuração \"Limite do pulo de quadro (%)\"."
 #define OPTION_VAL_AUTO_PT_BR "Automática"
 #define OPTION_VAL_MANUAL_PT_BR NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_PT_BR "Limite de pulo de quadro (%)"
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_PT_BR "Quando 'Pulo de quadro' é definido como 'Manual', especifica o limite de ocupação do buffer de áudio (porcentagem) abaixo do qual os quadros serão ignorados. Valores mais altos reduzem o risco de engasgos pois farão que os quadros sejam descartados com mais frequência."
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_PT_BR "Limite do pulo de quadro (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_PT_BR "Ao configurar \"Pulo de quadro\" como \"Manual\", especifica o limite do buffer de áudio em porcentagem, os quadros fora da porcentagem serão ignorados. Valores maiores reduzem o risco de engasgo por descartar quadros com mais frequência."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_PT_BR "Entrada de diagnóstico"
 #define FBA2012CPS1_DIAGNOSTICS_INFO_0_PT_BR "Alterne LIGAR para retomar o conteúdo para abrir o menu de serviços."
 
