@@ -4506,7 +4506,7 @@ struct retro_core_options_v2 options_hu = {
 /* RETRO_LANGUAGE_ID */
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_ID NULL
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_ID "Mengaktifkan overclocking CPU yang di emulasi. Dapat mengurangi perlambatan, tetapi dapat menyebabkan gangguan."
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_ID "Mengaktifkan emulasi 'overclock' CPU. Dapat mengurangi lambat, tapi menyebabkan 'glitch'."
 #define FBA2012CPS1_HISCORES_LABEL_ID NULL
 #define FBA2012CPS1_HISCORES_INFO_0_ID NULL
 #define FBA2012CPS1_ASPECT_LABEL_ID NULL
@@ -4515,9 +4515,9 @@ struct retro_core_options_v2 options_hu = {
 #define OPTION_VAL_PAR_ID NULL
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_ID NULL
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_ID NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_ID NULL
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_ID "Saring Audio"
 #define FBA2012CPS1_LOWPASS_FILTER_INFO_0_ID NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_ID NULL
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_ID "Tingkat Saring Audio (%)"
 #define FBA2012CPS1_LOWPASS_RANGE_INFO_0_ID NULL
 #define FBA2012CPS1_FRAMESKIP_LABEL_ID NULL
 #define FBA2012CPS1_FRAMESKIP_INFO_0_ID NULL
