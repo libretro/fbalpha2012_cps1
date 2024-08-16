@@ -446,27 +446,27 @@ struct retro_core_options_v2 options_ast = {
 /* RETRO_LANGUAGE_BE */
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_BE "Хуткасць ЦП (%)"
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_BE NULL
-#define FBA2012CPS1_HISCORES_LABEL_BE NULL
-#define FBA2012CPS1_HISCORES_INFO_0_BE NULL
-#define FBA2012CPS1_ASPECT_LABEL_BE NULL
-#define FBA2012CPS1_ASPECT_INFO_0_BE NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_BE "Уключае разгон эмуляванага CPU. Можа ўстараняць запавольванні, але прыводзіць да памылак."
+#define FBA2012CPS1_HISCORES_LABEL_BE "Лепшыя вынікі"
+#define FBA2012CPS1_HISCORES_INFO_0_BE "Уключае захаванне лепшых вынікаў у гульнях. Патрабуецца наяўнасць файла 'hiscore.dat' у каталогу system/fbalpha2012/."
+#define FBA2012CPS1_ASPECT_LABEL_BE "Забяспечаныя ядром суадносіны бакоў"
+#define FBA2012CPS1_ASPECT_INFO_0_BE "Выбар пераважных суадносін бакоў кантэнту. Ужываецца толькі пры выбары рэжыму суадносін бакоў 'Налада ядра' у наладах відэа RetroArch."
 #define OPTION_VAL_DAR_BE NULL
 #define OPTION_VAL_PAR_BE NULL
-#define FBA2012CPS1_AUTO_ROTATE_LABEL_BE NULL
-#define FBA2012CPS1_AUTO_ROTATE_INFO_0_BE NULL
-#define FBA2012CPS1_LOWPASS_FILTER_LABEL_BE NULL
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_BE NULL
-#define FBA2012CPS1_LOWPASS_RANGE_LABEL_BE NULL
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_BE NULL
-#define FBA2012CPS1_FRAMESKIP_LABEL_BE NULL
-#define FBA2012CPS1_FRAMESKIP_INFO_0_BE NULL
+#define FBA2012CPS1_AUTO_ROTATE_LABEL_BE "Паварот гульняў у вертыкальнай арыентацыі (патрабуецца перазапуск)"
+#define FBA2012CPS1_AUTO_ROTATE_INFO_0_BE "Аўтаматычна паварочваць экран пры запуску вертыкальна арыентаваных гульняў. Пры адключэнні, націскі D-Pad будуць разгорнутыя для адпаведнасці напрамкам на экране."
+#define FBA2012CPS1_LOWPASS_FILTER_LABEL_BE "Аўдыяфільтр"
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_BE "Уключае фільтр ніжніх частот для змякчэння гуку некаторых аркадных гульняў."
+#define FBA2012CPS1_LOWPASS_RANGE_LABEL_BE "Узровень аўдыяфільтра (%)"
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_BE "Ўстаноўка частаты зрэзу для нізкачастотнага аўдыяфільтра. Большыя значэнні ўзмацняюць эфект фільтрацыі для зніжэння ўплыву на больш шырокі дыяпазон высокай частаты."
+#define FBA2012CPS1_FRAMESKIP_LABEL_BE "Пропуск кадраў"
+#define FBA2012CPS1_FRAMESKIP_INFO_0_BE "Прапускаць кадры, каб пазбегнуць з'яўлення (трэска) пры спусташэнні аўдыёбуфера. Паляпшае прадукцыйнасць, але зніжае плаўнасць выявы. У рэжыме 'Аўта' пропуск кадраў рэгулюецца франтэндам. У рэжыме 'Уручную' выкарыстоўваецца значэнне опцыі 'Мяжа пропуску кадраў (%)'."
 #define OPTION_VAL_AUTO_BE "Аўта"
-#define OPTION_VAL_MANUAL_BE NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_BE NULL
-#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_BE NULL
-#define FBA2012CPS1_DIAGNOSTICS_LABEL_BE NULL
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_BE NULL
+#define OPTION_VAL_MANUAL_BE "Уручную"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_BE "Парог прапускання кадраў (%)"
+#define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_BE "Усталёўвае парог запаўнення аўдыёбуфера (у працэнтах), ніжэй за які будзе ўключацца пропуск кадраў, калі для параметра 'Пропуск кадраў' выбраны рэжым 'Уручную'. Вялікія значэнні змяншаюць верагоднасць з'яўлення трэска за рахунак больш частага пропуску кадраў."
+#define FBA2012CPS1_DIAGNOSTICS_LABEL_BE "Сэрвіснае меню"
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_BE "Уключыце наладу і працягнеце гульню для пераходу ў сэрвіснае меню."
 
 struct retro_core_option_v2_category option_cats_be[] = {
    { NULL, NULL, NULL },
