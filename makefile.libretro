@@ -120,12 +120,14 @@ endif
       MINVERSION = -miphoneos-version-min=5.0
    endif
    CFLAGS += $(MINVERSION)
+   CXXFLAGS += $(MINVERSION)
+   LDFLAGS += $(MINVERSION)
 
 else ifeq ($(platform), tvos-arm64)
    TARGET := $(TARGET_NAME)_libretro_tvos.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
-   MINVERSION :=
+   MINVERSION := -mappletvos-version-min=11.0
 
 ifeq ($(IOSSDK),)
    IOSSDK = $(shell xcodebuild -version -sdk appletvos Path)
@@ -135,6 +137,8 @@ endif
    CXX = c++ -arch arm64 -isysroot $(IOSSDK)   
    CFLAGS += -DIOS
    CFLAGS += $(MINVERSION)
+   CXXFLAGS += $(MINVERSION)
+   LDFLAGS += $(MINVERSION)
 
 else ifeq ($(platform), qnx)
    TARGET := $(TARGET_NAME)_libretro_$(platform).so
