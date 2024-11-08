@@ -852,9 +852,9 @@ struct retro_core_options_v2 options_bg = {
 /* RETRO_LANGUAGE_CA */
 
 #define FBA2012CPS1_CPU_SPEED_ADJUST_LABEL_CA "Velocitat de la CPU (%)"
-#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_CA NULL
+#define FBA2012CPS1_CPU_SPEED_ADJUST_INFO_0_CA "Augmenta la velocitat de la CPU emulada. Pot reduir els alentiments en els jocs, però pot causar errors gràfics."
 #define FBA2012CPS1_HISCORES_LABEL_CA "Màximes puntuacions"
-#define FBA2012CPS1_HISCORES_INFO_0_CA NULL
+#define FBA2012CPS1_HISCORES_INFO_0_CA "Habilitar el desat de les puntuacions més altes en els jocs que ho permeten. És necessari un fitxer 'hiscore.dat' en la carpeta 'system/fbalpha2012/."
 #define FBA2012CPS1_ASPECT_LABEL_CA "Relació d'aspecte proveïda pel nucli"
 #define FBA2012CPS1_ASPECT_INFO_0_CA "Escull la relació d'aspecte preferida. Aquesta relació d'aspecte només s'aplicarà si la relació d'aspecte a RetroArch està fixada a 'Core provided' en la configuració de vídeo."
 #define OPTION_VAL_DAR_CA NULL
@@ -862,17 +862,17 @@ struct retro_core_options_v2 options_bg = {
 #define FBA2012CPS1_AUTO_ROTATE_LABEL_CA "Girar els jocs que tenen una alineació vertical (Es requereix reinici)"
 #define FBA2012CPS1_AUTO_ROTATE_INFO_0_CA "Gira automàticament la pantalla en els jocs amb alineació vertical. Si aquesta opció està desactivada, l'entrada de la creueta girarà perquè l'entrada de la creueta coincideixi amb la creueta en pantalla."
 #define FBA2012CPS1_LOWPASS_FILTER_LABEL_CA "Filtre d'àudio"
-#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CA NULL
+#define FBA2012CPS1_LOWPASS_FILTER_INFO_0_CA "Habilita un filtre d'àudio passabaix per suavitzar els pics de so en alguns jocs arcade."
 #define FBA2012CPS1_LOWPASS_RANGE_LABEL_CA "Nivell del filtre d'àudio (%)"
-#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CA NULL
+#define FBA2012CPS1_LOWPASS_RANGE_INFO_0_CA "Especifica el tall de freqüència del filtre d'àudio passabaix. Un valor alt es pot captar com un filtre amb més força, perquè esmorteeix un rang més gran de freqüències altes."
 #define FBA2012CPS1_FRAMESKIP_LABEL_CA "Ometre fotogrames"
-#define FBA2012CPS1_FRAMESKIP_INFO_0_CA NULL
+#define FBA2012CPS1_FRAMESKIP_INFO_0_CA "Omet fotogrames per no saturar la memòria intermèdia de l'àudio. Millora el rendiment a canvi de perdre fluïdesa visual. Selecció automàtica omet fotogrames a petició del front-end. El valor manual ajusta el llindar d'omissió de fotogrames (%)."
 #define OPTION_VAL_AUTO_CA "Automàtic"
 #define OPTION_VAL_MANUAL_CA NULL
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_LABEL_CA "Llindar d'omissió de fotogrames (%)"
 #define FBA2012CPS1_FRAMESKIP_THRESHOLD_INFO_0_CA "Si l'omissió de fotogrames està fixada a 'Manual', aquesta opció selecciona el llindar inferior de la memòria intermèdia de l'àudio (en percentatge) per sota del no s'ometrà cap fotograma. Un valor més alt redueix el risc dels errors d'àudio, ometent fotogrames amb més freqüència."
 #define FBA2012CPS1_DIAGNOSTICS_LABEL_CA "Entrada de diagnòstic"
-#define FBA2012CPS1_DIAGNOSTICS_INFO_0_CA NULL
+#define FBA2012CPS1_DIAGNOSTICS_INFO_0_CA "Activa aquesta opció i torna al joc per obrir el menú de servei."
 
 struct retro_core_option_v2_category option_cats_ca[] = {
    { NULL, NULL, NULL },
